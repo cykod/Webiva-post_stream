@@ -3,10 +3,12 @@ class PostStream::PageController < ParagraphController
   editor_header 'Post Stream Paragraphs'
   
   editor_for :stream, :name => "Stream", :feature => :post_stream_page_stream,
-                      :inputs => { :public_target => [[:content, 'Public Content', :content],
-                                                      [:target, 'Public Target', :target]],
-                                   :private_target => [[:content, 'Private Content', :content],
-                                                       [:target, 'Private Target', :target]]
+                      :inputs => { :target => [[:content, 'Content', :content],
+                                               [:target, 'Target', :target]],
+                                   :post_permission => [[:content, 'Post Permission Content', :content],
+                                                        [:target, 'Post Permission Target', :target]],
+                                   :admin_permission => [[:content, 'Admin Permission Content', :content],
+                                                         [:target, 'Admin Permission Target', :target]]
                                  }
 
   class StreamOptions < HashModel
