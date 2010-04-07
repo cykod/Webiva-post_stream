@@ -10,6 +10,5 @@ describe PostStreamPostComment do
 
     @comment.should have(1).errors_on(:post_stream_post_id)
     @comment.should have(1).errors_on(:body)
-    @comment.should have(1).errors_on(:posted_at)
   end
 end
