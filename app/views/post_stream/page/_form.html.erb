@@ -1,0 +1,9 @@
+
+<div class="post_stream_form">
+<ul>
+<% cms_unstyled_form_for :stream_post, poster.post do |f| %>
+<li><%= f.text_area :body %></li>
+<li><%= f.submit 'Post' %></li>
+<% end %>
+</ul>
+</div>

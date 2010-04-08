@@ -89,7 +89,7 @@ class PostStreamPost < DomainModel
 
     items = scope.with_target(targets).find(:all, {:select => 'DISTINCT post_stream_post_id', :limit => limit + 1, :offset => offset, :order => 'posted_at DESC'}.merge(opts))
 
-    posts = PostStreamPost.find(:all, :conditions => {:id => items.collect { |item| item.post_stream_post_id }})
+    posts = PostStreamPost.find(:all, :conditions => {:id => items.collect { |item| item.post_stream_post_id }}, :order => 'posted_at DESC')
     has_more = posts.length > limit
     posts.pop if has_more
     [has_more, posts]

@@ -1,0 +1,8 @@
+<ul class="post_stream_posts">
+<% posts.each do |post| -%>
+<li>
+<span><%= h post.title %></span>
+<p><%= post.body_html %></p>
+</li>
+<% end -%>
+</ul>

@@ -9,7 +9,13 @@ describe PostStream::PageFeature, :type => :view do
   end
 
   it "should render the stream" do
+    @user = EndUser.push_target('test1@test.dev', :first_name => 'First', :last_name => 'Last')
+    @poster = PostStreamPoster.new @user, @user
+    @poster.post_permission = true
+
     @options = PostStream::PageController::StreamOptions.new nil
-    @output = @feature.post_stream_page_stream_feature(:options => @options)
+    @feature.should_receive(:render_to_string).twice
+    @feature.should_receive(:paragraph).twice
+    @output = @feature.post_stream_page_stream_feature(:options => @options, :poster => @poster, :posts => [], :has_more => false)
   end
 end
