@@ -74,4 +74,16 @@ class PostStreamPost < DomainModel
   def content_filter
     PostStream::AdminController.module_options.content_filter || 'comment'
   end
+
+  def self.find_for_targets(targets, page=1, opts={})
+    limit = opts.delete(:limit) || 10
+    offset = (page-1) * limit
+
+    items = PostStreamPostTarget.with_target(targets).find(:all, {:select => 'DISTINCT post_stream_post_id', :limit => limit + 1, :offset => offset, :order => 'posted_at DESC'}.merge(opts))
+
+    posts = PostStreamPost.find(:all, :conditions => {:id => items.collect { |item| item.post_stream_post_id }})
+    has_more = posts.length > limit
+    posts.pop if has_more
+    [has_more, posts]
+  end
 end

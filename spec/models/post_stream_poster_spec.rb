@@ -131,4 +131,119 @@ describe PostStreamPoster do
 
     @poster.post.title.should == 'First Last'
   end
+
+  it "should be able to fetch posts for target" do
+    @user = EndUser.push_target('test1@test.dev', :first_name => 'First', :last_name => 'Last')
+    @poster = PostStreamPoster.new @user, @user
+
+    assert_difference 'PostStreamPostTarget.count', 4 do
+      assert_difference 'PostStreamTarget.count', 1 do
+        assert_difference 'PostStreamPost.count', 4 do
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+        end
+      end
+    end
+
+    @poster = PostStreamPoster.new @user, @user
+    has_more, posts = @poster.fetch_posts
+    posts.length.should == 4
+  end
+
+  it "should be able to post to a different stream" do
+    @user1 = EndUser.push_target('test1@test.dev', :first_name => 'First', :last_name => 'Last')
+    @user2 = EndUser.push_target('test2@test.dev', :first_name => 'First2', :last_name => 'Last2')
+    @poster = PostStreamPoster.new @user2, @user1
+
+    assert_difference 'PostStreamPostTarget.count', 8 do
+      assert_difference 'PostStreamTarget.count', 2 do
+        assert_difference 'PostStreamPost.count', 4 do
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+        end
+      end
+    end
+
+    @poster = PostStreamPoster.new @user1, @user2
+    has_more, posts = @poster.fetch_posts
+    posts.length.should == 4
+
+    @poster = PostStreamPoster.new @user1, @user1
+    has_more, posts = @poster.fetch_posts
+    posts.length.should == 4
+
+    @poster = PostStreamPoster.new @user2, @user2
+    has_more, posts = @poster.fetch_posts
+    posts.length.should == 4
+
+    @poster = PostStreamPoster.new @user2, @user1
+    has_more, posts = @poster.fetch_posts
+    posts.length.should == 4
+  end
+
+  it "should be able to view the target and other streams" do
+    @user1 = EndUser.push_target('test1@test.dev', :first_name => 'First', :last_name => 'Last')
+    @user2 = EndUser.push_target('test2@test.dev', :first_name => 'First2', :last_name => 'Last2')
+    @user3 = EndUser.push_target('test3@test.dev', :first_name => 'First3', :last_name => 'Last3')
+    @poster = PostStreamPoster.new @user2, @user2
+
+    assert_difference 'PostStreamPostTarget.count', 4 do
+      assert_difference 'PostStreamTarget.count', 1 do
+        assert_difference 'PostStreamPost.count', 4 do
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+        end
+      end
+    end
+
+
+    @poster = PostStreamPoster.new @user1, @user1
+
+    assert_difference 'PostStreamPostTarget.count', 4 do
+      assert_difference 'PostStreamTarget.count', 1 do
+        assert_difference 'PostStreamPost.count', 4 do
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+        end
+      end
+    end
+
+    @poster = PostStreamPoster.new @user1, @user1
+    has_more, posts = @poster.fetch_posts
+    posts.length.should == 4
+
+    @poster = PostStreamPoster.new @user1, @user2
+    has_more, posts = @poster.fetch_posts
+    posts.length.should == 4
+
+    @poster = PostStreamPoster.new @user3, @user3
+    @poster.view_targets = [['EndUser', [@user1.id, @user2.id]]]
+    has_more, posts = @poster.fetch_posts
+    posts.length.should == 8
+
+  end
 end

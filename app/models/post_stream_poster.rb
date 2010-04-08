@@ -1,6 +1,6 @@
 
 class PostStreamPoster
-  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_target, :content_node
+  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_target, :content_node, :view_targets
 
   def initialize(user, target)
     self.end_user = user
@@ -39,5 +39,29 @@ class PostStreamPoster
       self.link_post_to_target(self.additional_target) if self.additional_target
       true
     end
+  end
+
+  def fetch_targets
+    targets = []
+    stream_target = PostStreamTarget.find_target(self.target)
+    targets << stream_target if stream_target
+
+    if self.view_targets
+      self.view_targets.each do |target_group|
+        target_type, target_ids = *target_group
+        stream_targets = PostStreamTarget.find(:all, :conditions => {:target_type => target_type, :target_id => target_ids})
+        targets = targets + stream_targets unless stream_targets.empty?
+      end
+    end
+
+    targets
+  end
+
+  # returns has_more and posts
+  def fetch_posts(page=1, opts={})
+    stream_targets = self.fetch_targets
+    return [false, []] if stream_targets.empty?
+
+    PostStreamPost.find_for_targets(stream_targets, page, opts)
   end
 end

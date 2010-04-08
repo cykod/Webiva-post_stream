@@ -18,6 +18,8 @@ class PostStreamTarget < DomainModel
   end
 
   def self.create_target(target)
+    # Note: could test target here and make sure it responds to name and image
+
     begin
       self.create(:target => target)
     rescue ActiveRecord::StatementInvalid => e

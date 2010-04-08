@@ -6,7 +6,7 @@ class PostStreamInitialSetup < ActiveRecord::Migration
       t.integer :posted_by_id
       t.integer :content_node_id
       t.integer :domain_file_id
-      t.string :post_type
+      t.string :post_type, :size => 16
       t.string :post_hash
       t.string :title
       t.text :link
@@ -20,6 +20,7 @@ class PostStreamInitialSetup < ActiveRecord::Migration
 
     add_index :post_stream_posts, [:end_user_id], :name => 'post_stream_posts_user_idx'
     add_index :post_stream_posts, [:content_node_id], :name => 'post_stream_posts_content_idx'
+    add_index :post_stream_posts, [:post_type, :posted_at], :name => 'post_stream_posts_type_posted_at_idx'
 
     create_table :post_stream_post_comments, :force => true do |t|
       t.integer :post_stream_post_id
@@ -44,6 +45,7 @@ class PostStreamInitialSetup < ActiveRecord::Migration
       t.integer :post_stream_post_id
       t.integer :post_stream_target_id
       t.datetime :posted_at
+      t.string :post_type, :size => 16
     end
 
     add_index :post_stream_post_targets, [:post_stream_target_id, :posted_at], :name => 'post_stream_post_targets_idx'
