@@ -13,6 +13,8 @@ class PostStream::PageRenderer < ParagraphRenderer
       target = conn_type == :target ? conn_id : conn_type.constantize.find_by_id(conn_id)
     end
 
+    return render_paragraph :text => 'Please setup page connections' unless target
+
     @poster = PostStreamPoster.new myself, target
 
     conn_type, conn_id = page_connection(:post_permission)
@@ -22,7 +24,10 @@ class PostStream::PageRenderer < ParagraphRenderer
     @poster.admin_permission = true if conn_id
 
     if @poster.can_post?
-      @poster.setup_post(params['post'])
+
+      handle_file_upload(params[:stream_post], 'domain_file_id', {:folder => @options.folder_id}) if request.post?
+
+      @poster.setup_post(params[:stream_post])
 
       if request.post? && @poster.valid?
         if @poster.save
