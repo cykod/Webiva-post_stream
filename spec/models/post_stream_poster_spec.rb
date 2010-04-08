@@ -246,4 +246,47 @@ describe PostStreamPoster do
     posts.length.should == 8
 
   end
+
+  it "should be able to fetch posts for a type" do
+    @user = EndUser.push_target('test1@test.dev', :first_name => 'First', :last_name => 'Last')
+    @poster = PostStreamPoster.new @user, @user
+
+    assert_difference 'PostStreamPostTarget.count', 4 do
+      assert_difference 'PostStreamTarget.count', 1 do
+        assert_difference 'PostStreamPost.count', 4 do
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+          @poster.setup_post :body => 'My first post'
+          @poster.save
+        end
+      end
+    end
+
+    assert_difference 'PostStreamPostTarget.count', 2 do
+      assert_difference 'PostStreamTarget.count', 0 do
+        assert_difference 'PostStreamPost.count', 2 do
+          @poster.setup_post :body => 'My first post', :link => 'http://test.dev/1'
+          @poster.save
+          @poster.setup_post :body => 'My first post', :link => 'http://test.dev/2'
+          @poster.save
+        end
+      end
+    end
+
+    @poster = PostStreamPoster.new @user, @user
+    has_more, posts = @poster.fetch_posts(nil, :post_types => nil)
+    posts.length.should == 6
+
+    @poster = PostStreamPoster.new @user, @user
+    has_more, posts = @poster.fetch_posts(nil, :post_types => [])
+    posts.length.should == 6
+
+    @poster = PostStreamPoster.new @user, @user
+    has_more, posts = @poster.fetch_posts(nil, :post_types => ['link'])
+    posts.length.should == 2
+  end
 end

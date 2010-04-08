@@ -76,10 +76,18 @@ class PostStreamPost < DomainModel
   end
 
   def self.find_for_targets(targets, page=1, opts={})
+    page = (page || 1).to_i
     limit = opts.delete(:limit) || 10
     offset = (page-1) * limit
 
-    items = PostStreamPostTarget.with_target(targets).find(:all, {:select => 'DISTINCT post_stream_post_id', :limit => limit + 1, :offset => offset, :order => 'posted_at DESC'}.merge(opts))
+    post_types = opts.delete(:post_types)
+    if post_types && ! post_types.empty?
+      scope = PostStreamPostTarget.with_types(post_types)
+    else
+      scope = PostStreamPostTarget
+    end
+
+    items = scope.with_target(targets).find(:all, {:select => 'DISTINCT post_stream_post_id', :limit => limit + 1, :offset => offset, :order => 'posted_at DESC'}.merge(opts))
 
     posts = PostStreamPost.find(:all, :conditions => {:id => items.collect { |item| item.post_stream_post_id }})
     has_more = posts.length > limit

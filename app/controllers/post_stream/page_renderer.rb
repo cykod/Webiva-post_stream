@@ -35,6 +35,8 @@ class PostStream::PageRenderer < ParagraphRenderer
       end
     end
 
+    @posts = @poster.fetch_posts(params[:stream_page], :post_types => @options.post_types_filter)
+
     render_paragraph :feature => :post_stream_page_stream
   end
 

@@ -8,8 +8,9 @@ class PostStreamPostTarget < DomainModel
   validates_presence_of :posted_at
   validates_presence_of :post_type
 
-  named_scope :with_post , lambda { |post_id| {:conditions => {:post_stream_post_id => post_id}} }
-  named_scope :with_target , lambda { |target_id| {:conditions => {:post_stream_target_id => target_id}} }
+  named_scope :with_post, lambda { |post_id| {:conditions => {:post_stream_post_id => post_id}} }
+  named_scope :with_target, lambda { |target_id| {:conditions => {:post_stream_target_id => target_id}} }
+  named_scope :with_types, lambda { |types| {:conditions => {:post_type => types}} }
 
   def self.link_post_to_target(post, target)
     begin
