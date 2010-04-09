@@ -1,9 +1,139 @@
+<style>
+ul.post_stream_form {
+  padding: 0 0 10px 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.post_stream_form textarea {
+  width: 100%;
+}
+
+.post_stream_form hr.seperator {
+  clear: both;
+  border: 0;
+  padding-bottom: 15px;
+}
+
+.post_stream_form ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.post_stream_form li {
+  padding: 0;
+  margin: 0;
+}
+
+.post_stream_form li.controls {
+  padding-top: 5px;
+}
+
+.post_stream_form .controls li {
+  float: left;
+}
+
+#post_stream_share {
+  width: 150px;
+}
+
+#post_stream_submit {
+  width: 50px;
+  float: right;
+  text-align: right;
+}
+
+li.post_stream_handler_form {
+  padding: 5px 0 5px 0;
+}
+
+li.post_stream_handler_form .close_button {
+  display: block;
+  float: right;
+}
+
+li.post_stream_handler_form .handler_form {
+  clear: both;
+}
+
+</style>
+
+<script>
+PostStreamForm = {
+  defaultBodyText: 'Share you ASP Story',
+  currentHandler: null,
+
+  share: function(handler) {
+    PostStreamForm.currentHandler = handler;
+
+    $$('.post_stream_handler_form').invoke('hide');
+    $('post_stream_share_buttons').hide();
+    $('post_stream_handler_form_' + handler).show();
+
+    PostStreamForm.bodyOnFocus();
+  },
+
+  close: function() {
+    PostStreamForm.currentHandler = null;
+
+    $$('.post_stream_handler_form').invoke('hide');
+    $('post_stream_share_buttons').show();
+  },
+
+  bodyOnFocus: function() {
+    bodyEle = $('stream_post_body');
+    bodyEle.rows = 3;
+    if( bodyEle.value == PostStreamForm.defaultBodyText ) {
+      bodyEle.value = '';
+    }
+  },
+
+  bodyOnBlur: function(ele) {
+    bodyEle = $('stream_post_body');
+    if( (bodyEle.value == PostStreamForm.defaultBodyText || bodyEle.value == '') && PostStreamForm.currentHandler == null ) {
+      bodyEle.rows = 1;
+      bodyEle.value = PostStreamForm.defaultBodyText;
+    }
+  }
+}
+</script>
 
 <div class="post_stream_form">
 <ul>
 <% cms_unstyled_form_for :stream_post, poster.post do |f| %>
-<li><%= f.text_area :body %></li>
-<li><%= f.submit 'Post' %></li>
+  <li class="body"><%= f.text_area :body, :rows => 1, :onfocus => 'PostStreamForm.bodyOnFocus();' %></li>
+
+  <li id="post_stream_handler_form_link" class="post_stream_handler_form" style="display:none;">
+    <div class="title_bar">
+      <span class="title">Link</span>
+      <span class="close_button"><a href="javascript:void(0);" onclick="PostStreamForm.close();">[X]</a></span>
+    </div>
+    <div class="handler_form">
+      <%= f.text_field :link %>
+    </div>
+  </li>
+
+  <li class="controls">
+    <ul>
+      <li id="post_stream_share">
+        <ul id="post_stream_share_buttons">
+          <li class="label">Share:</li>
+          <li><%= content_tag(:a, 'Link'.t, {:href => 'javascript:void(0);', :onclick => 'PostStreamForm.share("link");'}) %></li>
+        </ul>
+        &nbsp;
+      </li>
+
+      <li id="post_stream_share_with">
+        <label><%= check_box :stream_post, 'post_on_facebook' %> Post to facebook</label>
+      </li>
+
+      <li id="post_stream_submit">
+        <%= f.submit 'Post'.t %>
+      </li>
+    </ul>
+  </li>
 <% end %>
 </ul>
+<hr class="seperator"/>
 </div>

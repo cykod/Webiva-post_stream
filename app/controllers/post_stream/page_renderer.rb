@@ -7,6 +7,9 @@ class PostStream::PageRenderer < ParagraphRenderer
   def stream
     @options = paragraph_options(:stream)
 
+    require_js('prototype')
+    require_js('/components/post_stream/javascript/post_stream.js')
+
     target = nil
     conn_type, conn_id = page_connection(:target)
     if conn_id
