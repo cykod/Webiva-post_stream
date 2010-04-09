@@ -1,8 +1,54 @@
-<ul class="post_stream_posts">
+<style>
+.post_stream_posts {
+  font-size: 12px;
+}
+
+.post_stream_post {
+  padding-bottom: 5px;
+}
+
+.post_stream_post .post img {
+  display: block;
+  float: left;
+}
+
+.post_stream_post .post .title, .post_stream_post .post .body {
+  display: block;
+  padding-left: 70px;
+}
+
+.post_stream_post .post .title {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.post_stream_post .actions {
+  clear: both;
+}
+
+.post_stream_post .actions .posted_at {
+  display: block;
+  text-align: right;
+  font-size: 0.9em;
+  padding: 0 5px 2px 0;
+}
+
+.post_stream_post .actions .links {
+  display: block;
+  text-align: right;
+  padding-right: 5px;
+}
+
+.post_stream_post .shared_content {
+  padding: 10px;
+}
+
+</style>
+
+<div class="post_stream_posts">
 <% posts.each do |post| -%>
-<li>
-<span><%= h post.title %></span>
-<p><%= post.body_html %></p>
-</li>
+  <div class="post_stream_post">
+  <%= render :partial => '/post_stream/page/post', :locals => {:post => post} %>
+  </div>
 <% end -%>
-</ul>
+</div>

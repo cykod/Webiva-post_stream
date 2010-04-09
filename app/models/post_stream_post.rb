@@ -32,6 +32,18 @@ class PostStreamPost < DomainModel
     self.posted_by ? self.posted_by.image : Configuration.missing_image(nil)
   end
 
+  def posted_by_content_node
+    @content_node ||= ContentNode.find_by_node_type_and_node_id(self.posted_by_type, self.posted_by_id)
+  end
+
+  def posted_by_content_node=(node)
+    @content_node = node
+  end
+
+  def user_profile_entry
+    nil
+  end
+
   def validate
     case self.post_type
     when 'link'
@@ -65,7 +77,7 @@ class PostStreamPost < DomainModel
   def before_create
     self.post_hash ||= DomainModel.generate_hash
 
-    self.posted_by = self.end_user if self.posted_by.nil? && self.end_user
+    self.posted_by = self.user_profile_entry || self.end_user if self.posted_by.nil? && self.end_user
 
     self.title = self.posted_by ? self.posted_by.name : 'Anonymous'.t if self.title.blank?
     self.title = self.name if self.name && self.title == 'Anonymous'.t
@@ -90,7 +102,7 @@ class PostStreamPost < DomainModel
     items = scope.with_target(targets).find(:all, {:select => 'DISTINCT post_stream_post_id', :limit => limit + 1, :offset => offset, :order => 'posted_at DESC'}.merge(opts))
 
     has_more = items.length > limit
-    items.pop
+    items.pop if has_more
 
     posts = PostStreamPost.find(:all, :conditions => {:id => items.collect { |item| item.post_stream_post_id }}, :order => 'posted_at DESC')
     [has_more, posts]
