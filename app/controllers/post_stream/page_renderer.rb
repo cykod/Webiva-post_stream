@@ -28,11 +28,11 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     if @poster.can_post?
 
-      handle_file_upload(params[:stream_post], 'domain_file_id', {:folder => @options.folder_id}) if request.post?
+      handle_file_upload(params[:stream_post], 'domain_file_id', {:folder => @options.folder_id}) if request.post? && ! editor?
 
       @poster.setup_post(params[:stream_post])
 
-      if request.post? && @poster.valid?
+      if request.post? && @poster.valid? && ! editor?
         if @poster.save
         end
       end
@@ -40,7 +40,9 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     @has_more, @posts = @poster.fetch_posts(params[:stream_page], :post_types => @options.post_types_filter)
 
-    render_paragraph :feature => :post_stream_page_stream
+    css_style = render_to_string(:partial => '/post_stream/page/form_css')
+    output = post_stream_page_stream_feature
+    render_paragraph :text => css_style + output
   end
 
 end

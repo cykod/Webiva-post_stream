@@ -18,14 +18,14 @@ describe PostStream::PageRenderer, :type => :controller do
   it "should render the stream for a user" do
     @user = EndUser.push_target('test@test.dev')
     @rnd = stream_renderer({}, :target => [:target, @user])
-    @rnd.should_receive(:render_paragraph).with(:feature => :post_stream_page_stream)
+    @rnd.should_receive(:render_paragraph)
     renderer_get @rnd
   end
 
   it "should post to the stream" do
     mock_user
     @rnd = stream_renderer({}, :target => [:target, @myself], :post_permission => [:target, @myself])
-    @rnd.should_receive(:render_paragraph).with(:feature => :post_stream_page_stream)
+    @rnd.should_receive(:render_paragraph)
     assert_difference 'PostStreamPost.count', 1 do
       renderer_post @rnd, :stream_post => {:body => 'My first post'}
     end
@@ -45,7 +45,7 @@ describe PostStream::PageRenderer, :type => :controller do
     mock_user
     @user = EndUser.push_target('postasme@test.dev', :first_name => 'PostAsMe', :last_name => 'Last')
     @rnd = stream_renderer({}, :target => [:target, @user], :admin_permission => [:target, @myself])
-    @rnd.should_receive(:render_paragraph).with(:feature => :post_stream_page_stream)
+    @rnd.should_receive(:render_paragraph)
     assert_difference 'PostStreamPost.count', 1 do
       renderer_post @rnd, :stream_post => {:body => 'My first post'}
     end

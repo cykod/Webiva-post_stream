@@ -14,8 +14,8 @@ describe PostStream::PageFeature, :type => :view do
     @poster.post_permission = true
 
     @options = PostStream::PageController::StreamOptions.new nil
-    @feature.should_receive(:render_to_string).twice
-    @feature.should_receive(:paragraph).twice
+    @feature.should_receive(:render_to_string).once
+    @feature.should_receive(:paragraph).once
     @output = @feature.post_stream_page_stream_feature(:options => @options, :poster => @poster, :posts => [], :has_more => false)
   end
 end

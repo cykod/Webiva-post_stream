@@ -1,8 +1,10 @@
 <div class="post">
-  <% if post.posted_by_content_node -%>
-    <%= content_tag(:a, post.image.image_tag(:thumb), {:href => post.posted_by_content_node.link}, false) %>
-  <% else -%>
-    <%= post.image.image_tag(:thumb) %>
+  <% if post.image %>
+    <% if post.posted_by_content_node -%>
+      <%= content_tag(:a, post.image.image_tag(:thumb), {:href => post.posted_by_content_node.link}, false) %>
+    <% else -%>
+      <%= post.image.image_tag(:thumb) %>
+    <% end -%>
   <% end -%>
   <span class="title_body">
     <%= content_tag(:span, post.title, {:class => 'title'}) %>
