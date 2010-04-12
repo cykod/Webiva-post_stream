@@ -5,7 +5,7 @@ class PostStream::PageFeature < ParagraphFeature
   <div class="post_stream_form">
     <cms:form>
       <cms:body/>
-      <cms:share_components close='[X]'/>
+      <cms:handlers close='[X]'/>
       <div class="controls">
         <cms:share>
   
@@ -38,9 +38,19 @@ class PostStream::PageFeature < ParagraphFeature
         '<div class="body">' + t.locals.form.text_area(:body, {:rows => 1, :onfocus => 'PostStreamForm.bodyOnFocus();'}.merge(t.attr)) + '</div>'
       end
 
-      c.define_tag('form:share_components') do |t|
+      c.define_tag('form:handlers') do |t|
         t.locals.share_components_close = t.attr['close'] || '[X]'
-        self.render_form_handlers(t, data)
+        t.locals.share_components_close_image = t.attr['close_image']
+
+        output = '<div class="stream_post_handlers">'
+        output << (t.single? ? self.render_form_handlers(t, data) : t.expand)
+        output << '</div>'
+      end
+
+      c.define_tag('form:handlers:handler') do |t|
+        t.locals.handler_name = t.attr['type']
+        t.locals.handler_title = t.single? ? t.attr['title'] : t.expand
+        self.render_handler(t, data)
       end
 
       c.define_tag('form:share') do |t|
@@ -72,18 +82,27 @@ class PostStream::PageFeature < ParagraphFeature
   end
 
   def render_form_handlers(t, data)
-    output = '<div class="stream_post_handlers">'
-    output << self.render_link_handler(t, data)
-    output << '</div>'
+    output = ''
+    t.locals.handler_name = 'link'
+    output << render_handler(t, data)
     output
   end
 
+  def render_handler(t, data)
+    if t.locals.handler_name == 'link'
+      self.render_link_handler(t, data)
+    end
+  end
+
   def render_link_handler(t, data)
+    close_content = t.locals.share_components_close_image ? "<img src='#{t.locals.share_components_close_image}'/>" : t.locals.share_components_close
+    title = t.locals.handler_title || 'Link'
+
     <<-HANDLER
     <div id="post_stream_handler_form_link" class="post_stream_handler_form" style="display:none;">
       <div class="title_bar">
-        <span class="title">Link</span>
-        <span class="close_button"><a href="javascript:void(0);" onclick="PostStreamForm.close();">#{t.locals.share_components_close}</a></span>
+        <span class="title">#{title}</span>
+        <span class="close_button"><a href="javascript:void(0);" onclick="PostStreamForm.close();">#{close_content}</a></span>
       </div>
       <div class="handler_form">
         #{t.locals.form.text_field :link}
