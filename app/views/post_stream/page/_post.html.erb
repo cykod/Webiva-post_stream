@@ -20,4 +20,4 @@
     <a href="#">Comment</a> | <a href="#">Share</a>
   </span>
 </div>
-<%= content_tag(:div, 'Link: %s' / content_tag(:a, post.link, {:href => post.link, :rel => 'nofollow', :target => '_blank'}), {:class => 'shared_content'}, false) if post.link && post.post_type == 'link' -%>
+<%= content_tag(:div, post.handler_obj.render(self), {:class => 'shared_content'}, false) if post.handler_obj -%>

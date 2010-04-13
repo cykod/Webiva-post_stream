@@ -1,6 +1,8 @@
 
 class PostStream::PageFeature < ParagraphFeature
 
+  include StyledFormBuilderGenerator::FormFor
+
   feature :post_stream_page_stream, :default_feature => <<-FEATURE
   <div class="post_stream_form">
     <cms:form>
@@ -8,11 +10,7 @@ class PostStream::PageFeature < ParagraphFeature
       <cms:handlers close='[X]'/>
       <div class="controls">
         <cms:share>
-  
-          <cms:buttons>
-            <li class="label">Share: </li>
-            <cms:link>Link</cms:link>
-          </cms:buttons>
+          <cms:buttons label="Share:"/>
         </cms:share>
   
         <cms:share_with>
@@ -35,22 +33,26 @@ class PostStream::PageFeature < ParagraphFeature
       c.form_for_tag('form','stream_post', :html => {:multipart => true}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? }
 
       c.define_tag('form:body') do |t|
-        '<div class="body">' + t.locals.form.text_area(:body, {:rows => 1, :onfocus => 'PostStreamForm.bodyOnFocus();'}.merge(t.attr)) + '</div>'
+        rows = data[:poster].post.handler ? (t.attr['active_rows'] || 3) : (t.attr['rows'] || 1)
+        onfocus = data[:poster].post.handler ? nil : 'PostStreamForm.bodyOnFocus();'
+        script = "<script>PostStreamForm.inactiveRows = #{t.attr['rows'] || 1}; PostStreamForm.activeRows = #{t.attr['active_rows'] || 3};</script>\n"
+        script + '<div class="body">' + t.locals.form.text_area(:body, {:rows => rows, :onfocus => onfocus}.merge(t.attr)) + '</div>'
       end
 
       c.define_tag('form:handlers') do |t|
         t.locals.share_components_close = t.attr['close'] || '[X]'
         t.locals.share_components_close_image = t.attr['close_image']
 
-        output = '<div class="stream_post_handlers">'
-        output << (t.single? ? self.render_form_handlers(t, data) : t.expand)
+        output = t.locals.form.hidden_field :handler
+        output << '<div class="stream_post_handlers">'
+        output << (t.single? ? self.render_handler_forms(t, data) : t.expand)
         output << '</div>'
       end
 
       c.define_tag('form:handlers:handler') do |t|
-        t.locals.handler_name = t.attr['type']
-        t.locals.handler_title = t.single? ? t.attr['title'] : t.expand
-        self.render_handler(t, data)
+        title = t.single? ? t.attr['title'] : t.expand
+        handler = data[:poster].get_handler_by_type(t.attr['type'])
+        self.render_handler_form(handler, t, data, {'title' => title, 'close' => t.locals.share_components_close, 'close_image' => t.locals.share_components_close_image}.merge(t.attr))
       end
 
       c.define_tag('form:share') do |t|
@@ -58,12 +60,22 @@ class PostStream::PageFeature < ParagraphFeature
       end
 
       c.define_tag('form:share:buttons') do |t|
-        '<ul id="post_stream_share_buttons" class="post_stream_share_buttons">' + t.expand + '</ul>'
+        style = data[:poster].post.handler ? "style='display:none;'" : ''
+        output = "<ul id='post_stream_share_buttons' class='post_stream_share_buttons' #{style}>"
+        output << "<li class='label'>#{t.attr['label']}</li>" unless t.attr['label'].blank?
+
+        if t.single?
+          output << ("<li class='button'>" + data[:poster].handlers.collect{ |handler| handler.render_button }.join("</li><li class='button'>") + "</li>")
+        else
+          output << t.expand
+        end
+        output << '</ul>'
       end
 
-      c.define_tag('form:share:buttons:link') do |t|
-        content = t.single? ? 'Link' : t.expand
-        '<li class="button">' + content_tag(:a, content, {:href => 'javascript:void(0);', :onclick => 'PostStreamForm.share("link");'}) + '</li>'
+      c.define_tag('form:share:buttons:button') do |t|
+        title = t.attr['title'] || t.expand
+        handler = data[:poster].get_handler_by_type(t.attr['type'])
+        handler ? '<li class="button">' + handler.render_button('title' => title) + '</li>' : ''
       end
 
       c.define_tag('form:share_with') do |t|
@@ -81,33 +93,13 @@ class PostStream::PageFeature < ParagraphFeature
     end
   end
 
-  def render_form_handlers(t, data)
-    output = ''
-    t.locals.handler_name = 'link'
-    output << render_handler(t, data)
-    output
+  def render_handler_forms(t, data)
+    data[:poster].handlers.collect { |handler| self.render_handler_form(handler, t, data, t.attr) }.join("\n")
   end
 
-  def render_handler(t, data)
-    if t.locals.handler_name == 'link'
-      self.render_link_handler(t, data)
+  def render_handler_form(handler, t, data, opts={})
+    cms_unstyled_fields_for(handler.form_name, handler.options) do |f|
+      handler.render_form(self, f, opts)
     end
-  end
-
-  def render_link_handler(t, data)
-    close_content = t.locals.share_components_close_image ? "<img src='#{t.locals.share_components_close_image}'/>" : t.locals.share_components_close
-    title = t.locals.handler_title || 'Link'
-
-    <<-HANDLER
-    <div id="post_stream_handler_form_link" class="post_stream_handler_form" style="display:none;">
-      <div class="title_bar">
-        <span class="title">#{title}</span>
-        <span class="close_button"><a href="javascript:void(0);" onclick="PostStreamForm.close();">#{close_content}</a></span>
-      </div>
-      <div class="handler_form">
-        #{t.locals.form.text_field :link}
-      </div>
-    </div>
-    HANDLER
   end
 end

@@ -28,12 +28,15 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     if @poster.can_post?
 
-      handle_file_upload(params[:stream_post], 'domain_file_id', {:folder => @options.folder_id}) if request.post? && ! editor?
+      unless editor?
+        handle_file_upload(params[:stream_post], 'domain_file_id', {:folder => @options.folder_id}) if request.post?
 
-      @poster.setup_post(params[:stream_post])
+        @poster.setup_post(params[:stream_post])
+        @poster.process_request(params)
 
-      if request.post? && @poster.valid? && ! editor?
-        if @poster.save
+        if request.post? && @poster.valid?
+          if @poster.save
+          end
         end
       end
     end

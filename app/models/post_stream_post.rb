@@ -18,8 +18,6 @@ class PostStreamPost < DomainModel
   validates_presence_of :body
   validates_presence_of :posted_at
 
-  validates_urlness_of :link, :allow_nil => true
-
   serialize :data
 
   safe_content_filter(:body => :body_html)  do |post|
@@ -56,6 +54,10 @@ class PostStreamPost < DomainModel
     when 'content'
       self.errors.add(:content_node_id, 'is required') if self.content_node.nil?
     end
+
+    if self.handler_obj
+      self.errors.add(:handler, 'is invalid') unless self.handler_obj.valid?
+    end
   end
 
   def before_validation_on_create
@@ -83,6 +85,10 @@ class PostStreamPost < DomainModel
     self.title = self.name if self.name && self.title == 'Anonymous'.t
   end
 
+  def before_save
+    self.data = self.handler_obj.options.to_h if self.handler_obj
+  end
+
   def content_filter
     PostStream::AdminController.module_options.content_filter || 'comment'
   end
@@ -106,5 +112,13 @@ class PostStreamPost < DomainModel
 
     posts = PostStreamPost.find(:all, :conditions => {:id => items.collect { |item| item.post_stream_post_id }}, :order => 'posted_at DESC')
     [has_more, posts]
+  end
+
+  def handler_class
+    @handler_class ||= self.handler.classify.constantize if self.handler
+  end
+
+  def handler_obj
+    @handler_obj ||= self.handler_class.new(self) if self.handler_class
   end
 end

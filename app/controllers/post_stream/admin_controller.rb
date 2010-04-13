@@ -9,6 +9,9 @@ class PostStream::AdminController < ModuleController
   register_permissions :post_stream, [[ :manage, 'Manage Post Stream', 'Manage Post Stream'],
                                       [:config, 'Configure Post Stream', 'Configure Post Stream']
                                      ]
+
+  register_handler :post_stream, :share, 'PostStream::Share::Link'
+
   cms_admin_paths "options",
     "Post Stream Options" => { :action => 'options' },
     "Options" => { :controller => '/options' },
