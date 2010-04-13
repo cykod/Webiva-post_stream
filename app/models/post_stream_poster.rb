@@ -92,7 +92,15 @@ class PostStreamPoster
   def process_request(params)
     return unless params[:stream_post]
     return unless self.post.handler_obj
-    self.post.handler_obj.options(params[self.post.handler_obj.form_name])
+
+    opts = params[self.post.handler_obj.form_name]
+    opts = opts.to_hash.symbolize_keys if opts
+
+    if opts && self.post.handler_obj.respond_to?(:valid_params)
+      opts = opts.slice(*self.post.handler_obj.valid_params)
+    end
+
+    self.post.handler_obj.options(opts)
     self.post.handler_obj.process_request(params) if self.post.handler_obj.valid?
   end
 end

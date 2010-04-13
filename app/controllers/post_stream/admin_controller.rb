@@ -11,6 +11,7 @@ class PostStream::AdminController < ModuleController
                                      ]
 
   register_handler :post_stream, :share, 'PostStream::Share::Link'
+  register_handler :post_stream, :link, 'PostStream::Share::Link::Youtube'
 
   cms_admin_paths "options",
     "Post Stream Options" => { :action => 'options' },

@@ -14,10 +14,16 @@ module PostStream::Share
     def info; @info ||= self.get_handler_info(:post_stream, :share, self.class.to_s.underscore); end
     def identifier; self.info[:identifier]; end
 
+    def options_class
+      @options_class ||= "#{self.class.to_s}::Options".constantize
+    end
+
     def options(opts={})
+      return @options if @options
+
       data = self.post.data || {}
       opts ||= {}
-      @options ||= "#{self.class.to_s}::Options".constantize.new(data.merge(opts.to_hash.symbolize_keys))
+      @options ||= self.options_class.new(data.merge(opts))
     end
 
     def valid?
