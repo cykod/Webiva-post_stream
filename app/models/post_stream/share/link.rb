@@ -46,7 +46,7 @@ class PostStream::Share::Link < PostStream::Share::Base
 
   def supported_handler?(info)
     return true unless self.supported_post_types
-    
+
     info[:post_types].find do |post_type|
       self.supported_post_types.include?(post_type)
     end

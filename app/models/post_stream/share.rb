@@ -9,7 +9,7 @@ module PostStream::Share
     end
 
     def title; self.class.post_stream_share_handler_info[:name]; end
-    def type; @type ||= self.title.downcase.underscore; end
+    def type; @type ||= self.title.downcase.gsub(/[^a-z0-9 -]/, '').gsub(/( |-)/, '_'); end
     def form_name; "stream_post_#{self.type}"; end
     def info; @info ||= self.get_handler_info(:post_stream, :share, self.class.to_s.underscore); end
     def identifier; self.info[:identifier]; end

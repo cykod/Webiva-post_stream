@@ -107,6 +107,6 @@ class PostStreamPoster
     end
 
     self.post.handler_obj.options(opts)
-    self.post.handler_obj.process_request(params) if self.post.handler_obj.valid?
+    self.post.handler_obj.process_request(params)
   end
 end
