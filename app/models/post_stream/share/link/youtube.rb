@@ -27,9 +27,13 @@ class PostStream::Share::Link::Youtube < PostStream::Share::Link::Base
       doc =  Nokogiri::XML(res)
       vid = doc.at('entry')
 
+      return false unless vid
+
       self.options.video_key = video_key
       self.options.thumbnail = doc.xpath('//media:thumbnail')[0].attributes['url'].to_s
       self.options.title = doc.xpath('//media:title')[0].inner_html
+
+      true
     end
   end
 
