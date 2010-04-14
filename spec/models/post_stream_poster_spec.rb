@@ -2,7 +2,7 @@ require  File.expand_path(File.dirname(__FILE__)) + '/../post_stream_spec_helper
 
 describe PostStreamPoster do
 
-  reset_domain_tables :post_stream_post, :post_stream_post_comments, :post_stream_targets, :post_stream_post_targets, :end_users
+  reset_domain_tables :post_stream_posts, :post_stream_post_comments, :post_stream_targets, :post_stream_post_targets, :end_users
 
   it "should be able to check if posting is allowed" do
     @user1 = EndUser.push_target('test1@test.dev')
@@ -269,9 +269,14 @@ describe PostStreamPoster do
     assert_difference 'PostStreamPostTarget.count', 2 do
       assert_difference 'PostStreamTarget.count', 0 do
         assert_difference 'PostStreamPost.count', 2 do
-          @poster.setup_post :body => 'My first post', :link => 'http://test.dev/1'
+          params = {:body => 'My first post'}
+          @poster.setup_post params
+          @poster.post.handler = PostStream::Share::Link.to_s.underscore
+          @poster.process_request(:stream_post => params, :stream_post_link => {:link => 'http://test.dev/1'})
           @poster.save
-          @poster.setup_post :body => 'My first post', :link => 'http://test.dev/2'
+          @poster.setup_post params
+          @poster.post.handler = PostStream::Share::Link.to_s.underscore
+          @poster.process_request(:stream_post => params, :stream_post_link => {:link => 'http://test.dev/2'})
           @poster.save
         end
       end

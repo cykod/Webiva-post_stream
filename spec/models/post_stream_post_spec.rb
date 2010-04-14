@@ -2,7 +2,7 @@ require  File.expand_path(File.dirname(__FILE__)) + '/../post_stream_spec_helper
 
 describe PostStreamPost do
 
-  reset_domain_tables :post_stream_post, :post_stream_post_comments, :post_stream_targets, :post_stream_post_targets, :end_users
+  reset_domain_tables :post_stream_posts, :post_stream_post_comments, :post_stream_targets, :post_stream_post_targets, :end_users
 
   it "should require post, target and date" do
     @post = PostStreamPost.new
@@ -41,11 +41,6 @@ describe PostStreamPost do
     @post.should have(1).errors_on(:link)
 
     @post = PostStreamPost.new :post_type => 'link', :body => 'My first post'
-    @post.valid?
-
-    @post.should have(1).errors_on(:link)
-
-    @post = PostStreamPost.new :body => 'My first post', :link => 'invalid url'
     @post.valid?
 
     @post.should have(1).errors_on(:link)

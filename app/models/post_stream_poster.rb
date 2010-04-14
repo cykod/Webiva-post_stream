@@ -99,7 +99,7 @@ class PostStreamPoster
     return unless params[:stream_post]
     return unless self.post.handler_obj
 
-    opts = params[self.post.handler_obj.form_name]
+    opts = params[self.post.handler_obj.form_name.to_sym]
     opts = opts.to_hash.symbolize_keys if opts
 
     if opts && self.post.handler_obj.respond_to?(:valid_params)
