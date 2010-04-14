@@ -1,0 +1,5 @@
+<% if options.data['type'] == 'video' -%>
+  <%= render :partial => '/post_stream/share/link/oembed_video', :locals => {:post => post, :options => options} %>
+<% elsif options.data['type'] == 'photo' -%>
+  <%= render :partial => '/post_stream/share/link/oembed_photo', :locals => {:post => post, :options => options} %>
+<% end -%>

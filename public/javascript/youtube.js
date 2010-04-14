@@ -12,7 +12,7 @@ PostStreamLinkYoutube = {
     // display the video thumbnails
     $$('.post_stream_thumbnail').invoke('show');
 
-    $('post_stream_link_youtube_image_' + id).hide();
+    $('post_stream_thumbnail_' + id).hide();
     layer_id = "post_stream_video_" + id
     container_id = "youtube_video_" + id
     $(layer_id).show();
