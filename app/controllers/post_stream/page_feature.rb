@@ -89,7 +89,7 @@ class PostStream::PageFeature < ParagraphFeature
 
       c.submit_tag('form:submit', :default => 'Post')
 
-      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph) }
+      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer) }
     end
   end
 
@@ -99,7 +99,7 @@ class PostStream::PageFeature < ParagraphFeature
 
   def render_handler_form(handler, t, data, opts={})
     cms_unstyled_fields_for(handler.form_name, handler.options) do |f|
-      handler.render_form(self, f, opts)
+      handler.render_form(self.renderer, f, opts)
     end
   end
 end

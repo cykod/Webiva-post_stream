@@ -48,7 +48,7 @@
 <div class="post_stream_posts">
 <% posts.each do |post| -%>
   <div class="post_stream_post">
-  <%= render :partial => '/post_stream/page/post', :locals => {:post => post} %>
+  <%= render :partial => '/post_stream/page/post', :locals => {:post => post, :renderer => renderer} %>
   </div>
 <% end -%>
 </div>

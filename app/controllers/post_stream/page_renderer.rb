@@ -26,6 +26,8 @@ class PostStream::PageRenderer < ParagraphRenderer
     conn_type, conn_id = page_connection(:admin_permission)
     @poster.admin_permission = true if conn_id
 
+    PostStreamPoster.setup_header(self)
+
     if @poster.can_post?
 
       unless editor?

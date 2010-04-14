@@ -23,6 +23,12 @@ class PostStreamPoster
     @post
   end
 
+  def self.setup_header(renderer)
+    self.get_handler_info(:post_stream, :share).each do |info|
+      info[:class].setup_header(renderer) if info[:class].respond_to?(:setup_header)
+    end
+  end
+
   def post
     @post
   end

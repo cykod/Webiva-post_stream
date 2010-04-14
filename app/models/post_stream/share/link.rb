@@ -8,6 +8,12 @@ class PostStream::Share::Link < PostStream::Share::Base
     }
   end
 
+  def self.setup_header(renderer)
+    self.get_handler_info(:post_stream, :link).each do |info|
+      info[:class].setup_header(renderer) if info[:class].respond_to?(:setup_header)
+    end
+  end
+
   def valid_params
     [:link]
   end
@@ -19,16 +25,13 @@ class PostStream::Share::Link < PostStream::Share::Base
   def process_request(params)
     self.post.link = self.options.link
 
-    self.get_handler_info(:post_stream, :link).find do |info|
-      if self.supported_handler?(info)
-        handler = info[:class].new(self.post)
-        if handler.process_request(params)
-          self.options.handler = info[:identifier]
-          self.options.data = handler.data
-          true
-        else
-          nil
-        end
+    self.handlers.find do |handler|
+      if handler.process_request(params)
+        self.options.handler = handler.class.to_s.underscore
+        self.options.data = handler.data
+        true
+      else
+        nil
       end
     end
   end
@@ -49,6 +52,16 @@ class PostStream::Share::Link < PostStream::Share::Base
     end
   end
 
+  def handlers
+    @handlers ||= self.get_handler_info(:post_stream, :link).collect do |info|
+      if self.supported_handler?(info)
+        info[:class].new(self.post)
+      else
+        nil
+      end
+    end.compact
+  end
+
   def handler_class
     @handler_class ||= self.options.handler.classify.constantize if self.options.handler
   end
@@ -67,7 +80,7 @@ class PostStream::Share::Link < PostStream::Share::Base
 
     def validate
       if self.handler_required
-        self.errors.add(:link, 'is invalid') unless self.handler
+        self.errors.add(:link, 'is required') unless self.handler
       end
     end
   end
@@ -79,6 +92,10 @@ class PostStream::Share::Link < PostStream::Share::Base
 
     def post
       @post
+    end
+
+    def link
+      self.post.link
     end
 
     def options_class

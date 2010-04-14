@@ -20,4 +20,4 @@
     <a href="#">Comment</a> | <a href="#">Share</a>
   </span>
 </div>
-<%= content_tag(:div, post.handler_obj.render(self), {:class => 'shared_content'}, false) if post.handler_obj -%>
+<%= content_tag(:div, post.handler_obj.render(renderer), {:class => 'shared_content'}, false) if post.handler_obj -%>
