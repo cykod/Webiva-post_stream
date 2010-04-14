@@ -1,8 +1,8 @@
 
 PostStreamLinkYoutube = {
   autoplay: 1,
-  width: '400',
-  height: '300',
+  width: '340',
+  height: '260',
   color: "#FFFFFF",
 
   play: function(video_key, id) {
