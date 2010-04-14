@@ -41,7 +41,7 @@ class PostStream::Share::Link::Youtube < PostStream::Share::Link::Base
     if self.options.video_key
       renderer.render_to_string :partial => '/post_stream/share/link/youtube', :locals => {:post => self.post, :options => self.options}
     else
-      'Youtube Link: %s' / content_tag(:a, self.post.link, {:href => self.post.link, :rel => 'nofollow', :target => '_blank'})
+      'Link: %s' / content_tag(:a, self.post.link, {:href => self.post.link, :rel => 'nofollow', :target => '_blank'})
     end
   end
 

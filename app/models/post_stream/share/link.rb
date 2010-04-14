@@ -18,7 +18,7 @@ class PostStream::Share::Link < PostStream::Share::Base
     [:link]
   end
 
-  def render_form_elements(form, opts={})
+  def render_form_elements(renderer, form, opts={})
     form.text_field :link
   end
 

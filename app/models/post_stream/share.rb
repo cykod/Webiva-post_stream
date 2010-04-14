@@ -46,7 +46,7 @@ module PostStream::Share
         <span class="close_button"><a href="javascript:void(0);" onclick="PostStreamForm.close();">#{close_content}</a></span>
       </div>
       <div class="handler_form">
-        #{self.render_form_elements(form, opts)}
+        #{self.render_form_elements(renderer, form, opts)}
       </div>
       </div>
       HANDLER
