@@ -1,2 +1,3 @@
+<div class="video_title"><a href="<% vh= post.link %>" rel="nofollow" target="_blank" title="<%= vh options.title %>"><%= h truncate(options.title, :length => 35) %></a></div>
 <a href="javascript:void(0);" onclick="PostStreamLinkYoutube.play('<%= jvh options.video_key %>', '<%= post.id %>');"><img id="post_stream_thumbnail_<%= post.id %>" src="<%= options.thumbnail %>" class="post_stream_thumbnail" title="<%= vh options.title %>" /></a>
 <span id="post_stream_video_<%= post.id %>" class="post_stream_video" style="display:none;"></span>

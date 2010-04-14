@@ -1,3 +1,4 @@
+<div class="video_title"><a href="<% vh= post.link %>" rel="nofollow" target="_blank" title="<%= vh options.data['title'] %>"><%= h truncate(options.data['title'], :length => 35) %></a></div>
 <a href="javascript:void(0);" onclick="PostStreamOmbedLink.play('<%= jvh options.data['html'] %>', '<%= post.id %>');"><img id="post_stream_thumbnail_<%= post.id %>" src="<%= options.data['thumbnail_url'] %>" width="<%= options.data['thumbnail_width'] %>" height="<%= options.data['thumbnail_height'] %>" class="post_stream_thumbnail" title="<%= vh options.data['title'] %>" /></a>
 <span id="post_stream_video_<%= post.id %>" class="post_stream_video" style="display:none;"></span>
 
