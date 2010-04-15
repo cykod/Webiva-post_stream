@@ -1,5 +1,5 @@
 :config:
-  :method: "NetHTTP"
+  :method: "WebivaNetHTTP"
 
 :providers:
   :vimeo: "http://www.vimeo.com/api/oembed.{format}"
@@ -55,8 +55,6 @@
 :embedly:
   :format: "json"
   :schemes:
-    - "http://*youtube.com/watch*"
-    - "http://*.youtube.com/v/*"
     - "http://youtu.be/*"
     - "http://www.veoh.com/*/watch/*"
     - "http://www.justin.tv/*"
