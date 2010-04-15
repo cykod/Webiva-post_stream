@@ -20,7 +20,7 @@ heading = content_tag(:div, title_link, {:class => 'title'}, false)
 <% if object.blank? -%>
   <%= content_tag(:a, thumbnail_img, {:href => post.link, :rel => 'nofollow', :target => '_blank'}, false) %>
 <% else -%>
-  <a href="javascript:void(0);" onclick="PostStreamOmbedLink.play('<%= jvh object %>', '<%= post.id %>');"><%= thumbnail_img %></a>
-  <%= content_tag(:div, '', {:id => "post_stream_video_#{post.id}", :class => 'post_stream_video', :style => 'display:none;'}) %>
+  <a href="javascript:void(0);" onclick="PostStream.embed('<%= jvh object %>', '<%= post.id %>');"><%= thumbnail_img %></a>
+  <%= content_tag(:div, '', {:id => "post_stream_share_#{post.id}", :class => 'post_stream_share', :style => 'display:none;'}) %>
 <% end -%>
 

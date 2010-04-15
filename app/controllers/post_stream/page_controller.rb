@@ -12,14 +12,15 @@ class PostStream::PageController < ParagraphController
                                  }
 
   class StreamOptions < HashModel
-    attributes :folder_id => nil, :post_types_filter => [], :maxwidth => 340
+    attributes :folder_id => nil, :post_types_filter => [], :maxwidth => 340, :title_length => 40
 
     integer_options :maxwidth
 
     options_form(
                  fld(:post_types_filter, :ordered_array, :options => :post_types_options, :description => 'all posts are shown by default'),
                  fld(:folder_id, :filemanager_folder, :description => 'folder to use for file uploads'),
-                 fld(:maxwidth, :text_field, :description => 'embed content max width', :label => 'Max width')
+                 fld(:maxwidth, :text_field, :description => 'embed content max width', :label => 'Max width'),
+                 fld(:title_length, :text_field, :description => 'embed content title width before truncating')
                  )
 
     def folder_id

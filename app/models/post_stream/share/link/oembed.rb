@@ -15,10 +15,6 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
     }
   end
 
-  def self.setup_header(renderer)
-    renderer.require_js('/components/post_stream/javascript/oembed.js')
-  end
-
   def process_request(params, opts={})
     maxwidth = opts[:maxwidth] || '340'
     maxheight = opts[:maxheight] ? opts[:maxheight].to_s : nil
