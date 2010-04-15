@@ -36,6 +36,12 @@ PostStreamForm = {
       bodyEle.rows = PostStreamForm.inactiveRows;
       bodyEle.value = PostStreamForm.defaultBodyText;
     }
+  },
+
+  onsubmit: function(url, form_id) {
+    new Ajax.Request(url, {parameters: $(form_id).serialize(true),
+                           onSuccess: function(res) { eval(res.responseText); }
+                     });
   }
 }
 

@@ -2,31 +2,39 @@ class PostStream::PageRenderer < ParagraphRenderer
 
   features '/post_stream/page_feature'
 
-  paragraph :stream
+  paragraph :stream, :ajax => true
 
   def stream
     @options = paragraph_options(:stream)
 
-    require_js('prototype')
-    require_js('/components/post_stream/javascript/post_stream.js')
-
     target = nil
-    conn_type, conn_id = page_connection(:target)
-    if conn_id
-      target = conn_type == :target ? conn_id : conn_type.constantize.find_by_id(conn_id)
+    if ajax?
+      target = myself
+    else
+      conn_type, conn_id = page_connection(:target)
+      if conn_id
+        target = conn_type == :target ? conn_id : conn_type.constantize.find_by_id(conn_id)
+      end
     end
 
     return render_paragraph :text => 'Please setup page connections' unless target
 
     @poster = PostStreamPoster.new myself, target, @options.to_h
 
-    conn_type, conn_id = page_connection(:post_permission)
-    @poster.post_permission = true if conn_id
+    if ajax?
+      @poster.post_permission = true
+    else
+      require_js('prototype')
+      require_js('/components/post_stream/javascript/post_stream.js')
 
-    conn_type, conn_id = page_connection(:admin_permission)
-    @poster.admin_permission = true if conn_id
+      conn_type, conn_id = page_connection(:post_permission)
+      @poster.post_permission = true if conn_id
 
-    PostStreamPoster.setup_header(self)
+      conn_type, conn_id = page_connection(:admin_permission)
+      @poster.admin_permission = true if conn_id
+
+      PostStreamPoster.setup_header(self)
+    end
 
     if @poster.can_post?
 
@@ -36,8 +44,25 @@ class PostStream::PageRenderer < ParagraphRenderer
         @poster.setup_post(params[:stream_post])
         @poster.process_request(params)
 
-        if request.post? && @poster.valid?
-          if @poster.save
+        if request.post?
+          if ajax?
+            @saved = @poster.save
+            new_post_output = ''
+            form_output = ''
+            if @saved
+              new_post_output = render_to_string(:partial => '/post_stream/page/new_post', :locals => {:post => @poster.post, :renderer => self, :poster => @poster})
+              @poster.setup_post nil
+            end
+
+            @partial_feature = 'form'
+            form_output = webiva_post_process_paragraph(post_stream_page_stream_feature)
+
+            render_paragraph :rjs => '/post_stream/page/update', :locals => {:saved => @saved, :form_output => form_output, :new_post_output => new_post_output, :post => @poster.post, :renderer => self, :poster => @poster}
+            return
+          else
+            if @poster.save
+              return redirect_paragraph :page
+            end
           end
         end
       end

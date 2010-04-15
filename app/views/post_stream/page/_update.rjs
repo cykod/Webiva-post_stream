@@ -1,0 +1,3 @@
+
+page.replace "post_stream_post_new", new_post_output if saved
+page.replace "stream_post_form", form_output
