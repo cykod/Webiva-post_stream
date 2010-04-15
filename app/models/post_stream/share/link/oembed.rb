@@ -21,7 +21,6 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
     OEmbed.transform(self.link, false, {'maxwidth' => maxwidth.to_s, 'maxheight' => maxheight}.delete_if{|k,v| v.blank?}) do |r, url|
       r.video? { |d| self.options.data = d; '' }
       r.photo? { |d| self.options.data = d; '' }
-      r.audio? { |d| self.options.data = d; '' }
       r.rich? { |d| self.options.data = d; '' }
       r.link? { |d| self.options.data = d; '' }
     end

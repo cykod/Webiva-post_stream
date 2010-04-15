@@ -4,4 +4,6 @@
   <%= render :partial => '/post_stream/share/link/oembed_rich', :locals => {:post => post, :options => options, :maxwidth => maxwidth, :title_length => title_length} %>
 <% elsif options.data['type'] == 'photo' -%>
   <%= render :partial => '/post_stream/share/link/oembed_photo', :locals => {:post => post, :options => options, :maxwidth => maxwidth, :title_length => title_length} %>
+<% elsif options.data['type'] == 'link' -%>
+  <%= render :partial => '/post_stream/share/link/oembed_link', :locals => {:post => post, :options => options, :maxwidth => maxwidth, :title_length => title_length} %>
 <% end -%>
