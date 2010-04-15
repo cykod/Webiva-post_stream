@@ -1,9 +1,38 @@
+<div class="<%= h options.data['type'] %>">
+<%
+
+title = options.data['title'] || post.link
+title_link = content_tag(:a, truncate(title, :length => title_length), {:href => post.link, :rel => 'nofollow', :target => '_blank', :title => title})
+heading = content_tag(:div, title_link, {:class => 'title'}, false)
+
+provider = options.data['provider_name']
+provider_tag = ''
+if provider
+  provider_link = options.data['provider_url'] ? content_tag(:a, provider, {:href => options.data['provider_url'], :rel => 'nofollow', :target => '_blank'}) : provider
+  provider_tag = content_tag(:span, provider_link, {:class => 'provider'}, false)
+end
+
+author = options.data['author_name']
+author_tag = ''
+if author
+  author_link = options.data['author_url'] ? content_tag(:a, author, {:href => options.data['author_url'], :rel => 'nofollow', :target => '_blank'}) : author
+  author_tag = content_tag(:span, 'by %s ' / author_link, {:class => 'author'}, false)
+end
+
+%>
+<%= heading %>
+
 <% if options.data['type'] == 'video' -%>
   <%= render :partial => '/post_stream/share/link/oembed_video', :locals => {:post => post, :options => options, :maxwidth => maxwidth, :title_length => title_length} %>
 <% elsif options.data['type'] == 'rich' -%>
   <%= render :partial => '/post_stream/share/link/oembed_rich', :locals => {:post => post, :options => options, :maxwidth => maxwidth, :title_length => title_length} %>
 <% elsif options.data['type'] == 'photo' -%>
   <%= render :partial => '/post_stream/share/link/oembed_photo', :locals => {:post => post, :options => options, :maxwidth => maxwidth, :title_length => title_length} %>
-<% elsif options.data['type'] == 'link' -%>
-  <%= render :partial => '/post_stream/share/link/oembed_link', :locals => {:post => post, :options => options, :maxwidth => maxwidth, :title_length => title_length} %>
+<% end -%>
+</div>
+
+<% unless provider_tag.blank? && author_tag.blank? -%>
+  <div class="provider_author">
+    <%= provider_tag %> <%= author_tag %>
+  </div>
 <% end -%>

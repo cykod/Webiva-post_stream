@@ -1,15 +1,10 @@
 <%
-title = options.data['title'] || post.link
-title_link = content_tag(:a, truncate(title, :length => title_length), {:href => post.link, :rel => 'nofollow', :target => '_blank', :title => title})
-heading = content_tag(:div, title_link, {:class => 'title'}, false)
-
 width = options.data['width']
 height = options.data['height']
 if width.blank? || width.to_i > maxwidth
   width = maxwidth
   height = nil
 end
-img = tag(:img, {:src => options.data['url'], :width => width, :height => height, :alt => options.data['title'], :title => options.data['title']}.delete_if{|k,v| v.blank?})
+img = tag(:img, {:src => options.data['url'], :width => width, :height => height, :alt => options.data['title'], :title => options.data['title'], :class => 'post_stream_photo'}.delete_if{|k,v| v.blank?})
 -%>
-<%= heading %>
 <%= content_tag(:a, img, {:href => post.link, :rel => 'nofollow', :target => '_blank'}, false) %>

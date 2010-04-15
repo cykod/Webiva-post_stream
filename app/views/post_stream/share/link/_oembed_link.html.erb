@@ -1,7 +1,0 @@
-<%
-title = options.data['title'] || options.data['author_name'] || post.link
-title_link = content_tag(:a, truncate(title, :length => title_length), {:href => post.link, :rel => 'nofollow', :target => '_blank', :title => title})
-heading = content_tag(:div, title_link, {:class => 'title'}, false)
--%>
-<%= heading %>
-

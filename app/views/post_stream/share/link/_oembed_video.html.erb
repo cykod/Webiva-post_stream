@@ -12,15 +12,10 @@ end
 
 thumbnail_img = tag(:img, {:src => options.data['thumbnail_url'], :width => thumbnail_width, :height => thumbnail_height, :title => options.data['title'], :alt => options.data['title'], :id => "post_stream_thumbnail_#{post.id}", :class => 'post_stream_thumbnail'}.delete_if{|k,v| v.blank?})
 
-title = options.data['title'] || post.link
-title_link = content_tag(:a, truncate(title, :length => title_length), {:href => post.link, :rel => 'nofollow', :target => '_blank', :title => title})
-heading = content_tag(:div, title_link, {:class => 'title'}, false)
 %>
-<%= heading %>
 <% if html.blank? -%>
-  <%= content_tag(:a, thumbnail_img, {:href => post.link, :rel => 'nofollow', :target => '_blank'}, false) %>
+  <%= content_tag(:a, thumbnail_img, {:href => post.link, :rel => 'nofollow', :target => '_blank'}, false) if options.data['thumbnail_url'] %>
 <% else -%>
   <a href="javascript:void(0);" onclick="PostStream.embed('<%= jvh html %>', '<%= post.id %>');"><%= thumbnail_img %></a>
   <%= content_tag(:div, '', {:id => "post_stream_share_#{post.id}", :class => 'post_stream_share', :style => "display:none; width:#{options.data['width']}px; height:#{options.data['height']}px;"}) %>
 <% end -%>
-
