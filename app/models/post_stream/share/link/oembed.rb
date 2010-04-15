@@ -25,13 +25,14 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
       r.photo? { |d| self.options.data = d; '' }
       r.audio? { |d| self.options.data = d; '' }
       r.rich? { |d| self.options.data = d; '' }
+      r.link? { |d| self.options.data = d; '' }
     end
 
     self.options.data.empty? ? false : true
   end
 
   def render(renderer)
-    renderer.render_to_string :partial => '/post_stream/share/link/oembed', :locals => {:post => self.post, :options => self.options}
+    renderer.render_to_string :partial => '/post_stream/share/link/oembed', :locals => {:post => self.post, :options => self.options, :maxwidth => 340, :title_length => 35}
   end
 
   class Options < HashModel

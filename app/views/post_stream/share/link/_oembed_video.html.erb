@@ -3,11 +3,18 @@ html = options.data['html']
 doc =  Nokogiri::HTML(html)
 object = doc.xpath('//object').to_s
 
-thumbnail_img = tag(:img, {:src => options.data['thumbnail_url'], :width => options.data['thumbnail_width'], :height => options.data['thumbnail_height'], :title => options.data['title'], :alt => options.data['title'], :id => "post_stream_thumbnail_#{post.id}", :class => 'post_stream_thumbnail'}.delete_if{|k,v| v.blank?})
+thumbnail_width = options.data['thumbnail_width']
+thumbnail_height = options.data['thumbnail_height']
+if thumbnail_width.blank? || thumbnail_width.to_i > maxwidth
+  thumbnail_width = maxwidth
+  thumbnail_height = nil
+end
+
+thumbnail_img = tag(:img, {:src => options.data['thumbnail_url'], :width => thumbnail_width, :height => thumbnail_height, :title => options.data['title'], :alt => options.data['title'], :id => "post_stream_thumbnail_#{post.id}", :class => 'post_stream_thumbnail'}.delete_if{|k,v| v.blank?})
 
 title = options.data['title'] || post.link
-title_link = content_tag(:a, truncate(title, :length => 35), {:href => post.link, :rel => 'nofollow', :target => '_blank', :title => title})
-heading = content_tag(:div, title_link, {:class => 'video_title'}, false)
+title_link = content_tag(:a, truncate(title, :length => title_length), {:href => post.link, :rel => 'nofollow', :target => '_blank', :title => title})
+heading = content_tag(:div, title_link, {:class => 'title'}, false)
 %>
 <%= heading %>
 <% if object.blank? -%>
