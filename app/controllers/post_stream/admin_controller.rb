@@ -40,12 +40,27 @@ class PostStream::AdminController < ModuleController
     Configuration.get_config_model(Options,vals)
   end
 
+  def self.allowed_oembed_link?(link)
+    self.module_options.allowed_oembed_link?(link)
+  end
+
   class Options < HashModel
-    attributes :content_filter => 'comment', :folder_id => nil
+    attributes :content_filter => 'comment', :folder_id => nil, :oembed_domains => nil
 
     options_form(
-                 fld(:folder_id, :filemanager_folder, :description => 'default folder for uploads')
+                 fld(:folder_id, :filemanager_folder, :description => 'default folder for uploads'),
+                 fld(:oembed_domains, :text_area, :description => 'only allow embed media from these domains')
                  )
+
+    def allowed_oembed_domains
+      @allowed_oembed_domains ||= self.oembed_domains.split("\n").collect { |domain| domain.strip }
+    end
+
+    def allowed_oembed_link?(link)
+      return true if self.oembed_domains.empty?
+
+      self.allowed_oembed_domains.find { |domain| link.include?(".#{domain}") || link.include?("//#{domain}") }
+    end
   end
 
 end

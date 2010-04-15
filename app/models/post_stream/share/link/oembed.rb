@@ -45,8 +45,19 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
     end
 
     def fetch(url)
-      Rails.logger.error "fetching: #{url}"
-      uri = URI.parse(url)
+      uri = nil
+      begin
+        uri = URI.parse(url)
+      rescue URI::InvalidURIError => e
+        return nil
+      end
+
+      link = uri.query.split('&').find { |arg| arg =~ /^url=/ }
+      return nil unless link
+
+      link = CGI::unescape(link.sub('url=', ''))
+      return nil unless PostStream::AdminController.allowed_oembed_link?(link)
+
       Net::HTTP.start(uri.host, uri.port) do |http|
         http.request_get("#{uri.path}?#{uri.query}", {'User-Agent' => 'Webiva'}) do |response|
           begin
