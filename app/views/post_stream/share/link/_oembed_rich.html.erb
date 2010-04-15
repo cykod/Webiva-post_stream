@@ -15,8 +15,8 @@ thumbnail_img = tag(:img, {:src => options.data['thumbnail_url'], :width => thum
 %>
 <% if ! options.data['thumbnail_url'].blank? -%>
   <a href="javascript:void(0);" onclick="PostStream.embed('<%= jvh html %>', '<%= post.id %>');"><%= thumbnail_img %></a>
-  <%= content_tag(:div, '', {:id => "post_stream_share_#{post.id}", :class => 'post_stream_share', :style => "display:none; width:#{options.data['width']}px; height:#{options.data['height']}px;"}) %>
+  <%= content_tag(:div, '', {:id => "post_stream_embed_#{post.id}", :class => 'post_stream_embed', :style => "display:none; width:#{options.data['width']}px; height:#{options.data['height']}px;"}) %>
 <% else -%>
-  <%= content_tag(:div, html, {:id => "post_stream_share_#{post.id}", :style => "width:#{options.data['width']}px; height:#{options.data['height']}px;"}, false) %>
+  <%= content_tag(:div, html, {:id => "post_stream_embed_#{post.id}", :style => "width:#{options.data['width']}px; height:#{options.data['height']}px;"}, false) %>
 <% end -%>
 

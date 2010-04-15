@@ -49,13 +49,13 @@ PostStream = {
 
   embed: function(html, id) {
     // remove shared embeded content
-    $$('.post_stream_share').each(function(layer) { layer.update(); layer.hide(); });
+    $$('.post_stream_embed').each(function(layer) { layer.update(); layer.hide(); });
 
     // display the share thumbnails
     $$('.post_stream_thumbnail').invoke('show');
 
     $('post_stream_thumbnail_' + id).hide();
-    ele_id = "post_stream_share_" + id
+    ele_id = "post_stream_embed_" + id
     $(ele_id).show();
     $(ele_id).insert(html);
   }
