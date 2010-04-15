@@ -1,12 +1,13 @@
 
 class PostStreamPoster
-  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_target, :content_node, :view_targets, :active_handlers
+  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_target, :content_node, :view_targets, :active_handlers, :options
 
   include HandlerActions
 
-  def initialize(user, target)
+  def initialize(user, target, opts={})
     self.end_user = user
     self.target = target
+    self.options = opts
   end
 
   def can_post?
@@ -107,6 +108,6 @@ class PostStreamPoster
     end
 
     self.post.handler_obj.options(opts)
-    self.post.handler_obj.process_request(params)
+    self.post.handler_obj.process_request(params, options)
   end
 end

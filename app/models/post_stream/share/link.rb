@@ -22,11 +22,11 @@ class PostStream::Share::Link < PostStream::Share::Base
     form.text_field :link
   end
 
-  def process_request(params)
+  def process_request(params, opts={})
     self.post.link = self.options.link
 
     self.handlers.find do |handler|
-      if handler.process_request(params)
+      if handler.process_request(params, opts)
         self.options.handler = handler.class.to_s.underscore
         self.options.data = handler.data
         true
@@ -36,9 +36,9 @@ class PostStream::Share::Link < PostStream::Share::Base
     end
   end
 
-  def render(renderer)
+  def render(renderer, opts={})
     if self.handler_obj
-      self.handler_obj.render(renderer)
+      self.handler_obj.render(renderer, opts)
     else
       'Link: %s' / content_tag(:a, self.post.link, {:href => self.post.link, :rel => 'nofollow', :target => '_blank'})
     end

@@ -18,7 +18,7 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     return render_paragraph :text => 'Please setup page connections' unless target
 
-    @poster = PostStreamPoster.new myself, target
+    @poster = PostStreamPoster.new myself, target, @options.to_h
 
     conn_type, conn_id = page_connection(:post_permission)
     @poster.post_permission = true if conn_id

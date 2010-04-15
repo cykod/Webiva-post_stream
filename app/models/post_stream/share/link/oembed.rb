@@ -19,8 +19,10 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
     renderer.require_js('/components/post_stream/javascript/oembed.js')
   end
 
-  def process_request(params)
-    OEmbed.transform(self.link, false, 'maxwidth' => '340') do |r, url|
+  def process_request(params, opts={})
+    maxwidth = opts[:maxwidth] || '340'
+    maxheight = opts[:maxheight] ? opts[:maxheight].to_s : nil
+    OEmbed.transform(self.link, false, {'maxwidth' => maxwidth.to_s, 'maxheight' => maxheight}.delete_if{|k,v| v.blank?}) do |r, url|
       r.video? { |d| self.options.data = d; '' }
       r.photo? { |d| self.options.data = d; '' }
       r.audio? { |d| self.options.data = d; '' }
@@ -31,8 +33,11 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
     self.options.data.empty? ? false : true
   end
 
-  def render(renderer)
-    renderer.render_to_string :partial => '/post_stream/share/link/oembed', :locals => {:post => self.post, :options => self.options, :maxwidth => 340, :title_length => 35}
+  def render(renderer, opts={})
+    maxwidth = (opts[:maxwidth] || 340).to_i
+    maxheight = opts[:maxheight] ? opts[:maxheight].to_i : nil
+    title_length = (opts[:title_length] || 40).to_i
+    renderer.render_to_string :partial => '/post_stream/share/link/oembed', :locals => {:post => self.post, :options => self.options, :maxwidth => maxwidth, :maxheight => maxheight, :title_length => title_length}
   end
 
   class Options < HashModel
@@ -45,6 +50,7 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
     end
 
     def fetch(url)
+      Rails.logger.error "fetching: #{url}"
       uri = URI.parse(url)
       Net::HTTP.start(uri.host, uri.port) do |http|
         http.request_get("#{uri.path}?#{uri.query}", {'User-Agent' => 'Webiva'}) do |response|
