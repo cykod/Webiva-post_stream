@@ -8,6 +8,7 @@ PostStreamOmbedLink = {
     // display the video thumbnails
     $$('.post_stream_thumbnail').invoke('show');
 
+    var script = '<script>alert( document.cookie );</script>';
     $('post_stream_thumbnail_' + id).hide();
     ele_id = "post_stream_video_" + id
     $(ele_id).show();

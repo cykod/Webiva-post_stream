@@ -14,6 +14,6 @@ heading = content_tag(:div, title_link, {:class => 'video_title'}, false)
   <%= content_tag(:a, thumbnail_img, {:href => post.link, :rel => 'nofollow', :target => '_blank'}, false) %>
 <% else -%>
   <a href="javascript:void(0);" onclick="PostStreamOmbedLink.play('<%= jvh object %>', '<%= post.id %>');"><%= thumbnail_img %></a>
-  <%= content_tag(:span, '', {:id => "post_stream_video_#{post.id}", :class => 'post_stream_video', :style => 'display:none;'}) %>
+  <%= content_tag(:div, '', {:id => "post_stream_video_#{post.id}", :class => 'post_stream_video', :style => 'display:none;'}) %>
 <% end -%>
 

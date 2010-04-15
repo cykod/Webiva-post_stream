@@ -1,4 +1,5 @@
 require 'oembed_links'
+require 'nokogiri'
 
 yaml_file = File.join(File.dirname(__FILE__), '../../../../..', "config", "oembed_links.yml")
 if File.exists?(yaml_file)

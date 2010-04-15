@@ -12,7 +12,6 @@ class PostStream::AdminController < ModuleController
 
   register_handler :post_stream, :share, 'PostStream::Share::Link'
   register_handler :post_stream, :share, 'PostStream::Share::MediaLink'
-  register_handler :post_stream, :link, 'PostStream::Share::Link::Youtube'
   register_handler :post_stream, :link, 'PostStream::Share::Link::Oembed'
 
   cms_admin_paths "options",
