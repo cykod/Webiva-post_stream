@@ -1,7 +1,7 @@
 <%
 html = options.data['html']
 doc =  Nokogiri::HTML(html)
-object = doc.xpath('//object').to_s
+html = doc.xpath('//object').to_s
 
 thumbnail_width = options.data['thumbnail_width']
 thumbnail_height = options.data['thumbnail_height']
@@ -17,10 +17,10 @@ title_link = content_tag(:a, truncate(title, :length => title_length), {:href =>
 heading = content_tag(:div, title_link, {:class => 'title'}, false)
 %>
 <%= heading %>
-<% if object.blank? -%>
+<% if html.blank? -%>
   <%= content_tag(:a, thumbnail_img, {:href => post.link, :rel => 'nofollow', :target => '_blank'}, false) %>
 <% else -%>
-  <a href="javascript:void(0);" onclick="PostStream.embed('<%= jvh object %>', '<%= post.id %>');"><%= thumbnail_img %></a>
-  <%= content_tag(:div, '', {:id => "post_stream_share_#{post.id}", :class => 'post_stream_share', :style => 'display:none;'}) %>
+  <a href="javascript:void(0);" onclick="PostStream.embed('<%= jvh html %>', '<%= post.id %>');"><%= thumbnail_img %></a>
+  <%= content_tag(:div, '', {:id => "post_stream_share_#{post.id}", :class => 'post_stream_share', :style => "display:none; width:#{options.data['width']}px; height:#{options.data['height']}px;"}) %>
 <% end -%>
 
