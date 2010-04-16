@@ -30,13 +30,11 @@ class PostStream::PageFeature < ParagraphFeature
 
   def post_stream_page_stream_feature(data)
     webiva_feature(:post_stream_page_stream,data) do |c|
-      c.form_for_tag('form','stream_post', :html => {:multipart => true, :id => 'stream_post_form', :onsubmit => "PostStreamForm.onsubmit('#{self.ajax_url}', 'stream_post_form'); return false;"}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? }
+      formClass = data[:poster].post.handler ? 'active' : 'inactive'
+      c.form_for_tag('form','stream_post', :html => {:multipart => true, :id => 'stream_post_form', :class => formClass, :onsubmit => "PostStreamForm.onsubmit('#{self.ajax_url}', 'stream_post_form'); return false;"}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? }
 
       c.define_tag('form:body') do |t|
-        rows = data[:poster].post.handler ? (t.attr['active_rows'] || 3) : (t.attr['rows'] || 1)
-        onfocus = data[:poster].post.handler ? nil : 'PostStreamForm.bodyOnFocus();'
-        script = "<script>PostStreamForm.inactiveRows = #{t.attr['rows'] || 1}; PostStreamForm.activeRows = #{t.attr['active_rows'] || 3};</script>\n"
-        script + '<div class="body">' + t.locals.form.text_area(:body, {:rows => rows, :onfocus => onfocus}.merge(t.attr)) + '</div>'
+        '<div class="body">' + t.locals.form.text_area(:body, {:onfocus => 'PostStreamForm.bodyOnFocus();'}.merge(t.attr)) + '</div>'
       end
 
       c.define_tag('form:handlers') do |t|

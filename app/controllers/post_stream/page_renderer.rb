@@ -52,6 +52,10 @@ class PostStream::PageRenderer < ParagraphRenderer
             if @poster.comment
               if @saved
                 new_post_output = render_to_string(:partial => '/post_stream/page/new_comment', :locals => {:post => @poster.post, :renderer => self, :poster => @poster, :comment => @poster.comment})
+              else
+                # in this situation they were not allowed to comment on this post
+                render_paragraph :inline => '' if @poster.post.id.nil?
+                return
               end
 
               form_output = render_to_string(:partial => '/post_stream/page/comment_form', :locals => {:post => @poster.post, :renderer => self, :poster => @poster})

@@ -1,11 +1,9 @@
 PostStreamForm = {
-  defaultBodyText: 'Share you ASP Story',
-  currentType: null,
-  inactiveRows: 1,
-  activeRows: 3,
+  defaultBodyText: '',
+  currentHandler: null,
 
   share: function(type, handler) {
-    PostStreamForm.currentType = handler;
+    PostStreamForm.currentHandler = handler;
 
     $$('.post_stream_handler_form').invoke('hide');
     $('post_stream_share_buttons').hide();
@@ -15,7 +13,7 @@ PostStreamForm = {
   },
 
   close: function() {
-    PostStreamForm.currentType = null;
+    PostStreamForm.currentHandler = null;
 
     $('stream_post_handler').value = '';
     $$('.post_stream_handler_form').invoke('hide');
@@ -25,7 +23,7 @@ PostStreamForm = {
   bodyOnFocus: function() {
     PostStreamForm.deactivateComments();
     bodyEle = $('stream_post_body');
-    bodyEle.rows = PostStreamForm.activeRows;
+    $('stream_post_form').className = 'active';
     if( bodyEle.value == PostStreamForm.defaultBodyText ) {
       bodyEle.value = '';
     }
@@ -33,8 +31,8 @@ PostStreamForm = {
 
   bodyOnBlur: function(ele) {
     bodyEle = $('stream_post_body');
-    if( (bodyEle.value == PostStreamForm.defaultBodyText || bodyEle.value == '') && PostStreamForm.currentType == null ) {
-      bodyEle.rows = PostStreamForm.inactiveRows;
+    if( (bodyEle.value == PostStreamForm.defaultBodyText || bodyEle.value == '') && PostStreamForm.currentHandler == null ) {
+      $('stream_post_form').className = 'inactive';
       bodyEle.value = PostStreamForm.defaultBodyText;
     }
   },
@@ -76,11 +74,12 @@ PostStreamForm = {
 
   activateComment: function(id) {
     PostStreamForm.deactivateComments();
-
+    PostStreamForm.bodyOnBlur();
     $('post_stream_comment_form_' + id).className = 'post_stream_comment_form active';
   },
 
   focusCommentBody: function(id) {
+    PostStreamForm.bodyOnBlur();
     $$('form#post_stream_comment_form_' + id + ' textarea').invoke('focus');
   },
 
