@@ -21,6 +21,8 @@ class PostStream::AdminController < ModuleController
 
   permit 'post_stream_config'
 
+  content_node_type 'Post Stream Posts', "PostStreamPost", :title_field => :title
+
   public
 
   def options

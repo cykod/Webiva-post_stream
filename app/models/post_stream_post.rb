@@ -3,7 +3,7 @@ class PostStreamPost < DomainModel
   attr_accessor :folder_id, :name
 
   has_end_user :end_user_id, :name_column => :name
-  belongs_to :content_node
+  belongs_to :shared_content_node, :class_name => 'ContentNode', :foreign_key => 'shared_content_node_id'
 
   has_domain_file :domain_file_id
 
@@ -26,20 +26,43 @@ class PostStreamPost < DomainModel
     }
   end
 
+  content_node
+
+  def identifier
+    "#{self.id}-#{self.post_hash}"
+  end
+
+#  def content_admin_url
+#    { :controller => '/post_stream/manage', :action => 'post', :path => [ self.id ] }
+#  end
+
+  def share_url(site_node)
+    if self.shared_content_node
+      "#{self.shared_content_node.node_path}/#{self.identifier}"
+    else
+      "#{site_node.node_path}/#{self.identifier}"
+    end
+  end
+
   def image
     self.posted_by ? self.posted_by.image : Configuration.missing_image(nil)
   end
 
-  def posted_by_content_node
-    @content_node ||= ContentNode.find_by_node_type_and_node_id(self.posted_by_type, self.posted_by_id)
+  def posted_by_shared_content_node
+    @shared_content_node ||= ContentNode.find_by_node_type_and_node_id(self.posted_by_type, self.posted_by_id)
   end
 
-  def posted_by_content_node=(node)
-    @content_node = node
+  def posted_by_shared_content_node=(node)
+    @shared_content_node = node
   end
 
   def user_profile_entry
     nil
+  end
+
+  def self.find_by_identifier(identifier)
+    post_id, post_hash = *identifier.split('-')
+    PostStreamPost.find_by_id_and_post_hash(post_id, post_hash)
   end
 
   def validate
@@ -52,7 +75,7 @@ class PostStreamPost < DomainModel
     when 'media'
       self.errors.add(:domain_file_id, 'is required') if self.domain_file.nil?
     when 'content'
-      self.errors.add(:content_node_id, 'is required') if self.content_node.nil?
+      self.errors.add(:shared_content_node_id, 'is required') if self.shared_content_node.nil?
     end
 
     if self.handler_obj
@@ -62,7 +85,7 @@ class PostStreamPost < DomainModel
 
   def before_validation_on_create
     if self.post_type.nil?
-      if self.content_node
+      if self.shared_content_node
         self.post_type = 'content'
       elsif self.domain_file
         self.post_type = self.domain_file.image? ? 'image' : 'media'
@@ -77,7 +100,7 @@ class PostStreamPost < DomainModel
   end
 
   def before_create
-    self.post_hash ||= DomainModel.generate_hash
+    self.post_hash ||= DomainModel.generate_hash[0..8]
 
     self.posted_by = self.user_profile_entry || self.end_user if self.posted_by.nil? && self.end_user
 

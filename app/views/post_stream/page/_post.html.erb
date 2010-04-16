@@ -1,7 +1,7 @@
 <div class="post">
   <% if post.image %>
-    <% if post.posted_by_content_node -%>
-      <%= content_tag(:a, post.image.image_tag(:thumb), {:href => post.posted_by_content_node.link}, false) %>
+    <% if post.posted_by_shared_content_node -%>
+      <%= content_tag(:a, post.image.image_tag(:thumb), {:href => post.posted_by_shared_content_node.link}, false) %>
     <% else -%>
       <%= post.image.image_tag(:thumb) %>
     <% end -%>
@@ -10,7 +10,7 @@
     <%= content_tag(:span, post.title, {:class => 'title'}) %>
     <span class="body">
       <%= post.body_html %>
-      <%= content_tag(:a, 'Read More >>'.t, {:class => 'read_more', :href => post.content_node.link}) if post.content_node -%>
+      <%= content_tag(:a, 'Read More >>'.t, {:class => 'read_more', :href => post.shared_content_node.link}) if post.shared_content_node -%>
     </span>
   </span>
 </div>
@@ -18,7 +18,7 @@
   <span class="posted_at"><%= '%s ago' / time_ago_in_words(post.posted_at) %></span>
   <spam class="links">
 <% if poster.can_post? -%>
-    <a href="javascript:void(0);" onclick="PostStreamForm.toggleComment(<%= post.id %>);">Comment</a> | <a href="<%= "#{site_node.node_path}/#{post.id}/#{post.post_hash}" %>">Share</a>
+    <a href="javascript:void(0);" onclick="PostStreamForm.toggleComment(<%= post.id %>);">Comment</a> | <a href="<%= post.share_url(site_node) %>">Share</a>
 <% else -%>
     <a href="#">Share</a>
 <% end -%>

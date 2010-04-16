@@ -24,10 +24,9 @@ class PostStream::PageRenderer < ParagraphRenderer
     conn_type, conn_id = page_connection(:admin_permission)
     @poster.admin_permission = true if conn_id
 
-    conn_type, post_id = page_connection(:post_id)
-    conn_type, post_hash = page_connection(:post_hash)
+    conn_type, post_identifier = page_connection(:post_identifier)
 
-    raise SiteNodeEngine::MissingPageException.new( site_node, language ) unless @poster.fetch_post(post_id, post_hash)
+    raise SiteNodeEngine::MissingPageException.new( site_node, language ) unless @poster.fetch_post(post_identifier)
     @show_post_form = @poster.post.nil? ? true : false
 
     unless ajax?

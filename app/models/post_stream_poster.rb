@@ -1,6 +1,6 @@
 
 class PostStreamPoster
-  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_target, :content_node, :view_targets, :active_handlers, :options
+  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_target, :shared_content_node, :view_targets, :active_handlers, :options
 
   include HandlerActions
 
@@ -19,7 +19,7 @@ class PostStreamPoster
     @post = PostStreamPost.new attributes.slice(:body, :name, :domain_file_id).merge(opts)
     @post.end_user_id = self.end_user.id if self.end_user
     @post.posted_by = self.target if self.admin_permission
-    @post.content_node_id = self.content_node.id if self.content_node
+    @post.shared_content_node_id = self.shared_content_node.id if self.shared_content_node
     @post.handler = attributes[:handler] if self.valid_handler(attributes[:handler])
     @post
   end
@@ -30,9 +30,9 @@ class PostStreamPoster
     end
   end
 
-  def fetch_post(id, post_hash)
-    return true if id.nil? && post_hash.nil?
-    @post = PostStreamPost.find_by_id_and_post_hash(id, post_hash)
+  def fetch_post(identifier)
+    return true if identifier.nil?
+    @post = PostStreamPost.find_by_identifier(identifier)
     return false if @post.nil?
     return false unless self.valid_post_and_target
     @post
