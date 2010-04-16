@@ -2,6 +2,7 @@ PostStreamForm = {
   defaultPostText: '',
   defaultCommentText: '',
   currentHandler: null,
+  pageConnectionHash: '',
 
   share: function(type, handler) {
     PostStreamForm.currentHandler = handler;
@@ -39,7 +40,10 @@ PostStreamForm = {
   },
 
   onsubmit: function(url, form_id) {
-    new Ajax.Request(url, {parameters: $(form_id).serialize(true),
+    parameters = $(form_id).serialize(true);
+    parameters.page_connection_hash = PostStreamForm.pageConnectionHash;
+
+    new Ajax.Request(url, {parameters: parameters,
                            onSuccess: function(res) { eval(res.responseText); }
                      });
   },

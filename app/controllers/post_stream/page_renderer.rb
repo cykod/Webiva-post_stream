@@ -6,32 +6,27 @@ class PostStream::PageRenderer < ParagraphRenderer
 
   def stream
     @options = paragraph_options(:stream)
+    @page_connection_hash =  page_connection_hash
 
     target = nil
-    if ajax?
-      target = myself
-    else
-      conn_type, conn_id = page_connection(:target)
-      if conn_id
-        target = conn_type == :target ? conn_id : conn_type.constantize.find_by_id(conn_id)
-      end
+    conn_type, conn_id = page_connection(:target)
+    if conn_id
+      target = conn_type == :target ? conn_id : conn_type.constantize.find_by_id(conn_id)
     end
 
     return render_paragraph :text => 'Please setup page connections' unless target
 
     @poster = PostStreamPoster.new myself, target, @options.to_h
 
-    if ajax?
-      @poster.post_permission = true
-    else
+    conn_type, conn_id = page_connection(:post_permission)
+    @poster.post_permission = true if conn_id
+
+    conn_type, conn_id = page_connection(:admin_permission)
+    @poster.admin_permission = true if conn_id
+
+    unless ajax?
       require_js('prototype')
       require_js('/components/post_stream/javascript/post_stream.js')
-
-      conn_type, conn_id = page_connection(:post_permission)
-      @poster.post_permission = true if conn_id
-
-      conn_type, conn_id = page_connection(:admin_permission)
-      @poster.admin_permission = true if conn_id
 
       PostStreamPoster.setup_header(self)
     end
