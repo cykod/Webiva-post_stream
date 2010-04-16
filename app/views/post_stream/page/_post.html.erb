@@ -18,7 +18,7 @@
   <span class="posted_at"><%= '%s ago' / time_ago_in_words(post.posted_at) %></span>
   <spam class="links">
 <% if poster.can_post? -%>
-    <a href="javascript:void(0);" onclick="PostStreamForm.toggleComment(<%= post.id %>);">Comment</a> | <a href="#">Share</a>
+    <a href="javascript:void(0);" onclick="PostStreamForm.toggleComment(<%= post.id %>);">Comment</a> | <a href="<%= "#{site_node.node_path}/#{post.id}/#{post.post_hash}" %>">Share</a>
 <% else -%>
     <a href="#">Share</a>
 <% end -%>

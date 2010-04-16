@@ -33,6 +33,9 @@ PostStreamForm = {
 
   bodyOnBlur: function(ele) {
     bodyEle = $('stream_post_body');
+    if( ! bodyEle )
+      return;
+
     if( (bodyEle.value == PostStreamForm.defaultPostText || bodyEle.value == '') && PostStreamForm.currentHandler == null ) {
       $('stream_post_form').className = 'inactive';
       bodyEle.value = PostStreamForm.defaultPostText;

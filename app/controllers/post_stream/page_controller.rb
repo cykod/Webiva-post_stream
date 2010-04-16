@@ -8,7 +8,9 @@ class PostStream::PageController < ParagraphController
                                    :post_permission => [[:target, 'Post Permission Target', :target],
                                                         [:content, 'Post Permission Content', :content]],
                                    :admin_permission => [[:target, 'Admin Permission Target', :target],
-                                                         [:content, 'Admin Permission Content', :content]]
+                                                         [:content, 'Admin Permission Content', :content]],
+                                   :post_id => [[:id, 'Post Id', :path]],
+                                   :post_hash => [[:hash, 'Post Hash', :path]]
                                  }
 
   class StreamOptions < HashModel

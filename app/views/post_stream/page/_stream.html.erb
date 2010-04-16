@@ -108,12 +108,17 @@
 }
 
 </style>
+<script type="text/javascript">
+PostStreamForm.pageConnectionHash = '<%= jvh page_connection_hash %>';
+PostStreamForm.defaultPostText = '<%= jvh poster.options[:default_post_text] %>';
+PostStreamForm.defaultCommentText = '<%= jvh poster.options[:default_comment_text] %>';
+</script>
 
 <div class="post_stream_posts">
 <div id="post_stream_post_new"></div>
 <% posts.each do |post| -%>
   <div class="post_stream_post">
-  <%= render :partial => '/post_stream/page/post', :locals => {:post => post, :renderer => renderer, :poster => poster} %>
+  <%= render :partial => '/post_stream/page/post', :locals => {:post => post, :renderer => renderer, :poster => poster, :site_node => site_node} %>
   </div>
 <% end -%>
 </div>

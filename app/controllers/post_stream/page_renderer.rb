@@ -24,6 +24,12 @@ class PostStream::PageRenderer < ParagraphRenderer
     conn_type, conn_id = page_connection(:admin_permission)
     @poster.admin_permission = true if conn_id
 
+    conn_type, post_id = page_connection(:post_id)
+    conn_type, post_hash = page_connection(:post_hash)
+
+    raise SiteNodeEngine::MissingPageException.new( site_node, language ) unless @poster.fetch_post(post_id, post_hash)
+    @show_post_form = @poster.post.nil? ? true : false
+
     unless ajax?
       require_js('prototype')
       require_js('effects')
@@ -37,7 +43,7 @@ class PostStream::PageRenderer < ParagraphRenderer
       unless editor?
         handle_file_upload(params[:stream_post], 'domain_file_id', {:folder => @options.folder_id}) if request.post? && params[:stream_post]
 
-        @poster.setup_post(params[:stream_post])
+        @poster.setup_post(params[:stream_post]) unless @poster.post
         @poster.process_request(params)
 
         if request.post?
@@ -58,7 +64,7 @@ class PostStream::PageRenderer < ParagraphRenderer
               form_output = render_to_string(:partial => '/post_stream/page/comment_form', :locals => {:post => @poster.post, :renderer => self, :poster => @poster})
             else
               if @saved
-                new_post_output = render_to_string(:partial => '/post_stream/page/new_post', :locals => {:post => @poster.post, :renderer => self, :poster => @poster})
+                new_post_output = render_to_string(:partial => '/post_stream/page/new_post', :locals => {:post => @poster.post, :renderer => self, :poster => @poster, :site_node => site_node})
                 new_post = @poster.post
                 @poster.setup_post nil
               end
@@ -78,7 +84,12 @@ class PostStream::PageRenderer < ParagraphRenderer
       end
     end
 
-    @has_more, @posts = @poster.fetch_posts(params[:stream_page], :post_types => @options.post_types_filter)
+    if @poster.post.id
+      @has_more = false
+      @posts = [@poster.post]
+    else
+      @has_more, @posts = @poster.fetch_posts(params[:stream_page], :post_types => @options.post_types_filter)
+    end
 
     css_style = render_to_string(:partial => '/post_stream/page/form_css')
     output = post_stream_page_stream_feature

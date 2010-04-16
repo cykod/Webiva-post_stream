@@ -30,6 +30,21 @@ class PostStreamPoster
     end
   end
 
+  def fetch_post(id, post_hash)
+    return true if id.nil? && post_hash.nil?
+    @post = PostStreamPost.find_by_id_and_post_hash(id, post_hash)
+    return false if @post.nil?
+    return false unless self.valid_post_and_target
+    @post
+    @comment = @post.post_stream_post_comments.new
+  end
+
+  def valid_post_and_target
+    stream_target = PostStreamTarget.find_target(self.target)
+    return nil unless stream_target
+    PostStreamPostTarget.find_with_post_and_target(@post, stream_target)
+  end
+
   def post
     @post
   end
@@ -126,6 +141,8 @@ class PostStreamPoster
       self.setup_post nil
       return nil
     end
+
+    return nil unless self.valid_post_and_target
 
     @comment = @post.post_stream_post_comments.build params[:stream_post_comment].slice(:body, :name)
     @comment.end_user_id = self.end_user.id if self.end_user

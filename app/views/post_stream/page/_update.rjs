@@ -1,7 +1,7 @@
 
 if poster.comment
   page.replace "post_stream_comment_new_#{post.id}", new_post_output if saved
-  page.visual_effect :highlight, "new_comment_#{post.id}", :duration=>3 if saved
+  page.visual_effect :highlight, "new_comment_#{post.id}", :duration => 3 if saved
   page.replace "post_stream_comment_#{post.id}", form_output
 else
   page.replace "post_stream_post_new", new_post_output if saved

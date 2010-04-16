@@ -31,11 +31,10 @@ class PostStream::PageFeature < ParagraphFeature
   def post_stream_page_stream_feature(data)
     webiva_feature(:post_stream_page_stream,data) do |c|
       formClass = data[:poster].post && data[:poster].post.handler ? 'active' : 'inactive'
-      c.form_for_tag('form','stream_post', :html => {:multipart => true, :id => 'stream_post_form', :class => formClass, :onsubmit => "PostStreamForm.onsubmit('#{self.ajax_url}', 'stream_post_form'); return false;"}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? }
+      c.form_for_tag('form','stream_post', :html => {:multipart => true, :id => 'stream_post_form', :class => formClass, :onsubmit => "PostStreamForm.onsubmit('#{self.ajax_url}', 'stream_post_form'); return false;"}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? && data[:show_post_form] }
 
       c.define_tag('form:body') do |t|
-        script = "<script type='text/javascript'>PostStreamForm.pageConnectionHash = '#{jvh data[:page_connection_hash]}';\nPostStreamForm.defaultPostText = '#{jvh data[:poster].options[:default_post_text]}';\nPostStreamForm.defaultCommentText = '#{jvh data[:poster].options[:default_comment_text]}';\n</script>\n"
-        script + '<div class="body">' + t.locals.form.text_area(:body, {:onfocus => 'PostStreamForm.bodyOnFocus();'}.merge(t.attr)) + '</div>'
+        '<div class="body">' + t.locals.form.text_area(:body, {:onfocus => 'PostStreamForm.bodyOnFocus();'}.merge(t.attr)) + '</div>'
       end
 
       c.define_tag('form:handlers') do |t|
@@ -88,7 +87,7 @@ class PostStream::PageFeature < ParagraphFeature
 
       c.submit_tag('form:submit', :default => 'Post')
 
-      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer) }
+      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => site_node, :page_connection_hash => data[:page_connection_hash]) }
     end
   end
 
