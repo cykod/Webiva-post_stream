@@ -39,7 +39,7 @@ class PostStream::PageRenderer < ParagraphRenderer
     if @poster.can_post?
 
       unless editor?
-        handle_file_upload(params[:stream_post], 'domain_file_id', {:folder => @options.folder_id}) if request.post?
+        handle_file_upload(params[:stream_post], 'domain_file_id', {:folder => @options.folder_id}) if request.post? && params[:stream_post]
 
         @poster.setup_post(params[:stream_post])
         @poster.process_request(params)
@@ -49,13 +49,21 @@ class PostStream::PageRenderer < ParagraphRenderer
             @saved = @poster.save
             new_post_output = ''
             form_output = ''
-            if @saved
-              new_post_output = render_to_string(:partial => '/post_stream/page/new_post', :locals => {:post => @poster.post, :renderer => self, :poster => @poster})
-              @poster.setup_post nil
-            end
+            if @poster.comment
+              if @saved
+                new_post_output = render_to_string(:partial => '/post_stream/page/new_comment', :locals => {:post => @poster.post, :renderer => self, :poster => @poster, :comment => @poster.comment})
+              end
 
-            @partial_feature = 'form'
-            form_output = webiva_post_process_paragraph(post_stream_page_stream_feature)
+              form_output = render_to_string(:partial => '/post_stream/page/comment_form', :locals => {:post => @poster.post, :renderer => self, :poster => @poster})
+            else
+              if @saved
+                new_post_output = render_to_string(:partial => '/post_stream/page/new_post', :locals => {:post => @poster.post, :renderer => self, :poster => @poster})
+                @poster.setup_post nil
+              end
+
+              @partial_feature = 'form'
+              form_output = webiva_post_process_paragraph(post_stream_page_stream_feature)
+            end
 
             render_paragraph :rjs => '/post_stream/page/update', :locals => {:saved => @saved, :form_output => form_output, :new_post_output => new_post_output, :post => @poster.post, :renderer => self, :poster => @poster}
             return

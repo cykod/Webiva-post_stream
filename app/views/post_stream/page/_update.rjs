@@ -1,3 +1,8 @@
 
-page.replace "post_stream_post_new", new_post_output if saved
-page.replace "stream_post_form", form_output
+if poster.comment
+  page.replace "post_stream_post_comment_new_#{post.id}", new_post_output if saved
+  page.replace "post_stream_post_comment_form_#{post.id}", form_output
+else
+  page.replace "post_stream_post_new", new_post_output if saved
+  page.replace "stream_post_form", form_output
+end

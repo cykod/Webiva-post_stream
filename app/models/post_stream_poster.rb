@@ -34,6 +34,10 @@ class PostStreamPoster
     @post
   end
 
+  def comment
+    @comment
+  end
+
   def valid?
     @post.valid?
   end
@@ -50,7 +54,9 @@ class PostStreamPoster
   end
 
   def save
-    if @post.save
+    if @comment
+      @comment.save
+    elsif @post.save
       self.link_post_to_target(self.target)
       self.link_post_to_target(self.end_user) unless self.admin_permission || self.target == self.end_user
       self.link_post_to_target(self.additional_target) if self.additional_target
@@ -97,6 +103,7 @@ class PostStreamPoster
   end
 
   def process_request(params)
+    return self.process_comment_request(params) if params[:stream_post_comment]
     return unless params[:stream_post]
     return unless self.post.handler_obj
 
@@ -109,5 +116,19 @@ class PostStreamPoster
 
     self.post.handler_obj.options(opts)
     self.post.handler_obj.process_request(params, options)
+  end
+
+  def process_comment_request(params)
+    return unless params[:stream_post_comment]
+
+    @post = PostStreamPost.find_by_id(params[:stream_post_comment][:post_stream_post_id])
+    if @post.nil?
+      self.setup_post nil
+      return nil
+    end
+
+    @comment = @post.post_stream_post_comments.build params[:stream_post_comment].slice(:body, :name)
+    @comment.end_user_id = self.end_user.id if self.end_user
+    @comment
   end
 end
