@@ -32,6 +32,10 @@ class PostStreamPost < DomainModel
     "#{self.id}-#{self.post_hash}"
   end
 
+  def content_node_body(lang)
+    self.body_html
+  end
+
 #  def content_admin_url
 #    { :controller => '/post_stream/manage', :action => 'post', :path => [ self.id ] }
 #  end

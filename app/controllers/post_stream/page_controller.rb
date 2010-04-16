@@ -17,6 +17,8 @@ class PostStream::PageController < ParagraphController
 
     integer_options :maxwidth
 
+    canonical_paragraph "PostStreamPost", :identifier, :list_page_id => nil
+
     options_form(
                  fld(:post_types_filter, :ordered_array, :options => :post_types_options, :description => 'all posts are shown by default'),
                  fld(:folder_id, :filemanager_folder, :description => 'folder to use for file uploads'),
