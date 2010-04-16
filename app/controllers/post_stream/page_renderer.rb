@@ -26,6 +26,7 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     unless ajax?
       require_js('prototype')
+      require_js('effects')
       require_js('/components/post_stream/javascript/post_stream.js')
 
       PostStreamPoster.setup_header(self)
@@ -43,6 +44,7 @@ class PostStream::PageRenderer < ParagraphRenderer
           if ajax?
             @saved = @poster.save
             new_post_output = ''
+            new_post = nil
             form_output = ''
             if @poster.comment
               if @saved
@@ -57,6 +59,7 @@ class PostStream::PageRenderer < ParagraphRenderer
             else
               if @saved
                 new_post_output = render_to_string(:partial => '/post_stream/page/new_post', :locals => {:post => @poster.post, :renderer => self, :poster => @poster})
+                new_post = @poster.post
                 @poster.setup_post nil
               end
 
@@ -64,7 +67,7 @@ class PostStream::PageRenderer < ParagraphRenderer
               form_output = webiva_post_process_paragraph(post_stream_page_stream_feature)
             end
 
-            render_paragraph :rjs => '/post_stream/page/update', :locals => {:saved => @saved, :form_output => form_output, :new_post_output => new_post_output, :post => @poster.post, :renderer => self, :poster => @poster}
+            render_paragraph :rjs => '/post_stream/page/update', :locals => {:saved => @saved, :form_output => form_output, :new_post_output => new_post_output, :post => @poster.post, :renderer => self, :poster => @poster, :new_post => new_post}
             return
           else
             if @poster.save
