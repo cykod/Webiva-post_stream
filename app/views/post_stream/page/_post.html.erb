@@ -21,6 +21,6 @@
   </span>
 </div>
 <%= content_tag(:div, post.handler_obj.render(renderer, poster.options), {:class => 'shared_content'}, false) if post.handler_obj -%>
-<%= render :partial => '/post_stream/page/comments', :locals => {:renderer => renderer, :post => post} %>
-<%= render :partial => '/post_stream/page/comment_form', :locals => {:renderer => renderer, :post => post} %>
+<%= render :partial => '/post_stream/page/comments', :locals => {:renderer => renderer, :post => post, :poster => poster} %>
+<%= render :partial => '/post_stream/page/comment_form', :locals => {:renderer => renderer, :post => post, :poster => poster} %>
 <hr class="seperator"/>

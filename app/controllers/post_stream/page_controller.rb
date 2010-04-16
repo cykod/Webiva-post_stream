@@ -12,7 +12,7 @@ class PostStream::PageController < ParagraphController
                                  }
 
   class StreamOptions < HashModel
-    attributes :folder_id => nil, :post_types_filter => [], :maxwidth => 340, :title_length => 40
+    attributes :folder_id => nil, :post_types_filter => [], :maxwidth => 340, :title_length => 40, :default_post_text => '', :default_comment_text => ''
 
     integer_options :maxwidth
 
@@ -20,7 +20,9 @@ class PostStream::PageController < ParagraphController
                  fld(:post_types_filter, :ordered_array, :options => :post_types_options, :description => 'all posts are shown by default'),
                  fld(:folder_id, :filemanager_folder, :description => 'folder to use for file uploads'),
                  fld(:maxwidth, :text_field, :description => 'embed content max width', :label => 'Max width'),
-                 fld(:title_length, :text_field, :description => 'embed content title width before truncating')
+                 fld(:title_length, :text_field, :description => 'embed content title width before truncating'),
+                 fld(:default_post_text, :text_field),
+                 fld(:default_comment_text, :text_field)
                  )
 
     def folder_id

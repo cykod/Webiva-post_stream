@@ -15,7 +15,7 @@ class PostStreamPoster
   end
 
   def setup_post(attributes, opts={})
-    attributes ||= {}
+    attributes ||= {:body => self.options[:default_post_text]}
     @post = PostStreamPost.new attributes.slice(:body, :name, :domain_file_id).merge(opts)
     @post.end_user_id = self.end_user.id if self.end_user
     @post.posted_by = self.target if self.admin_permission

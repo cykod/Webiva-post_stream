@@ -1,5 +1,6 @@
 PostStreamForm = {
-  defaultBodyText: '',
+  defaultPostText: '',
+  defaultCommentText: '',
   currentHandler: null,
 
   share: function(type, handler) {
@@ -24,16 +25,16 @@ PostStreamForm = {
     PostStreamForm.deactivateComments();
     bodyEle = $('stream_post_body');
     $('stream_post_form').className = 'active';
-    if( bodyEle.value == PostStreamForm.defaultBodyText ) {
+    if( bodyEle.value == PostStreamForm.defaultPostText ) {
       bodyEle.value = '';
     }
   },
 
   bodyOnBlur: function(ele) {
     bodyEle = $('stream_post_body');
-    if( (bodyEle.value == PostStreamForm.defaultBodyText || bodyEle.value == '') && PostStreamForm.currentHandler == null ) {
+    if( (bodyEle.value == PostStreamForm.defaultPostText || bodyEle.value == '') && PostStreamForm.currentHandler == null ) {
       $('stream_post_form').className = 'inactive';
-      bodyEle.value = PostStreamForm.defaultBodyText;
+      bodyEle.value = PostStreamForm.defaultPostText;
     }
   },
 
@@ -48,8 +49,7 @@ PostStreamForm = {
       if( $('post_stream_comment_form_' + id).hasClassName('active') ) {
         PostStreamForm.deactivateComments();
       } else {
-        PostStreamForm.deactivateComments();
-        $('post_stream_comment_form_' + id).className = 'post_stream_comment_form active';
+        PostStreamForm.activateComment(id);
         PostStreamForm.focusCommentBody(id);
       }
     } else {
@@ -58,7 +58,7 @@ PostStreamForm = {
       $('post_stream_comment_' + id).toggle();
 
       if( $('post_stream_comment_' + id).visible() ) {
-        $('post_stream_comment_form_' + id).className = 'post_stream_comment_form active';
+        PostStreamForm.activateComment(id);
         PostStreamForm.focusCommentBody(id);
       }
     }
@@ -76,11 +76,12 @@ PostStreamForm = {
     PostStreamForm.deactivateComments();
     PostStreamForm.bodyOnBlur();
     $('post_stream_comment_form_' + id).className = 'post_stream_comment_form active';
+    if( $('stream_post_comment_body_' + id).value == PostStreamForm.defaultCommentText )
+      $('stream_post_comment_body_' + id).value = '';
   },
 
   focusCommentBody: function(id) {
-    PostStreamForm.bodyOnBlur();
-    $$('form#post_stream_comment_form_' + id + ' textarea').invoke('focus');
+    $('stream_post_comment_body_' + id).focus();
   },
 
   deactivateComments: function() {

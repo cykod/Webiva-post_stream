@@ -34,7 +34,8 @@ class PostStream::PageFeature < ParagraphFeature
       c.form_for_tag('form','stream_post', :html => {:multipart => true, :id => 'stream_post_form', :class => formClass, :onsubmit => "PostStreamForm.onsubmit('#{self.ajax_url}', 'stream_post_form'); return false;"}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? }
 
       c.define_tag('form:body') do |t|
-        '<div class="body">' + t.locals.form.text_area(:body, {:onfocus => 'PostStreamForm.bodyOnFocus();'}.merge(t.attr)) + '</div>'
+        script = "<script type='text/javascript'>PostStreamForm.defaultPostText = '#{jvh data[:poster].options[:default_post_text]}';\nPostStreamForm.defaultCommentText = '#{jvh data[:poster].options[:default_comment_text]}';\n</script>\n"
+        script + '<div class="body">' + t.locals.form.text_area(:body, {:onfocus => 'PostStreamForm.bodyOnFocus();'}.merge(t.attr)) + '</div>'
       end
 
       c.define_tag('form:handlers') do |t|
