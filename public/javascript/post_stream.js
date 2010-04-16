@@ -23,6 +23,7 @@ PostStreamForm = {
   },
 
   bodyOnFocus: function() {
+    PostStreamForm.deactivateComments();
     bodyEle = $('stream_post_body');
     bodyEle.rows = PostStreamForm.activeRows;
     if( bodyEle.value == PostStreamForm.defaultBodyText ) {
@@ -42,6 +43,53 @@ PostStreamForm = {
     new Ajax.Request(url, {parameters: $(form_id).serialize(true),
                            onSuccess: function(res) { eval(res.responseText); }
                      });
+  },
+
+  toggleComment: function(id) {
+    if( PostStreamForm.hasComments(id) || ($('post_stream_comment_' + id).visible() && $('post_stream_comment_form_' + id).hasClassName('inactive'))) {
+      if( $('post_stream_comment_form_' + id).hasClassName('active') ) {
+        PostStreamForm.deactivateComments();
+      } else {
+        PostStreamForm.deactivateComments();
+        $('post_stream_comment_form_' + id).className = 'post_stream_comment_form active';
+        PostStreamForm.focusCommentBody(id);
+      }
+    } else {
+      PostStreamForm.deactivateComments();
+
+      $('post_stream_comment_' + id).toggle();
+
+      if( $('post_stream_comment_' + id).visible() ) {
+        $('post_stream_comment_form_' + id).className = 'post_stream_comment_form active';
+        PostStreamForm.focusCommentBody(id);
+      }
+    }
+  },
+
+  showComment: function(id) {
+    $('post_stream_comment_' + id).show();
+  },
+
+  hideComment: function(id) {
+    $('post_stream_comment_' + id).hide();
+  },
+
+  activateComment: function(id) {
+    PostStreamForm.deactivateComments();
+
+    $('post_stream_comment_form_' + id).className = 'post_stream_comment_form active';
+  },
+
+  focusCommentBody: function(id) {
+    $$('form#post_stream_comment_form_' + id + ' textarea').invoke('focus');
+  },
+
+  deactivateComments: function() {
+    $$('.post_stream_comment_form').each(function(e) { e.className = 'post_stream_comment_form inactive'; });
+  },
+
+  hasComments: function(id) {
+    return $$('#post_stream_comments_' + id + ' div.comment').length > 0
   }
 }
 

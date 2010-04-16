@@ -17,7 +17,7 @@
 <div class="actions">
   <span class="posted_at"><%= '%s ago' / time_ago_in_words(post.posted_at) %></span>
   <spam class="links">
-    <a href="#">Comment</a> | <a href="#">Share</a>
+    <a href="javascript:void(0);" onclick="PostStreamForm.toggleComment(<%= post.id %>);">Comment</a> | <a href="#">Share</a>
   </span>
 </div>
 <%= content_tag(:div, post.handler_obj.render(renderer, poster.options), {:class => 'shared_content'}, false) if post.handler_obj -%>

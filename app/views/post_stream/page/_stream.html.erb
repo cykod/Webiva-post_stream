@@ -12,7 +12,12 @@
   float: left;
 }
 
-.post_stream_post .post .title, .post_stream_post .post .body {
+.post_stream_post .comments {
+  clear: both;
+  padding-top: 5px;
+}
+
+.post_stream_post .post .title, .post_stream_post .post .body, .post_stream_post .comments, .post_stream_post .comment_form {
   display: block;
   padding-left: 70px;
 }
@@ -74,6 +79,30 @@
 .post_stream_post hr.seperator {
   clear: both;
   border: none;
+}
+
+.post_stream_post .comment_form textarea {
+  width: 100%;
+}
+
+.post_stream_post .comment_form .submit {
+  text-align: right;
+}
+
+.post_stream_post .comment_form .inactive textarea {
+  height: 16px;
+}
+
+.post_stream_post .comment_form .inactive .submit {
+  display: none;
+}
+
+.post_stream_post .comment_form .active textarea {
+  height: 50px;
+}
+
+.post_stream_post .comment_form .active .submit {
+  display: block;
 }
 
 </style>
