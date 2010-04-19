@@ -132,6 +132,17 @@
   padding: 0 5px 2px 0;
 }
 
+.post_stream_post a.fb_share_button {
+  background-image: url('http://static.ak.fbcdn.net/images/connect_favicon.png');
+  background-repeat: no-repeat;
+  text-align: right;
+  height: 14px;
+  text-decoration: none;
+}
+.post_stream_post a.fb_share_button span {
+  padding-left: 18px;
+}
+
 </style>
 <script type="text/javascript">
 PostStreamForm.pageConnectionHash = '<%= jvh page_connection_hash %>';
@@ -147,3 +158,4 @@ PostStreamForm.defaultCommentText = '<%= jvh poster.options[:default_comment_tex
   </div>
 <% end -%>
 </div>
+

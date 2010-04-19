@@ -113,5 +113,15 @@ PostStream = {
     ele_id = "post_stream_embed_" + id
     $(ele_id).show();
     $(ele_id).insert(html);
+  },
+
+  share: function(url, title, summary) {
+    if( ! summary ) {
+      summary = '';
+    }
+
+    var sharer_url = "http://www.facebook.com/sharer.php?s=100&p[url]=" + escape(url) + "&p[title]=" + escape(title) + "&p[summary]=" + escape(summary);
+
+    window.open(sharer_url, 'sharer', 'toolbar=0,status=0,width=626,height=436');
   }
 }
