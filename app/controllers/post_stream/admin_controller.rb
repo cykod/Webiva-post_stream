@@ -47,7 +47,7 @@ class PostStream::AdminController < ModuleController
   end
 
   class Options < HashModel
-    attributes :content_filter => 'comment', :folder_id => nil, :oembed_domains => nil
+    attributes :content_filter => 'comment', :folder_id => nil, :oembed_domains => ''
 
     options_form(
                  fld(:folder_id, :filemanager_folder, :description => 'default folder for uploads'),

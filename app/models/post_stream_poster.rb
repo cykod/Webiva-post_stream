@@ -1,6 +1,6 @@
 
 class PostStreamPoster
-  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_target, :shared_content_node, :view_targets, :active_handlers, :options
+  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_target, :shared_content_node, :view_targets, :active_handlers, :options, :submitted
 
   include HandlerActions
 
@@ -16,6 +16,7 @@ class PostStreamPoster
 
   def setup_post(attributes, opts={})
     attributes ||= {:body => self.options[:default_post_text]}
+    self.submitted = false
     @post = PostStreamPost.new attributes.slice(:body, :name, :domain_file_id).merge(opts)
     @post.end_user_id = self.end_user.id if self.end_user
     @post.posted_by = self.target if self.admin_permission
@@ -68,7 +69,13 @@ class PostStreamPoster
     PostStreamPostTarget.link_post_to_target(@post, PostStreamTarget.push_target(target))
   end
 
+  def was_submitted?
+    self.submitted
+  end
+
   def save
+    self.submitted = true
+
     if @comment
       @comment.save
     elsif @post.save

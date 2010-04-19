@@ -1,9 +1,9 @@
 
 class PostStreamPostComment < DomainModel
-  attr_accessor :folder_id
+  attr_accessor :folder_id, :name
 
   belongs_to :post_stream_post
-  has_end_user :end_user_id
+  has_end_user :end_user_id, :name_column => :name
 
   validates_presence_of :post_stream_post_id
   validates_presence_of :body
@@ -17,6 +17,10 @@ class PostStreamPostComment < DomainModel
 
   def before_validation_on_create
     self.posted_at ||= Time.now
+  end
+
+  def validate
+    self.errors.add(:name, 'is missing') if self.end_user && self.end_user.missing_name? && self.name.blank?
   end
 
   def content_filter

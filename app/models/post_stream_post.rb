@@ -32,8 +32,8 @@ class PostStreamPost < DomainModel
     "#{self.id}-#{self.post_hash}"
   end
 
-  def content_node_body(lang)
-    self.body_html
+  def content_node_body(language)
+    self.body
   end
 
 #  def content_admin_url
@@ -85,6 +85,8 @@ class PostStreamPost < DomainModel
     if self.handler_obj
       self.errors.add(:handler, 'is invalid') unless self.handler_obj.valid?
     end
+
+    self.errors.add(:name, 'is missing') if self.end_user && self.end_user.missing_name? && self.name.blank?
   end
 
   def before_validation_on_create

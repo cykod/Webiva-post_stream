@@ -78,9 +78,13 @@
   float: right;
 }
 
-.post_stream_post hr.seperator {
+.post_stream_post hr.separator {
   clear: both;
   border: none;
+}
+
+.post_stream_post .comment_form {
+  padding-right: 30px;
 }
 
 .post_stream_post .comment_form textarea {
@@ -95,16 +99,37 @@
   height: 16px;
 }
 
-.post_stream_post .comment_form .inactive .submit {
-  display: none;
-}
-
 .post_stream_post .comment_form .active textarea {
   height: 50px;
 }
 
-.post_stream_post .comment_form .active .submit {
+.post_stream_post .comment_form .inactive .submit, .post_stream_post .comment_form .inactive .name {
+  display: none;
+}
+
+.post_stream_post .comment_form .active .submit, .post_stream_post .comment_form .active .name {
   display: block;
+}
+
+.post_stream_post .comment img {
+  display: block;
+  float: left;
+  padding-right: 10px;
+  width: 25px;
+}
+
+.post_stream_post .comment .content {
+  display: block;
+}
+
+.post_stream_post .comment .name {
+  font-weight: bold;
+}
+
+.post_stream_post .comment .posted_at {
+  display: block;
+  font-size: 0.9em;
+  padding: 0 5px 2px 0;
 }
 
 </style>

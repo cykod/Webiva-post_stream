@@ -48,6 +48,9 @@ class PostStream::PageRenderer < ParagraphRenderer
         if request.post?
           if ajax?
             @saved = @poster.save
+
+            myself.reload if @saved && myself.id && myself.missing_name?
+
             new_post_output = ''
             new_post = nil
             form_output = ''

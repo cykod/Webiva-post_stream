@@ -27,4 +27,4 @@
 <%= content_tag(:div, post.handler_obj.render(renderer, poster.options), {:class => 'shared_content'}, false) if post.handler_obj -%>
 <%= render :partial => '/post_stream/page/comments', :locals => {:renderer => renderer, :post => post, :poster => poster} %>
 <%= render :partial => '/post_stream/page/comment_form', :locals => {:renderer => renderer, :post => post, :poster => poster} if poster.can_post? %>
-<hr class="seperator"/>
+<hr class="separator"/>

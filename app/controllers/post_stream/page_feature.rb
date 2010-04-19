@@ -6,6 +6,9 @@ class PostStream::PageFeature < ParagraphFeature
   feature :post_stream_page_stream, :default_feature => <<-FEATURE
   <div class="post_stream_form">
     <cms:form>
+      <cms:no_name>
+        <cms:name/>
+      </cms:no_name>
       <cms:body/>
       <cms:handlers close='[X]'/>
       <div class="controls">
@@ -30,8 +33,13 @@ class PostStream::PageFeature < ParagraphFeature
 
   def post_stream_page_stream_feature(data)
     webiva_feature(:post_stream_page_stream,data) do |c|
-      formClass = data[:poster].post && data[:poster].post.handler ? 'active' : 'inactive'
+      formClass = data[:poster].was_submitted? ? 'active' : 'inactive'
       c.form_for_tag('form','stream_post', :html => {:multipart => true, :id => 'stream_post_form', :class => formClass, :onsubmit => "PostStreamForm.onsubmit('#{self.ajax_url}', 'stream_post_form'); return false;"}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? && data[:show_post_form] }
+
+      c.expansion_tag('form:no_name') { |t| myself.missing_name? }
+      c.define_tag('form:name') do |t|
+        '<div class="name">' + 'Name:'.t + ' ' + t.locals.form.text_field(:name, t.attr) + '</div>'
+      end
 
       c.define_tag('form:body') do |t|
         '<div class="body">' + t.locals.form.text_area(:body, {:onfocus => 'PostStreamForm.bodyOnFocus();'}.merge(t.attr)) + '</div>'

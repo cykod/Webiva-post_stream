@@ -1,6 +1,6 @@
 <div id="post_stream_comment_new_<%= post.id %>"></div>
 <div class="comment" id="new_comment_<%= post.id %>">
 <div class="new_comment">
-  <span class="body"><%= comment.body_html %></span>
-<div class="new">
+  <%= render :partial => '/post_stream/page/comment', :locals => {:comment => comment, :post => post, :poster => poster} %>
+</div>
 </div>
