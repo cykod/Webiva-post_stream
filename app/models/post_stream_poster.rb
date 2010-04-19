@@ -1,6 +1,7 @@
+require 'digest/sha1'
 
 class PostStreamPoster
-  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_target, :shared_content_node, :view_targets, :active_handlers, :options, :submitted
+  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_targets, :shared_content_node, :view_targets, :active_handlers, :options, :submitted
 
   include HandlerActions
 
@@ -8,6 +9,7 @@ class PostStreamPoster
     self.end_user = user
     self.target = target
     self.options = opts
+    self.additional_targets = []
   end
 
   def can_post?
@@ -17,7 +19,7 @@ class PostStreamPoster
   def setup_post(attributes, opts={})
     attributes ||= {:body => self.options[:default_post_text]}
     self.submitted = false
-    @post = PostStreamPost.new attributes.slice(:body, :name, :domain_file_id, :post_on_facebook).merge(opts)
+    @post = PostStreamPost.new attributes.slice(:body, :name, :domain_file_id, :post_on_facebook, :additional_target).merge(opts)
     @post.end_user_id = self.end_user.id if self.end_user
     @post.posted_by = self.target if self.admin_permission
     @post.shared_content_node_id = self.shared_content_node.id if self.shared_content_node
@@ -71,6 +73,18 @@ class PostStreamPoster
 
   def was_submitted?
     self.submitted
+  end
+
+  def additional_target
+    return nil if self.additional_targets.empty?
+
+    self.additional_targets.find { |t| Digest::SHA1.hexdigest(t.class.to_s + t.id.to_s) == self.post.additional_target }
+  end
+
+  def additional_target_options
+    return nil if self.additional_targets.empty?
+
+    self.additional_targets.collect { |t| ['Post to %s' / t.name, Digest::SHA1.hexdigest(t.class.to_s + t.id.to_s)] }
   end
 
   def save

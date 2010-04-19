@@ -1,6 +1,6 @@
 
 class PostStreamPost < DomainModel
-  attr_accessor :folder_id, :name, :post_on_facebook
+  attr_accessor :folder_id, :name, :post_on_facebook, :additional_target
 
   has_end_user :end_user_id, :name_column => :name
   belongs_to :shared_content_node, :class_name => 'ContentNode', :foreign_key => 'shared_content_node_id'
