@@ -4,3 +4,8 @@
 <%= render :partial => '/post_stream/page/post', :locals => {:post => post, :renderer => renderer, :poster => poster, :site_node => site_node} %>
 </div>
 </div>
+<% if post.post_on_facebook -%>
+<script type="text/javascript">
+PostStream.share('<%= jvh Configuration.domain_link(post.share_url(site_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);
+</script>
+<% end -%>

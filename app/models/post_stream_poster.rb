@@ -17,7 +17,7 @@ class PostStreamPoster
   def setup_post(attributes, opts={})
     attributes ||= {:body => self.options[:default_post_text]}
     self.submitted = false
-    @post = PostStreamPost.new attributes.slice(:body, :name, :domain_file_id).merge(opts)
+    @post = PostStreamPost.new attributes.slice(:body, :name, :domain_file_id, :post_on_facebook).merge(opts)
     @post.end_user_id = self.end_user.id if self.end_user
     @post.posted_by = self.target if self.admin_permission
     @post.shared_content_node_id = self.shared_content_node.id if self.shared_content_node

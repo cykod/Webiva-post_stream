@@ -18,9 +18,12 @@
   <span class="posted_at"><%= '%s ago' / time_ago_in_words(post.posted_at) %></span>
   <spam class="links">
 <% if poster.can_post? -%>
-    <a href="javascript:void(0);" onclick="PostStreamForm.toggleComment(<%= post.id %>);">Comment</a> | <a class="fb_share_button" onclick="PostStream.share('<%= jvh Configuration.domain_link(post.share_url(site_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);" href="javascript:void(0);"><span>Share</span></a>
-<% else -%>
-    <a href="#">Share</a>
+    <a href="javascript:void(0);" onclick="PostStreamForm.toggleComment(<%= post.id %>);">Comment</a>
+  <% if poster.options[:post_on_facebook] -%>
+    | <a class="fb_share_button" onclick="PostStream.share('<%= jvh Configuration.domain_link(post.share_url(site_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);" href="javascript:void(0);"><span><%= 'Share'.t %></span></a>
+  <% end -%>
+<% elsif poster.options[:post_on_facebook] -%>
+    <a class="fb_share_button" onclick="PostStream.share('<%= jvh Configuration.domain_link(post.share_url(site_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);" href="javascript:void(0);"><span><%= 'Share'.t %></span></a>
 <% end -%>
   </span>
 </div>

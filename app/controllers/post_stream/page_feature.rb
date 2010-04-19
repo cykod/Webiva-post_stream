@@ -89,8 +89,10 @@ class PostStream::PageFeature < ParagraphFeature
       end
 
       c.define_tag('form:share_with:facebook') do |t|
-        content = t.single? ? 'post on facebook' : t.expand
-        '<label>' + check_box(:stream_post, 'post_on_facebook') + " #{content}</label>"
+        if data[:options].post_on_facebook
+          content = t.single? ? 'Post to facebook' : t.expand
+          '<label>' + t.locals.form.check_boxes(:post_on_facebook, [[content, true]], :single => true) + "</label>"
+        end
       end
 
       c.submit_tag('form:submit', :default => 'Post')

@@ -1,6 +1,6 @@
 
 class PostStreamPost < DomainModel
-  attr_accessor :folder_id, :name
+  attr_accessor :folder_id, :name, :post_on_facebook
 
   has_end_user :end_user_id, :name_column => :name
   belongs_to :shared_content_node, :class_name => 'ContentNode', :foreign_key => 'shared_content_node_id'
@@ -39,6 +39,11 @@ class PostStreamPost < DomainModel
 #  def content_admin_url
 #    { :controller => '/post_stream/manage', :action => 'post', :path => [ self.id ] }
 #  end
+
+  def post_on_facebook=(val)
+    val = val == 'true' if val.is_a?(String)
+    @post_on_facebook = val
+  end
 
   def share_url(site_node)
     if self.shared_content_node
