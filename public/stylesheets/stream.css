@@ -183,10 +183,12 @@
 
 .post_stream_form .active textarea {
   height: 80px;
+  padding: 1px;
 }
 
 .post_stream_form .inactive textarea {
-  height: 20px;
+  height: 16px;
+  padding: 4px;
 }
 
 .post_stream_form hr.seperator {
