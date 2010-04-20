@@ -161,8 +161,24 @@
   padding: 0 10px 10px 0;
 }
 
+.post_stream_form .body {
+  padding-bottom: 2px;
+}
+
 .post_stream_form textarea {
   width: 100%;
+}
+
+.post_stream_form .handler_form input {
+  width: 100%;
+}
+
+.post_stream_form .title_bar {
+  padding-bottom: 2px;
+}
+
+.post_stream_form .title_bar .title {
+  padding-left: 5px;
 }
 
 .post_stream_form .active textarea {
