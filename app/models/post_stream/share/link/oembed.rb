@@ -35,6 +35,14 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
     renderer.render_to_string :partial => '/post_stream/share/link/oembed', :locals => {:post => self.post, :options => self.options, :maxwidth => maxwidth, :maxheight => maxheight, :title_length => title_length}
   end
 
+  def preview_image_url
+    if self.options.data['type'] == 'photo'
+      self.options.data['url']
+    elsif ! self.options.data['thumbnail_url'].blank?
+      self.options.data['thumbnail_url']
+    end
+  end
+
   class Options < HashModel
     attributes :data => {}
   end

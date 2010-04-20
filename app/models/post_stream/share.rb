@@ -13,6 +13,7 @@ module PostStream::Share
     def form_name; "stream_post_#{self.type}"; end
     def info; @info ||= self.get_handler_info(:post_stream, :share, self.class.to_s.underscore); end
     def identifier; self.info[:identifier]; end
+    def preview_image_url; nil; end
 
     def options_class
       @options_class ||= "#{self.class.to_s}::Options".constantize

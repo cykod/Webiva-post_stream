@@ -30,6 +30,14 @@ class PostStream::PageRenderer < ParagraphRenderer
     raise SiteNodeEngine::MissingPageException.new( site_node, language ) unless @poster.fetch_post(post_identifier)
     @show_post_form = @poster.post.nil? ? true : false
 
+    if @poster.post
+      self.html_include(:head_html, "<meta name='title' content='#{vh truncate(@poster.post.body, :length => 60)}' />")
+
+      if @poster.post.preview_image_url
+        self.html_include(:head_html, "<link rel='image_src' href='#{vh @poster.post.preview_image_url}' />")
+      end
+    end
+
     unless ajax?
       require_js('prototype')
       require_js('effects')

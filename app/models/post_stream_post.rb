@@ -177,4 +177,12 @@ class PostStreamPost < DomainModel
     @comments ||= []
     @comments << comment
   end
+
+  def preview_image_url
+    if self.domain_file && self.domain_file.image?
+      self.domain_file.full_url
+    elsif self.handler_obj
+      self.handler_obj.preview_image_url
+    end
+  end
 end

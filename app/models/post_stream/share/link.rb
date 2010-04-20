@@ -70,6 +70,10 @@ class PostStream::Share::Link < PostStream::Share::Base
     @handler_obj ||= self.handler_class.new(self.post) if self.handler_class
   end
 
+  def preview_image_url
+    self.handler_obj.preview_image_url if self.handler_obj
+  end
+
   class Options < HashModel
     attr_accessor :handler_required
 
@@ -89,6 +93,8 @@ class PostStream::Share::Link < PostStream::Share::Base
     def initialize(post)
       @post = post
     end
+
+    def preview_image_url; nil; end
 
     def post
       @post
