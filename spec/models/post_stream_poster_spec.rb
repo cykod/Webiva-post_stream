@@ -114,11 +114,13 @@ describe PostStreamPoster do
     @user2 = EndUser.push_target('test2@test.dev', :first_name => 'First2', :last_name => 'Last2')
 
     @poster = PostStreamPoster.new @user1, @user1
-    @poster.additional_target = @user2
+    @poster.additional_targets << @user2
     @poster.post_permission = true
     @poster.can_post?.should be_true
 
-    @poster.setup_post(:body => 'My first post')
+    additional_target = Digest::SHA1.hexdigest(@user2.class.to_s + @user2.id.to_s)
+
+    @poster.setup_post(:body => 'My first post', :additional_target => additional_target)
     @poster.valid?.should be_true
 
     assert_difference 'PostStreamPostTarget.count', 2 do

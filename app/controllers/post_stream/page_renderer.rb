@@ -99,7 +99,7 @@ class PostStream::PageRenderer < ParagraphRenderer
       end
     end
 
-    if @poster.post.id
+    if @poster.post && @poster.post.id
       @has_more = false
       @posts = [@poster.post]
     else

@@ -104,7 +104,7 @@ describe PostStreamPost do
   it "should be able to create a post of type media" do
     @site_node = SiteVersion.default.root.add_subpage('blog')
 
-    @post = PostStreamPost.create :body => 'My first post', :content_node_id => @site_node.content_node.id
+    @post = PostStreamPost.create :body => 'My first post', :shared_content_node_id => @site_node.content_node.id
     @post.id.should_not be_nil
     @post.title.should == 'Anonymous'
     @post.post_hash.should_not be_nil
