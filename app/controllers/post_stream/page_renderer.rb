@@ -112,12 +112,22 @@ class PostStream::PageRenderer < ParagraphRenderer
   def recent_posts
     @options = paragraph_options(:recent_posts)
 
-    @page_connection_hash = nil
-    @poster = PostStreamPoster.new myself, nil, @options.to_h
-    @has_more = false
-    @stream_page = 1
-    @posts = PostStreamPost.with_types(@options.post_types_filter).find(:all, :limit => @options.posts_to_display, :order => 'posted_at DESC')
-    @poster.fetch_comments(@posts) if @options.show_comments
-    render_paragraph :feature => :post_stream_page_recent_posts
+    results = renderer_cache(nil, nil, :expires => @options.cache_expires*60) do |cache|
+      @page_connection_hash = nil
+      @poster = PostStreamPoster.new myself, nil, @options.to_h
+      @has_more = false
+      @stream_page = 1
+      @posts = PostStreamPost.with_types(@options.post_types_filter).find(:all, :limit => @options.posts_to_display, :order => 'posted_at DESC')
+      @poster.fetch_comments(@posts) if @options.show_comments
+
+      if paragraph.site_feature
+        cache[:output] = post_stream_page_recent_posts_feature
+      else
+        cache[:output] = render_to_string :partial => '/post_stream/page/stream', :locals => {:poster => @poster, :has_more => @has_more, :stream_page => @stream_page, :page_connection_hash => @page_connection_hash, :posts => @posts, :paragraph => paragraph, :renderer => self, :site_node => site_node}
+      end
+    end
+
+    require_css('/components/post_stream/stylesheets/stream.css') unless paragraph.render_css
+    render_paragraph :text => results.output
   end
 end

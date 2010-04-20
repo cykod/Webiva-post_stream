@@ -43,16 +43,19 @@ class PostStream::PageController < ParagraphController
   end
 
   class RecentPostsOptions < HashModel
-    attributes :post_types_filter => [], :maxwidth => 340, :title_length => 40, :post_on_facebook => true, :posts_to_display => 10, :show_comments => true
+    attributes :post_types_filter => [], :maxwidth => 340, :title_length => 40, :post_on_facebook => true, :posts_to_display => 10, :show_comments => true, :cache_expires => 5
 
-    integer_options :maxwidth, :posts_to_display, :title_length
+    integer_options :maxwidth, :posts_to_display, :title_length, :cache_expires
     boolean_options :post_on_facebook, :show_comments
+
+    validates_numericality_of :cache_expires, :greater_than => 0
 
     canonical_paragraph "PostStreamPost", :identifier, :list_page_id => nil
 
     options_form(
                  fld(:post_types_filter, :ordered_array, :options => :post_types_options, :description => 'all posts are shown by default'),
                  fld(:posts_to_display, :text_field),
+                 fld(:cache_expires, :text_field, :description => 'number of minutes to cache recent posts'),
                  fld(:maxwidth, :text_field, :description => 'embed content max width', :label => 'Max width'),
                  fld(:title_length, :text_field, :description => 'embed content title width before truncating'),
                  fld(:post_on_facebook, :check_boxes, :single => true, :options => [['share posts on Facebook', true]]),

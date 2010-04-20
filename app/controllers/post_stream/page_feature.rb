@@ -2,6 +2,7 @@
 class PostStream::PageFeature < ParagraphFeature
 
   include StyledFormBuilderGenerator::FormFor
+  include ActionView::Helpers::DateHelper
 
   feature :post_stream_page_stream,
     :default_css_file => '/components/post_stream/stylesheets/stream.css',
@@ -124,12 +125,42 @@ class PostStream::PageFeature < ParagraphFeature
   feature :post_stream_page_recent_posts,
     :default_css_file => '/components/post_stream/stylesheets/stream.css',
     :default_feature => <<-FEATURE
-  <cms:stream/>
+  <cms:posts>
+    <div class="post_stream_posts">
+      <cms:post>
+        <div class="post_stream_post">
+          <div class="post">
+            <cms:photo size="thumb"/>
+            <span class="title_body">
+              <span class="title"><cms:post_link><cms:title/></cms:post_link></span>
+              <span class="body"><cms:body/></span>
+            </span>
+          </div>
+          <span class="actions">
+            <span class="posted_at"><cms:posted_ago/> ago</span>
+          </span>
+          <div class="shared_content">
+            <cms:embeded/>
+          </div>
+        <hr class="separator"/>
+        </div>
+      </cms:post>
+    </div>
+  </cms:posts>
   FEATURE
 
   def post_stream_page_recent_posts_feature(data)
     webiva_feature(:post_stream_page_recent_posts,data) do |c|
-      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => site_node, :attributes => t.attr) }
+      c.loop_tag('post') { |t| data[:posts] }
+      c.image_tag('post:photo') { |t| t.locals.post.image }
+      c.link_tag('post:post') { |t| t.locals.post.content_node.link }
+      c.link_tag('post:posted_by') { |t| t.locals.post.posted_by_shared_content_node.link if t.locals.post.posted_by_shared_content_node }
+      c.link_tag('post:content') { |t| t.locals.post.shared_content_node.link if t.locals.post.shared_content_node }
+      c.h_tag('post:title') { |t| t.locals.post.title }
+      c.value_tag('post:body') { |t| t.locals.post.body_html }
+      c.date_tag('post:posted_at',DEFAULT_DATETIME_FORMAT.t) { |t| t.locals.post.posted_at }
+      c.value_tag('post:posted_ago') { |t| time_ago_in_words(t.locals.post.posted_at) }
+      c.value_tag('post:embeded') { |t| t.locals.post.handler_obj.render(self.renderer, data[:poster].options) if t.locals.post.handler_obj }
     end
   end
 end
