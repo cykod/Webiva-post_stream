@@ -121,7 +121,18 @@ class PostStreamPoster
     stream_targets = self.fetch_targets
     return [false, []] if stream_targets.empty?
 
-    PostStreamPost.find_for_targets(stream_targets, page, opts)
+    has_more, posts = PostStreamPost.find_for_targets(stream_targets, page, opts)
+    self.fetch_comments(posts)
+    [has_more, posts]
+  end
+
+  def fetch_comments(posts)
+    comments = PostStreamPostComment.find(:all, :conditions => {:post_stream_post_id => posts.collect { |p| p.id if p.post_stream_post_comments_count > 0 }.compact}, :order => 'posted_at DESC')
+
+    comments.each do |comment|
+      post = posts.find { |p| p.id == comment.post_stream_post_id }
+      post.add_comment(comment) if post
+    end
   end
 
   def handlers

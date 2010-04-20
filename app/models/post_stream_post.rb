@@ -162,4 +162,17 @@ class PostStreamPost < DomainModel
     self.post_stream_post_comments_count = self.post_stream_post_comments.count
     self.save
   end
+
+  def comments
+    @comments ||= []
+  end
+
+  def comments=(comments)
+    @comments = comments
+  end
+
+  def add_comment(comment)
+    @comments ||= []
+    @comments << comment
+  end
 end

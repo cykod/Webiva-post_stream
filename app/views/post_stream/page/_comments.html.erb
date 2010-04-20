@@ -1,6 +1,6 @@
 <div class="comments" id="post_stream_comments_<%= post.id %>">
 <div id="post_stream_comment_new_<%= post.id %>"></div>
-<% post.post_stream_post_comments.each do |comment| -%>
+<% post.comments.each do |comment| -%>
   <div class="comment">
     <%= render :partial => '/post_stream/page/comment', :locals => {:comment => comment, :post => post, :poster => poster} %>
   </div>
