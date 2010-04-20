@@ -8,7 +8,7 @@ class PostStream::Share::MediaLink < PostStream::Share::Link
 
   def initialize(post)
     super(post)
-    self.supported_post_types = ['media']
+    self.supported_post_types = ['image', 'media']
   end
 
   def options(opts={})

@@ -79,10 +79,12 @@ class PostStreamPost < DomainModel
     when 'link'
       self.errors.add(:link, 'is required') if self.link.blank?
     when 'image'
-      self.errors.add(:domain_file_id, 'is required') if self.domain_file.nil?
-      self.errors.add(:domain_file_id, 'is invalid') if self.domain_file && ! self.domain_file.image?
+      if self.link.blank? && self.handler.blank?
+        self.errors.add(:domain_file_id, 'is required') if self.domain_file.nil?
+        self.errors.add(:domain_file_id, 'is invalid') if self.domain_file && ! self.domain_file.image?
+      end
     when 'media'
-      self.errors.add(:domain_file_id, 'is required') if self.domain_file.nil?
+      self.errors.add(:domain_file_id, 'is required') if self.domain_file.nil? && self.link.blank? && self.handler.blank?
     when 'content'
       self.errors.add(:shared_content_node_id, 'is required') if self.shared_content_node.nil?
     end
