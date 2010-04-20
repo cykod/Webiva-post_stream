@@ -2,6 +2,11 @@
   font-size: 12px;
 }
 
+.post_stream_posts .has_more {
+  background-color: #eee;
+  padding: 10px;
+}
+
 .post_stream_post {
   padding-bottom: 5px;
 }

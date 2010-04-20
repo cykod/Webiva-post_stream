@@ -39,7 +39,7 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     @stream_page = (params[:stream_page] || 1).to_i
     if @stream_page > 1
-      @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter)
+      @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter, :limit => @options.posts_per_page)
       if @posts.empty?
         render_paragraph :inline => 'no_more'
       else
@@ -102,7 +102,7 @@ class PostStream::PageRenderer < ParagraphRenderer
       @has_more = false
       @posts = [@poster.post]
     else
-      @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter)
+      @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter, :limit => @options.posts_per_page)
     end
 
     render_paragraph :feature => :post_stream_page_stream

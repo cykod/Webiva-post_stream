@@ -13,9 +13,9 @@ class PostStream::PageController < ParagraphController
                                  }
 
   class StreamOptions < HashModel
-    attributes :folder_id => nil, :post_types_filter => [], :maxwidth => 340, :title_length => 40, :default_post_text => '', :default_comment_text => '', :post_on_facebook => true
+    attributes :folder_id => nil, :post_types_filter => [], :maxwidth => 340, :title_length => 40, :default_post_text => '', :default_comment_text => '', :post_on_facebook => true, :posts_per_page => 10
 
-    integer_options :maxwidth
+    integer_options :maxwidth, :posts_per_page
     boolean_options :post_on_facebook
 
     canonical_paragraph "PostStreamPost", :identifier, :list_page_id => nil
@@ -23,6 +23,7 @@ class PostStream::PageController < ParagraphController
     options_form(
                  fld(:post_types_filter, :ordered_array, :options => :post_types_options, :description => 'all posts are shown by default'),
                  fld(:folder_id, :filemanager_folder, :description => 'folder to use for file uploads'),
+                 fld(:posts_per_page, :text_field),
                  fld(:maxwidth, :text_field, :description => 'embed content max width', :label => 'Max width'),
                  fld(:title_length, :text_field, :description => 'embed content title width before truncating'),
                  fld(:post_on_facebook, :check_boxes, :single => true, :options => [['share posts on Facebook', true]]),
