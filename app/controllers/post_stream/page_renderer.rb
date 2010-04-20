@@ -3,6 +3,7 @@ class PostStream::PageRenderer < ParagraphRenderer
   features '/post_stream/page_feature'
 
   paragraph :stream, :ajax => true
+  paragraph :recent_posts
 
   def stream
     @options = paragraph_options(:stream)
@@ -108,4 +109,15 @@ class PostStream::PageRenderer < ParagraphRenderer
     render_paragraph :feature => :post_stream_page_stream
   end
 
+  def recent_posts
+    @options = paragraph_options(:recent_posts)
+
+    @page_connection_hash = nil
+    @poster = PostStreamPoster.new myself, nil, @options.to_h
+    @has_more = false
+    @stream_page = 1
+    @posts = PostStreamPost.with_types(@options.post_types_filter).find(:all, :limit => @options.posts_to_display, :order => 'posted_at DESC')
+    @poster.fetch_comments(@posts) if @options.show_comments
+    render_paragraph :feature => :post_stream_page_recent_posts
+  end
 end

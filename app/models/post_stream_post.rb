@@ -28,6 +28,8 @@ class PostStreamPost < DomainModel
 
   content_node
 
+  named_scope :with_types, lambda { |types| types.empty? ? {} : {:conditions => {:post_type => types}} }
+
   def identifier
     "#{self.id}-#{self.post_hash}"
   end

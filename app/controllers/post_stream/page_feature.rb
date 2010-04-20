@@ -107,7 +107,7 @@ class PostStream::PageFeature < ParagraphFeature
 
       c.submit_tag('form:submit', :default => 'Post')
 
-      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => site_node, :attributes => t.attr) }
+      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => site_node, :attributes => t.attr, :show_comments => true) }
     end
   end
 
@@ -118,6 +118,18 @@ class PostStream::PageFeature < ParagraphFeature
   def render_handler_form(handler, t, data, opts={})
     cms_unstyled_fields_for(handler.form_name, handler.options) do |f|
       handler.render_form(self.renderer, f, opts)
+    end
+  end
+
+  feature :post_stream_page_recent_posts,
+    :default_css_file => '/components/post_stream/stylesheets/stream.css',
+    :default_feature => <<-FEATURE
+  <cms:stream/>
+  FEATURE
+
+  def post_stream_page_recent_posts_feature(data)
+    webiva_feature(:post_stream_page_recent_posts,data) do |c|
+      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => site_node, :attributes => t.attr) }
     end
   end
 end
