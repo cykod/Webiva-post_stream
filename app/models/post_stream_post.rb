@@ -157,4 +157,9 @@ class PostStreamPost < DomainModel
   def handler_obj
     @handler_obj ||= self.handler_class.new(self) if self.handler_class
   end
+
+  def update_comments_count
+    self.post_stream_post_comments_count = self.post_stream_post_comments.count
+    self.save
+  end
 end

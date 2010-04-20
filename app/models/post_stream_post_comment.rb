@@ -26,4 +26,8 @@ class PostStreamPostComment < DomainModel
   def content_filter
     PostStream::AdminController.module_options.content_filter || 'comment'
   end
+
+  def after_create
+    self.post_stream_post.update_comments_count
+  end
 end
