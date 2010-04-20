@@ -37,6 +37,18 @@ class PostStream::PageRenderer < ParagraphRenderer
       PostStreamPoster.setup_header(self)
     end
 
+    @stream_page = (params[:stream_page] || 1).to_i
+    if @stream_page > 1
+      @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter)
+      if @posts.empty?
+        render_paragraph :inline => 'no_more'
+      else
+        render_paragraph :inline => render_to_string(:partial => '/post_stream/page/posts', :locals => {:posts => @posts, :renderer => self, :poster => @poster, :site_node => site_node, :has_more => @has_more, :stream_page => @stream_page})
+      end
+
+      return
+    end
+
     if @poster.can_post?
 
       unless editor?
@@ -90,7 +102,7 @@ class PostStream::PageRenderer < ParagraphRenderer
       @has_more = false
       @posts = [@poster.post]
     else
-      @has_more, @posts = @poster.fetch_posts(params[:stream_page], :post_types => @options.post_types_filter)
+      @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter)
     end
 
     css_style = render_to_string(:partial => '/post_stream/page/form_css')

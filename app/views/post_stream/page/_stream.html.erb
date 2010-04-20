@@ -161,10 +161,14 @@ PostStreamForm.defaultCommentText = '<%= jvh poster.options[:default_comment_tex
 
 <div class="post_stream_posts">
 <div id="post_stream_post_new"></div>
-<% posts.each do |post| -%>
-  <div class="post_stream_post">
-  <%= render :partial => '/post_stream/page/post', :locals => {:post => post, :renderer => renderer, :poster => poster, :site_node => site_node} %>
-  </div>
+<%= render :partial => '/post_stream/page/posts', :locals => {:posts => posts, :renderer => renderer, :poster => poster, :site_node => site_node, :has_more => has_more, :stream_page => stream_page} %>
+<div id="more_stream_posts">
+</div>
+<% if has_more -%>
+<div class="has_more">
+<a id="stream_post_has_more" onclick="PostStreamForm.has_more('<%= jvh renderer.ajax_url %>');" href="javascript:void(0);"><%= attributes['has_more'] || 'Previous Posts'.t %></a>
+<span id="stream_post_no_more" style="display:none;"><%= attributes['no_more'] || 'No more posts'.t %></span>
+</div>
 <% end -%>
 </div>
 

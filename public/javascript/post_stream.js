@@ -97,10 +97,26 @@ PostStreamForm = {
 
   hasComments: function(id) {
     return $$('#post_stream_comments_' + id + ' div.comment').length > 0
+  },
+
+  has_more: function(url) {
+    PostStream.nextPage++;
+
+    new Ajax.Request(url, {parameters: 'stream_page=' + PostStream.nextPage + '&page_connection_hash=' + PostStreamForm.pageConnectionHash,
+                           onSuccess: function(res) {
+                             if(res.responseText == 'no_more') {
+                               $('stream_post_has_more').hide();
+                               $('stream_post_no_more').show();
+                             } else {
+                               $('more_stream_posts').insert(res.responseText);
+                             }
+                           }
+                     });
   }
 }
 
 PostStream = {
+  nextPage: 1,
 
   embed: function(html, id) {
     // remove shared embeded content

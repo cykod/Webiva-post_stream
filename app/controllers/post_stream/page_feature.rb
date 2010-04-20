@@ -105,7 +105,7 @@ class PostStream::PageFeature < ParagraphFeature
 
       c.submit_tag('form:submit', :default => 'Post')
 
-      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => site_node, :page_connection_hash => data[:page_connection_hash]) }
+      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => site_node, :attributes => t.attr) }
     end
   end
 
