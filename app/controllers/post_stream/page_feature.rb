@@ -3,7 +3,9 @@ class PostStream::PageFeature < ParagraphFeature
 
   include StyledFormBuilderGenerator::FormFor
 
-  feature :post_stream_page_stream, :default_feature => <<-FEATURE
+  feature :post_stream_page_stream,
+    :default_css_file => '/components/post_stream/stylesheets/stream.css',
+    :default_feature => <<-FEATURE
   <div class="post_stream_form">
     <cms:form>
       <cms:no_name>

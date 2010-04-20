@@ -1,0 +1,234 @@
+.post_stream_posts {
+  font-size: 12px;
+}
+
+.post_stream_post {
+  padding-bottom: 5px;
+}
+
+.post_stream_post .post img {
+  display: block;
+  float: left;
+}
+
+.post_stream_post .comments {
+  clear: both;
+  padding-top: 5px;
+}
+
+.post_stream_post .post .title, .post_stream_post .post .body, .post_stream_post .comments, .post_stream_post .comment_form {
+  display: block;
+  padding-left: 70px;
+}
+
+.post_stream_post .post .title {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.post_stream_post .actions {
+  clear: both;
+}
+
+.post_stream_post .actions .posted_at {
+  display: block;
+  text-align: right;
+  font-size: 0.9em;
+  padding: 0 5px 2px 0;
+}
+
+.post_stream_post .actions .links {
+  display: block;
+  text-align: right;
+  padding-right: 5px;
+  font-size: 0.9em;
+}
+
+.post_stream_post .actions .links a {
+  text-decoration: none;
+}
+
+.post_stream_post .actions .links a:hover {
+  text-decoration: underline;
+}
+
+.post_stream_post .shared_content {
+  padding: 10px 0 10px 70px;
+  text-align: center;
+}
+
+.post_stream_post .shared_content .title {
+  padding-bottom: 5px;
+  text-align: left;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.post_stream_post .shared_content a {
+  outline: none;
+}
+
+.post_stream_post .shared_content .post_stream_embed, .post_stream_post .shared_content .post_stream_thumbnail, .post_stream_post .shared_content .post_stream_photo {
+  padding-bottom: 5px;
+}
+
+.post_stream_post .shared_content .provider_author {
+  text-align: left;
+  padding-top: 2px;
+  padding-right: 5px;
+  font-size: 0.8em;
+  border-top: 1px solid #000;
+}
+
+.post_stream_post .shared_content .provider_author .provider {
+  float: left;
+}
+
+.post_stream_post .shared_content .provider_author .author {
+  float: right;
+}
+
+.post_stream_post hr.separator {
+  clear: both;
+  border: none;
+}
+
+.post_stream_post .comment_form {
+  padding-right: 30px;
+}
+
+.post_stream_post .comment_form textarea {
+  width: 100%;
+}
+
+.post_stream_post .comment_form .submit {
+  text-align: right;
+}
+
+.post_stream_post .comment_form .inactive textarea {
+  height: 16px;
+}
+
+.post_stream_post .comment_form .active textarea {
+  height: 50px;
+}
+
+.post_stream_post .comment_form .inactive .submit, .post_stream_post .comment_form .inactive .name {
+  display: none;
+}
+
+.post_stream_post .comment_form .active .submit, .post_stream_post .comment_form .active .name {
+  display: block;
+}
+
+.post_stream_post .comment img {
+  display: block;
+  float: left;
+  padding-right: 10px;
+  width: 25px;
+}
+
+.post_stream_post .comment .content {
+  display: block;
+}
+
+.post_stream_post .comment .name {
+  font-weight: bold;
+}
+
+.post_stream_post .comment .posted_at {
+  display: block;
+  font-size: 0.9em;
+  padding: 0 5px 2px 0;
+}
+
+.post_stream_post a.fb_share_button {
+  background-image: url('http://static.ak.fbcdn.net/images/connect_favicon.png');
+  background-repeat: no-repeat;
+  text-align: right;
+  height: 14px;
+  text-decoration: none;
+  padding-left: 18px;
+}
+
+.post_stream_form {
+  font-size: 12px;
+  padding: 0 10px 10px 0;
+}
+
+.post_stream_form textarea {
+  width: 100%;
+}
+
+.post_stream_form .active textarea {
+  height: 80px;
+}
+
+.post_stream_form .inactive textarea {
+  height: 20px;
+}
+
+.post_stream_form hr.seperator {
+  clear: both;
+  border: 0;
+  padding-bottom: 15px;
+}
+
+.post_stream_share ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.post_stream_share li {
+  padding: 0;
+  margin: 0;
+  float: left;
+}
+
+.post_stream_share li.button {
+  padding-left: 5px;
+}
+
+.post_stream_share {
+  width: 300px;
+  float: left;
+}
+
+.post_stream_share_with {
+  width: 200px;
+  float: left;
+  font-size: 0.9em;
+}
+
+.post_stream_submit {
+  width: 50px;
+  float: right;
+  text-align: right;
+}
+
+.post_stream_handler_form {
+  padding: 5px 0 5px 0;
+}
+
+.post_stream_handler_form .close_button {
+  display: block;
+  float: right;
+}
+
+.post_stream_handler_form .handler_form {
+  clear: both;
+}
+
+.post_stream_form .fieldWithErrors input, .post_stream_form .fieldWithErrors textarea {
+  border: 1px solid red;
+}
+
+.post_stream_form .active .controls, .post_stream_form .active .name {
+  display: block;
+}
+
+.post_stream_form .inactive .controls, .post_stream_form .inactive .name {
+  display: none;
+}
+

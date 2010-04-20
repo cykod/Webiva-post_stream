@@ -105,9 +105,7 @@ class PostStream::PageRenderer < ParagraphRenderer
       @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter)
     end
 
-    css_style = render_to_string(:partial => '/post_stream/page/form_css')
-    output = post_stream_page_stream_feature
-    render_paragraph :text => css_style + output
+    render_paragraph :feature => :post_stream_page_stream
   end
 
 end
