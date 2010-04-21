@@ -16,7 +16,7 @@ author = options.data['author_name']
 author_tag = ''
 if author
   author_link = options.data['author_url'] ? content_tag(:a, author, {:href => options.data['author_url'], :rel => 'nofollow', :target => '_blank'}) : author
-  author_tag = content_tag(:span, 'by %s ' / author_link, {:class => 'author'}, false)
+  author_tag = content_tag(:span, 'by %s' / author_link, {:class => 'author'}, false)
 end
 
 %>

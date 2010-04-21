@@ -38,13 +38,11 @@ class PostStream::PageRenderer < ParagraphRenderer
       end
     end
 
-    unless ajax?
-      require_js('prototype')
-      require_js('effects')
-      require_js('/components/post_stream/javascript/post_stream.js')
+    require_js('prototype')
+    require_js('effects')
+    require_js('/components/post_stream/javascript/post_stream.js')
 
-      PostStreamPoster.setup_header(self)
-    end
+    PostStreamPoster.setup_header(self)
 
     @stream_page = (params[:stream_page] || 1).to_i
     if @stream_page > 1
