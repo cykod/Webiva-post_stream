@@ -19,19 +19,24 @@ class PostStream::Share::Link < PostStream::Share::Base
   end
 
   def valid?
-    super
+    is_valid = super
 
     if self.handler_obj && ! self.handler_obj.valid?
       self.options.errors.add(:link, 'is invalid')
       self.post.errors.add_to_base(self.handler_obj.error_message) if self.handler_obj.error_message
+      return false
     elsif self.options.errors[:link]
       error = self.options.errors[:link]
       error = error[0] if error.is_a?(Array)
       self.post.errors.add_to_base('Link ' + error)
+      return false
     elsif self.options.errors[:handler]
       self.options.errors.add(:link, 'is not supported.')
       self.post.errors.add_to_base('Link ' + self.options.errors[:link])
+      return false
     end
+
+    is_valid
   end
 
   def render_form_elements(renderer, form, opts={})
