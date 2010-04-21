@@ -16,6 +16,10 @@ class PostStreamPoster
     self.post_permission || self.admin_permission
   end
 
+  def fetch_first_post
+    @post = PostStreamPost.find :first
+  end
+
   def setup_post(attributes, opts={})
     attributes ||= {:body => self.options[:default_post_text]}
     self.submitted = false
@@ -35,11 +39,15 @@ class PostStreamPoster
 
   def fetch_post(identifier)
     return true if identifier.nil?
-    @post = PostStreamPost.find_by_identifier(identifier)
+    fetch_post_by_identifier(identifier)
     return false if @post.nil?
     return false unless self.valid_post_and_target
     @post
     @comment = @post.post_stream_post_comments.new
+  end
+
+  def fetch_post_by_identifier(identifier)
+    @post = PostStreamPost.find_by_identifier(identifier)
   end
 
   def valid_post_and_target

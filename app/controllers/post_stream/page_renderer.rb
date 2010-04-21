@@ -4,6 +4,7 @@ class PostStream::PageRenderer < ParagraphRenderer
 
   paragraph :stream, :ajax => true
   paragraph :recent_posts
+  paragraph :post
 
   def stream
     @options = paragraph_options(:stream)
@@ -25,26 +26,6 @@ class PostStream::PageRenderer < ParagraphRenderer
     conn_type, conn_id = page_connection(:admin_permission)
     @poster.admin_permission = true if conn_id
 
-    conn_type, post_identifier = page_connection(:post_identifier)
-    post_identifier = nil if self.file_upload?
-
-    raise SiteNodeEngine::MissingPageException.new( site_node, language ) unless @poster.fetch_post(post_identifier)
-    @show_post_form = @poster.post.nil? ? true : false
-
-    if @poster.post
-      self.html_include(:head_html, "<meta name='title' content='#{vh truncate(@poster.post.body, :length => 60)}' />")
-
-      if @poster.post.preview_image_url
-        self.html_include(:head_html, "<link rel='image_src' href='#{vh @poster.post.preview_image_url}' />")
-      end
-    end
-
-    require_js('prototype')
-    require_js('effects')
-    require_js('/components/post_stream/javascript/post_stream.js')
-
-    PostStreamPoster.setup_header(self)
-
     @stream_page = (params[:stream_page] || 1).to_i
     if @stream_page > 1
       @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter, :limit => @options.posts_per_page)
@@ -56,6 +37,12 @@ class PostStream::PageRenderer < ParagraphRenderer
 
       return
     end
+
+    require_js('prototype')
+    require_js('effects')
+    require_js('/components/post_stream/javascript/post_stream.js')
+
+    PostStreamPoster.setup_header(self)
 
     if @poster.can_post?
 
@@ -106,12 +93,7 @@ class PostStream::PageRenderer < ParagraphRenderer
       end
     end
 
-    if @poster.post && @poster.post.id
-      @has_more = false
-      @posts = [@poster.post]
-    else
-      @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter, :limit => @options.posts_per_page)
-    end
+    @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter, :limit => @options.posts_per_page)
 
     if self.file_upload?
       return render_paragraph :inline => ''
@@ -138,9 +120,52 @@ class PostStream::PageRenderer < ParagraphRenderer
       end
     end
 
+    require_js('prototype')
+    require_js('effects')
+    require_js('/components/post_stream/javascript/post_stream.js')
+    PostStreamPoster.setup_header(self)
+
     require_css('/components/post_stream/stylesheets/stream.css') unless paragraph.render_css
     render_paragraph :text => results.output
   end
+
+  def post
+    @options = paragraph_options(:post)
+
+    @page_connection_hash = nil
+    @poster = PostStreamPoster.new myself, nil, @options.to_h
+
+    if editor?
+      @poster.fetch_first_post
+    else
+      conn_type, post_identifier = page_connection(:post_identifier)
+      raise SiteNodeEngine::MissingPageException.new( site_node, language ) unless post_identifier
+      raise SiteNodeEngine::MissingPageException.new( site_node, language ) unless @poster.fetch_post_by_identifier(post_identifier)
+    end
+
+    @has_more = false
+    @stream_page = 1
+    @posts = []
+    @posts << @poster.post if @poster.post
+    @poster.fetch_comments(@posts)
+
+    require_js('prototype')
+    require_js('effects')
+    require_js('/components/post_stream/javascript/post_stream.js')
+    PostStreamPoster.setup_header(self)
+
+    if @poster.post
+      self.html_include(:head_html, "<meta name='title' content='#{vh truncate(@poster.post.body, :length => 60)}' />")
+
+      if @poster.post.preview_image_url
+        self.html_include(:head_html, "<link rel='image_src' href='#{vh @poster.post.preview_image_url}' />")
+      end
+    end
+
+    render_paragraph :feature => :post_stream_page_post
+  end
+
+  protected
 
   def file_upload?
     params[:upload]

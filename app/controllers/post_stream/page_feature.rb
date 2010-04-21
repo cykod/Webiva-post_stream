@@ -39,7 +39,7 @@ class PostStream::PageFeature < ParagraphFeature
   def post_stream_page_stream_feature(data)
     webiva_feature(:post_stream_page_stream,data) do |c|
       formClass = data[:poster].was_submitted? ? 'active' : 'inactive'
-      c.form_for_tag('form','stream_post', :html => {:multipart => true, :id => 'stream_post_form', :class => formClass, :onsubmit => "PostStreamForm.onsubmit('#{self.ajax_url}', 'stream_post_form'); return false;"}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? && data[:show_post_form] }
+      c.form_for_tag('form','stream_post', :html => {:multipart => true, :id => 'stream_post_form', :class => formClass, :onsubmit => "PostStreamForm.onsubmit('#{self.ajax_url}', 'stream_post_form'); return false;"}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? }
 
       c.value_tag('form:errors') do |t|
         errors = []
@@ -122,7 +122,7 @@ class PostStream::PageFeature < ParagraphFeature
 
       c.submit_tag('form:submit', :default => 'Post')
 
-      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => site_node, :attributes => t.attr, :show_comments => true) }
+      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => data[:options].post_page_node, :attributes => t.attr, :show_comments => true) }
     end
   end
 
@@ -175,6 +175,18 @@ class PostStream::PageFeature < ParagraphFeature
       c.date_tag('post:posted_at',DEFAULT_DATETIME_FORMAT.t) { |t| t.locals.post.posted_at }
       c.value_tag('post:posted_ago') { |t| time_ago_in_words(t.locals.post.posted_at) }
       c.value_tag('post:embeded') { |t| t.locals.post.handler_obj.render(self.renderer, data[:poster].options) if t.locals.post.handler_obj }
+    end
+  end
+
+  feature :post_stream_page_post,
+    :default_css_file => '/components/post_stream/stylesheets/stream.css',
+    :default_feature => <<-FEATURE
+  <cms:stream/>
+  FEATURE
+
+  def post_stream_page_post_feature(data)
+    webiva_feature(:post_stream_page_post,data) do |c|
+      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => site_node, :attributes => t.attr, :show_comments => true) }
     end
   end
 end
