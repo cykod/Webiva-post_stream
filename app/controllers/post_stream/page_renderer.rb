@@ -143,6 +143,6 @@ class PostStream::PageRenderer < ParagraphRenderer
   end
 
   def file_upload?
-    params[:path] && params[:path].length > 1 && params[:path][-1] == 'upload'
+    params[:upload]
   end
 end

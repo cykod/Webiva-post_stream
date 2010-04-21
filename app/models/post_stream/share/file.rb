@@ -26,7 +26,8 @@ class PostStream::Share::File < PostStream::Share::Base
   end
 
   def render_form_elements(renderer, form, opts={})
-    form.upload_image :file
+    output = form.hidden_field(:file_id)
+    output += form.inline_file_upload(:file, :url => renderer.ajax_url, :params => {:page_connection_hash => renderer.page_connection_hash})
   end
 
   def process_request(renderer, params, opts={})
