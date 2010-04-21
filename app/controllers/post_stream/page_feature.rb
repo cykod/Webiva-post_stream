@@ -9,7 +9,7 @@ class PostStream::PageFeature < ParagraphFeature
     :default_feature => <<-FEATURE
   <div class="post_stream_form">
     <cms:form>
-      <cms:errors><div class="errors"><cms:value/></cms:errors>
+      <cms:errors prefix="* "><div class="errors"><cms:value/></div></cms:errors>
       <cms:no_name>
         <cms:name/>
       </cms:no_name>
@@ -48,7 +48,10 @@ class PostStream::PageFeature < ParagraphFeature
 
         errors << "Body #{t.locals.stream_post.errors[:body]}" if t.locals.stream_post.errors[:body]
 
-        errors.empty? ? nil : errors.join('<br/>')
+        prefix = t.attr['prefix'] || ''
+        postfix = t.attr['postfix'] || ''
+        spacer = t.attr['spacer'] || '<br/>'
+        errors.empty? ? nil : prefix + errors.join("#{postfix}#{spacer}#{prefix}") + postfix
       end
 
       c.expansion_tag('form:no_name') { |t| myself.missing_name? }
