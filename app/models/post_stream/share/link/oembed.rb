@@ -15,7 +15,7 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
     }
   end
 
-  def process_request(params, opts={})
+  def process_request(renderer, params, opts={})
     maxwidth = opts[:maxwidth] || '340'
     maxheight = opts[:maxheight] ? opts[:maxheight].to_s : nil
     OEmbed.transform(self.link, false, {'maxwidth' => maxwidth.to_s, 'maxheight' => maxheight}.delete_if{|k,v| v.blank?}) do |r, url|

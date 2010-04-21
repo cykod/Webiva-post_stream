@@ -274,11 +274,11 @@ describe PostStreamPoster do
           params = {:body => 'My first post'}
           @poster.setup_post params
           @poster.post.handler = PostStream::Share::Link.to_s.underscore
-          @poster.process_request(:stream_post => params, :stream_post_link => {:link => 'http://test.dev/1'})
+          @poster.process_request(nil, :stream_post => params, :stream_post_link => {:link => 'http://test.dev/1'})
           @poster.save
           @poster.setup_post params
           @poster.post.handler = PostStream::Share::Link.to_s.underscore
-          @poster.process_request(:stream_post => params, :stream_post_link => {:link => 'http://test.dev/2'})
+          @poster.process_request(nil, :stream_post => params, :stream_post_link => {:link => 'http://test.dev/2'})
           @poster.save
         end
       end

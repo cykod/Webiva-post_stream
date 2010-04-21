@@ -43,11 +43,11 @@ class PostStream::Share::Link < PostStream::Share::Base
     form.text_field :link
   end
 
-  def process_request(params, opts={})
+  def process_request(renderer, params, opts={})
     self.post.link = self.options.link
 
     self.handlers.find do |handler|
-      if handler.process_request(params, opts)
+      if handler.process_request(renderer, params, opts)
         @handler_class = handler.class.to_s.underscore
         @handler_obj = handler
         self.options.handler = @handler_class
