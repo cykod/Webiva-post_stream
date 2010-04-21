@@ -26,6 +26,7 @@ class PostStream::PageRenderer < ParagraphRenderer
     @poster.admin_permission = true if conn_id
 
     conn_type, post_identifier = page_connection(:post_identifier)
+    post_identifier = nil if self.file_upload?
 
     raise SiteNodeEngine::MissingPageException.new( site_node, language ) unless @poster.fetch_post(post_identifier)
     @show_post_form = @poster.post.nil? ? true : false
@@ -38,13 +39,11 @@ class PostStream::PageRenderer < ParagraphRenderer
       end
     end
 
-    unless ajax?
-      require_js('prototype')
-      require_js('effects')
-      require_js('/components/post_stream/javascript/post_stream.js')
+    require_js('prototype')
+    require_js('effects')
+    require_js('/components/post_stream/javascript/post_stream.js')
 
-      PostStreamPoster.setup_header(self)
-    end
+    PostStreamPoster.setup_header(self)
 
     @stream_page = (params[:stream_page] || 1).to_i
     if @stream_page > 1
@@ -64,7 +63,7 @@ class PostStream::PageRenderer < ParagraphRenderer
         handle_file_upload(params[:stream_post], 'domain_file_id', {:folder => @options.folder_id}) if request.post? && params[:stream_post]
 
         @poster.setup_post(params[:stream_post]) unless @poster.post
-        @poster.process_request(params)
+        @poster.process_request(self, params)
 
         if request.post?
           if ajax?
@@ -114,6 +113,10 @@ class PostStream::PageRenderer < ParagraphRenderer
       @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter, :limit => @options.posts_per_page)
     end
 
+    if self.file_upload?
+      return render_paragraph :inline => ''
+    end
+
     render_paragraph :feature => :post_stream_page_stream
   end
 
@@ -137,5 +140,9 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     require_css('/components/post_stream/stylesheets/stream.css') unless paragraph.render_css
     render_paragraph :text => results.output
+  end
+
+  def file_upload?
+    params[:path] && params[:path].length > 1 && params[:path][-1] == 'upload'
   end
 end

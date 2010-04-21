@@ -9,6 +9,7 @@ class PostStream::PageFeature < ParagraphFeature
     :default_feature => <<-FEATURE
   <div class="post_stream_form">
     <cms:form>
+      <cms:errors prefix="* "><div class="errors"><cms:value/></div></cms:errors>
       <cms:no_name>
         <cms:name/>
       </cms:no_name>
@@ -39,6 +40,19 @@ class PostStream::PageFeature < ParagraphFeature
     webiva_feature(:post_stream_page_stream,data) do |c|
       formClass = data[:poster].was_submitted? ? 'active' : 'inactive'
       c.form_for_tag('form','stream_post', :html => {:multipart => true, :id => 'stream_post_form', :class => formClass, :onsubmit => "PostStreamForm.onsubmit('#{self.ajax_url}', 'stream_post_form'); return false;"}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? && data[:show_post_form] }
+
+      c.value_tag('form:errors') do |t|
+        errors = []
+        
+        errors << t.locals.stream_post.errors[:base] if t.locals.stream_post.errors[:base]
+
+        errors << "Body #{t.locals.stream_post.errors[:body]}" if t.locals.stream_post.errors[:body]
+
+        prefix = t.attr['prefix'] || ''
+        postfix = t.attr['postfix'] || ''
+        spacer = t.attr['spacer'] || '<br/>'
+        errors.empty? ? nil : prefix + errors.join("#{postfix}#{spacer}#{prefix}") + postfix
+      end
 
       c.expansion_tag('form:no_name') { |t| myself.missing_name? }
       c.define_tag('form:name') do |t|

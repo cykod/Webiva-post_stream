@@ -255,3 +255,7 @@
   display: none;
 }
 
+.post_stream_form .errors {
+  padding: 10px;
+  color: red;
+}

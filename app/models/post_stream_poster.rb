@@ -149,7 +149,7 @@ class PostStreamPoster
     self.handlers.find { |handler| handler.type == type }
   end
 
-  def process_request(params)
+  def process_request(renderer, params)
     return self.process_comment_request(params) if params[:stream_post_comment]
     return unless params[:stream_post]
     return unless self.post.handler_obj
@@ -162,7 +162,7 @@ class PostStreamPoster
     end
 
     self.post.handler_obj.options(opts)
-    self.post.handler_obj.process_request(params, options)
+    self.post.handler_obj.process_request(renderer, params, options)
   end
 
   def process_comment_request(params)
