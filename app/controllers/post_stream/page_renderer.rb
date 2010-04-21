@@ -12,7 +12,7 @@ class PostStream::PageRenderer < ParagraphRenderer
     target = nil
     conn_type, conn_id = page_connection(:target)
     if conn_id
-      target = conn_type == :target ? conn_id : conn_type.constantize.find_by_id(conn_id)
+      target = conn_type == :target ? conn_id : conn_id[0].constantize.find_by_id(conn_id[1])
     end
 
     return render_paragraph :text => 'Please setup page connections' unless target
