@@ -18,6 +18,22 @@ class PostStream::Share::Link < PostStream::Share::Base
     [:link]
   end
 
+  def valid?
+    super
+
+    if self.handler_obj && ! self.handler_obj.valid?
+      self.options.errors.add(:link, 'is invalid')
+      self.post.errors.add_to_base(self.handler_obj.error_message) if self.handler_obj.error_message
+    elsif self.options.errors[:link]
+      error = self.options.errors[:link]
+      error = error[0] if error.is_a?(Array)
+      self.post.errors.add_to_base('Link ' + error)
+    elsif self.options.errors[:handler]
+      self.options.errors.add(:link, 'is not supported.')
+      self.post.errors.add_to_base('Link ' + self.options.errors[:link])
+    end
+  end
+
   def render_form_elements(renderer, form, opts={})
     form.text_field :link
   end
@@ -27,7 +43,9 @@ class PostStream::Share::Link < PostStream::Share::Base
 
     self.handlers.find do |handler|
       if handler.process_request(params, opts)
-        self.options.handler = handler.class.to_s.underscore
+        @handler_class = handler.class.to_s.underscore
+        @handler_obj = handler
+        self.options.handler = @handler_class
         self.options.data = handler.data
         true
       else
@@ -84,12 +102,14 @@ class PostStream::Share::Link < PostStream::Share::Base
 
     def validate
       if self.handler_required
-        self.errors.add(:link, 'is required') unless self.handler
+        self.errors.add(:handler, 'is required') unless self.handler
       end
     end
   end
 
   class Base
+    attr_accessor :error_message
+
     def initialize(post)
       @post = post
     end
@@ -119,7 +139,7 @@ class PostStream::Share::Link < PostStream::Share::Base
     end
 
     def valid?
-      self.options.valid?
+      self.options.valid? && self.error_message.nil?
     end
   end
 end
