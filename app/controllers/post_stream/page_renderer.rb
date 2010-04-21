@@ -15,7 +15,11 @@ class PostStream::PageRenderer < ParagraphRenderer
       target = conn_type == :target ? conn_id : conn_id[0].constantize.find_by_id(conn_id[1])
     end
 
-    return render_paragraph :text => 'Please setup page connections' unless target
+    if conn_type && !conn_id
+      return render_paragraph :nothing => true
+    else
+      return render_paragraph :text => 'Please setup page connections' unless target
+    end
 
     @poster = PostStreamPoster.new myself, target, @options.to_h
 
