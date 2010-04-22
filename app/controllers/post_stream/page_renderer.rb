@@ -18,6 +18,8 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     if conn_type && !conn_id
       return render_paragraph :nothing => true
+    elsif editor?
+      target = myself
     else
       return render_paragraph :text => 'Please setup page connections' unless target
     end
@@ -25,10 +27,10 @@ class PostStream::PageRenderer < ParagraphRenderer
     @poster = PostStreamPoster.new myself, target, @options.to_h
 
     conn_type, conn_id = page_connection(:post_permission)
-    @poster.post_permission = true if conn_id
+    @poster.post_permission = true if conn_id || editor?
 
     conn_type, conn_id = page_connection(:admin_permission)
-    @poster.admin_permission = true if conn_id
+    @poster.admin_permission = true if conn_id || editor?
 
     @stream_page = (params[:stream_page] || 1).to_i
     if @stream_page > 1
