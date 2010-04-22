@@ -144,5 +144,13 @@ PostStream = {
 
     var sharer_url = "http://www.facebook.com/sharer.php?s=100&p[url]=" + escape(url) + "&p[title]=" + escape(title) + "&p[summary]=" + escape(summary);
     window.open(sharer_url, 'sharer', 'toolbar=0,status=0,width=626,height=436');
+  },
+
+  deletePost: function(url, id) {
+    parameters = 'delete=1&post_stream_post_id=' + id + '&page_connection_hash=' + PostStreamForm.pageConnectionHash;
+
+    new Ajax.Request(url, {parameters: parameters,
+                           onSuccess: function(res) { eval(res.responseText); }
+                     });    
   }
 }

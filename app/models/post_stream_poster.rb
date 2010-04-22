@@ -158,6 +158,7 @@ class PostStreamPoster
   end
 
   def process_request(renderer, params)
+    return self.process_delete_post_request(params) if params[:delete]
     return self.process_comment_request(params) if params[:stream_post_comment]
     return unless params[:stream_post]
     return unless self.post.handler_obj
@@ -187,5 +188,18 @@ class PostStreamPoster
     @comment = @post.post_stream_post_comments.build params[:stream_post_comment].slice(:body, :name)
     @comment.end_user_id = self.end_user.id if self.end_user
     @comment
+  end
+
+  def process_delete_post_request(params)
+    @post = PostStreamPost.find_by_id(params[:post_stream_post_id])
+  end
+
+  def delete_post
+    if @post.end_user_id == self.end_user.id
+      @post.destroy
+      return true
+    end
+
+    false
   end
 end

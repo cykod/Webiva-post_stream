@@ -60,6 +60,11 @@ class PostStream::PageRenderer < ParagraphRenderer
 
         if request.post?
           if ajax?
+            if params[:delete]
+              @deleted = @poster.delete_post
+              return render_paragraph :rjs => '/post_stream/page/delete', :locals => {:deleted => @deleted, :post => @poster.post, :renderer => self, :poster => @poster}
+            end
+
             @saved = @poster.save
 
             myself.reload if @saved && myself.id && myself.missing_name?
@@ -91,7 +96,10 @@ class PostStream::PageRenderer < ParagraphRenderer
             render_paragraph :rjs => '/post_stream/page/update', :locals => {:saved => @saved, :form_output => form_output, :new_post_output => new_post_output, :post => @poster.post, :renderer => self, :poster => @poster, :new_post => new_post}
             return
           else
-            if @poster.save
+            if params[:delete]
+              @poster.delete_post
+              return redirect_paragraph :page
+            elsif @poster.save
               return redirect_paragraph :page
             end
           end

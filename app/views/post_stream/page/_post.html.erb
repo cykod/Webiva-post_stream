@@ -1,4 +1,10 @@
 <div class="post">
+<% if post.end_user_id == poster.end_user.id -%>
+<div class="delete">
+<a onclick="PostStream.deletePost('<%= jvh renderer.ajax_url %>', <%= post.id %>);" href="javascript:void(0);">Delete</a>
+</div>
+<% end -%>
+
   <% if post.image %>
     <% if post.posted_by_shared_content_node -%>
       <%= content_tag(:a, post.image.image_tag(:thumb), {:href => post.posted_by_shared_content_node.link}, false) %>
