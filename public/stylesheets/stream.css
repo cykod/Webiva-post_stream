@@ -110,19 +110,19 @@
   text-align: right;
 }
 
-.post_stream_post .comment_form .inactive textarea {
+.post_stream_post .comment_form .post_stream_inactive textarea {
   height: 16px;
 }
 
-.post_stream_post .comment_form .active textarea {
+.post_stream_post .comment_form .post_stream_active textarea {
   height: 50px;
 }
 
-.post_stream_post .comment_form .inactive .submit, .post_stream_post .comment_form .inactive .name {
+.post_stream_post .comment_form .post_stream_inactive .submit, .post_stream_post .comment_form .post_stream_inactive .name {
   display: none;
 }
 
-.post_stream_post .comment_form .active .submit, .post_stream_post .comment_form .active .name {
+.post_stream_post .comment_form .post_stream_active .submit, .post_stream_post .comment_form .post_stream_active .name {
   display: block;
 }
 
@@ -181,12 +181,12 @@
   padding-left: 5px;
 }
 
-.post_stream_form .active textarea {
+.post_stream_form .post_stream_active textarea {
   height: 80px;
   padding: 1px;
 }
 
-.post_stream_form .inactive textarea {
+.post_stream_form .post_stream_inactive textarea {
   height: 16px;
   padding: 4px;
 }
@@ -247,11 +247,11 @@
   border: 1px solid red;
 }
 
-.post_stream_form .active .controls, .post_stream_form .active .name {
+.post_stream_form .post_stream_active .controls, .post_stream_form .post_stream_active .name {
   display: block;
 }
 
-.post_stream_form .inactive .controls, .post_stream_form .inactive .name {
+.post_stream_form .post_stream_inactive .controls, .post_stream_form .post_stream_inactive .name {
   display: none;
 }
 

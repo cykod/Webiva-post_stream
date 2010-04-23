@@ -38,7 +38,7 @@ class PostStream::PageFeature < ParagraphFeature
 
   def post_stream_page_stream_feature(data)
     webiva_feature(:post_stream_page_stream,data) do |c|
-      formClass = data[:poster].was_submitted? ? 'active' : 'inactive'
+      formClass = data[:poster].was_submitted? ? 'post_stream_active' : 'post_stream_inactive'
       c.form_for_tag('form','stream_post', :html => {:multipart => true, :id => 'stream_post_form', :class => formClass, :onsubmit => "PostStreamForm.onsubmit('#{self.ajax_url}', 'stream_post_form'); return false;"}) { |t| t.locals.stream_post = data[:poster].post if data[:poster].can_post? }
 
       c.value_tag('form:errors') do |t|

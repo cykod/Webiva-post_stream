@@ -25,7 +25,7 @@ PostStreamForm = {
   bodyOnFocus: function() {
     PostStreamForm.deactivateComments();
     bodyEle = $('stream_post_body');
-    $('stream_post_form').className = 'active';
+    $('stream_post_form').className = 'post_stream_active';
     if( bodyEle.value == PostStreamForm.defaultPostText ) {
       bodyEle.value = '';
     }
@@ -37,7 +37,7 @@ PostStreamForm = {
       return;
 
     if( (bodyEle.value == PostStreamForm.defaultPostText || bodyEle.value == '') && PostStreamForm.currentHandler == null ) {
-      $('stream_post_form').className = 'inactive';
+      $('stream_post_form').className = 'post_stream_inactive';
       bodyEle.value = PostStreamForm.defaultPostText;
     }
   },
@@ -52,8 +52,8 @@ PostStreamForm = {
   },
 
   toggleComment: function(id) {
-    if( PostStreamForm.hasComments(id) || ($('post_stream_comment_' + id).visible() && $('post_stream_comment_form_' + id).hasClassName('inactive'))) {
-      if( $('post_stream_comment_form_' + id).hasClassName('active') ) {
+    if( PostStreamForm.hasComments(id) || ($('post_stream_comment_' + id).visible() && $('post_stream_comment_form_' + id).hasClassName('post_stream_inactive'))) {
+      if( $('post_stream_comment_form_' + id).hasClassName('post_stream_active') ) {
         PostStreamForm.deactivateComments();
       } else {
         PostStreamForm.activateComment(id);
@@ -82,7 +82,7 @@ PostStreamForm = {
   activateComment: function(id) {
     PostStreamForm.deactivateComments();
     PostStreamForm.bodyOnBlur();
-    $('post_stream_comment_form_' + id).className = 'post_stream_comment_form active';
+    $('post_stream_comment_form_' + id).className = 'post_stream_comment_form post_stream_active';
     if( $('stream_post_comment_body_' + id).value == PostStreamForm.defaultCommentText )
       $('stream_post_comment_body_' + id).value = '';
   },
@@ -92,7 +92,7 @@ PostStreamForm = {
   },
 
   deactivateComments: function() {
-    $$('.post_stream_comment_form').each(function(e) { e.className = 'post_stream_comment_form inactive'; });
+    $$('.post_stream_comment_form').each(function(e) { e.className = 'post_stream_comment_form post_stream_inactive'; });
   },
 
   hasComments: function(id) {

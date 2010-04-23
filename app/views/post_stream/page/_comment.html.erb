@@ -1,4 +1,4 @@
-<%= "<img src='#{comment.end_user.image.url}'/>" if comment.end_user.image %>
+<%= "<img src='#{comment.end_user.image.url(:icon)}'/>" if comment.end_user.image %>
 <span class="content">
 <span class="name"><%= comment.end_user.name %></span>
 <span class="body"><%= comment.body_html %></span>

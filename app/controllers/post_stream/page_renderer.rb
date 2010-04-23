@@ -32,6 +32,11 @@ class PostStream::PageRenderer < ParagraphRenderer
     conn_type, conn_id = page_connection(:admin_permission)
     @poster.admin_permission = true if conn_id || editor?
 
+    conn_type, conn_id = page_connection(:content_list)
+    if conn_id 
+      @poster.view_targets = conn_id
+    end
+
     @stream_page = (params[:stream_page] || 1).to_i
     if @stream_page > 1
       @has_more, @posts = @poster.fetch_posts(@stream_page, :post_types => @options.post_types_filter, :limit => @options.posts_per_page)
