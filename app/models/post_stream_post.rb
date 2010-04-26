@@ -157,6 +157,25 @@ class PostStreamPost < DomainModel
     [has_more, posts]
   end
 
+  def self.find_for_target(target, page=1, opts={})
+    page = (page || 1).to_i
+    limit = opts.delete(:limit) || 10
+    offset = (page-1) * limit
+
+    post_types = opts.delete(:post_types)
+    if post_types && ! post_types.empty?
+      scope = PostStreamPost.with_types(post_types)
+    else
+      scope = PostStreamPost
+    end
+
+    posts = PostStreamPost.find(:all, :conditions => {:posted_by_id => target.id, :posted_by_type => target.class.to_s}, :limit => limit + 1, :offset => offset, :order => 'posted_at DESC')
+    has_more = posts.length > limit
+    posts.pop if has_more
+
+    [has_more, posts]
+  end
+
   def handler_class
     @handler_class ||= self.handler.classify.constantize if self.handler
   end

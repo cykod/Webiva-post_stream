@@ -145,10 +145,15 @@ class PostStreamPoster
 
   # returns has_more and posts
   def fetch_posts(page=1, opts={})
-    stream_targets = self.fetch_targets
-    return [false, []] if stream_targets.empty?
+    if self.options[:only_display_target_posts]
+      @has_more, @posts = PostStreamPost.find_for_target(self.target, page, opts)
+    else
+      stream_targets = self.fetch_targets
+      return [false, []] if stream_targets.empty?
 
-    @has_more, @posts = PostStreamPost.find_for_targets(stream_targets, page, opts)
+      @has_more, @posts = PostStreamPost.find_for_targets(stream_targets, page, opts)
+    end
+
     self.fetch_comments(@posts)
     self.fetch_images(@posts)
     [@has_more, @posts]
