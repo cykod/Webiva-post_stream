@@ -85,10 +85,6 @@ class PostStreamPoster
     @comment
   end
 
-  def valid?
-    @post.valid?
-  end
-
   def valid_handler(identifier)
     return false if identifier.blank?
     info = get_handler_info(:post_stream, :share, identifier)
