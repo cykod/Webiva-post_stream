@@ -42,7 +42,7 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     @poster.setup(params)
 
-    if request.post? && ! editor?
+    if request.post? && ! editor? && params[:stream_page].nil?
       @poster.process_request(params)
 
       myself.reload if myself.id && myself.missing_name?
