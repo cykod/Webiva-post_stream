@@ -30,4 +30,8 @@ class PostStreamPostComment < DomainModel
   def after_create
     self.post_stream_post.update_comments_count
   end
+
+  def post_stream_post_identifier
+    self.post_stream_post.identifier
+  end
 end

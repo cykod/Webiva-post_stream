@@ -1,7 +1,7 @@
 require 'digest/sha1'
 
 class PostStreamPoster
-  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_targets, :shared_content_node, :view_targets, :active_handlers, :options, :submitted
+  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_targets, :shared_content_node, :view_targets, :active_handlers, :options, :renderer, :page_connection_hash, :post_page_node, :request_type
 
   include HandlerActions
 
@@ -20,9 +20,8 @@ class PostStreamPoster
     @post = PostStreamPost.find :first
   end
 
-  def setup_post(attributes, opts={})
-    attributes ||= {:body => self.options[:default_post_text]}
-    self.submitted = false
+  def setup(params={}, opts={})
+    attributes = params[:stream_post] ? params[:stream_post] : {:body => self.options[:default_post_text]}
     @post = PostStreamPost.new attributes.slice(:body, :name, :domain_file_id, :post_on_facebook, :additional_target).merge(opts)
     @post.end_user_id = self.end_user.id if self.end_user
     @post.posted_by = self.target if self.admin_permission
@@ -32,6 +31,12 @@ class PostStreamPoster
   end
 
   def self.setup_header(renderer)
+    unless renderer.ajax?
+      renderer.require_js('prototype')
+      renderer.require_js('effects')
+      renderer.require_js('/components/post_stream/javascript/post_stream.js')
+    end
+
     self.get_handler_info(:post_stream, :share).each do |info|
       info[:class].setup_header(renderer) if info[:class].respond_to?(:setup_header)
     end
@@ -60,6 +65,14 @@ class PostStreamPoster
     @post
   end
 
+  def posts
+    @posts
+  end
+
+  def has_more
+    @has_more
+  end
+
   def comment
     @comment
   end
@@ -80,7 +93,7 @@ class PostStreamPoster
   end
 
   def was_submitted?
-    self.submitted
+    self.request_type
   end
 
   def additional_target
@@ -96,15 +109,13 @@ class PostStreamPoster
   end
 
   def save
-    self.submitted = true
-
-    if @comment
-      @comment.save
-    elsif @post.save
+    if @post.save
       self.link_post_to_target(self.target)
       self.link_post_to_target(self.end_user) unless self.admin_permission || self.target == self.end_user
       self.link_post_to_target(self.additional_target) if self.additional_target
       true
+    else
+      false
     end
   end
 
@@ -129,17 +140,16 @@ class PostStreamPoster
     stream_targets = self.fetch_targets
     return [false, []] if stream_targets.empty?
 
-    has_more, posts = PostStreamPost.find_for_targets(stream_targets, page, opts)
-    self.fetch_comments(posts)
-    [has_more, posts]
+    @has_more, @posts = PostStreamPost.find_for_targets(stream_targets, page, opts)
+    self.fetch_comments(@posts)
+    [@has_more, @posts]
   end
 
   def fetch_comments(posts)
-    comments = PostStreamPostComment.find(:all, :conditions => {:post_stream_post_id => posts.collect { |p| p.id if p.post_stream_post_comments_count > 0 }.compact}, :order => 'posted_at DESC')
+    comments = PostStreamPostComment.find(:all, :conditions => {:post_stream_post_id => posts.collect { |p| p.id if p.post_stream_post_comments_count > 0 }.compact}, :order => 'posted_at DESC').group_by(&:post_stream_post_id)
 
-    comments.each do |comment|
-      post = posts.find { |p| p.id == comment.post_stream_post_id }
-      post.add_comment(comment) if post
+    posts.each do |post|
+      post.comments = comments[post.id] if comments[post.id]
     end
   end
 
@@ -157,49 +167,57 @@ class PostStreamPoster
     self.handlers.find { |handler| handler.type == type }
   end
 
-  def process_request(renderer, params)
-    return self.process_delete_post_request(params) if params[:delete]
-    return self.process_comment_request(params) if params[:stream_post_comment]
-    return unless params[:stream_post]
-    return unless self.post.handler_obj
+  def process_request(params)
+    if params[:delete]
+      self.request_type = 'delete_post'
 
-    opts = params[self.post.handler_obj.form_name.to_sym]
-    opts = opts.to_hash.symbolize_keys if opts
+      self.fetch_post_by_identifier(params[:post_stream_post_identifier])
 
-    if opts && self.post.handler_obj.respond_to?(:valid_params)
-      opts = opts.slice(*self.post.handler_obj.valid_params)
+      @deleted = self.delete_post
+    elsif params[:stream_post_comment]
+      self.request_type = 'new_comment'
+
+      self.fetch_post_by_identifier(params[:stream_post_comment][:post_stream_post_identifier])
+
+      if @post && self.valid_post_and_target
+        @comment = @post.post_stream_post_comments.build params[:stream_post_comment].slice(:body, :name)
+        @comment.end_user_id = self.end_user.id if self.end_user
+        @saved = @comment.save
+        @post.reload if @saved
+      end
+    else
+      self.request_type = 'new_post'
+
+      if self.post.handler_obj
+        opts = params[self.post.handler_obj.form_name.to_sym]
+        opts = opts.to_hash.symbolize_keys if opts
+
+        if opts && self.post.handler_obj.respond_to?(:valid_params)
+          opts = opts.slice(*self.post.handler_obj.valid_params)
+        end
+
+        self.post.handler_obj.options(opts)
+        self.post.handler_obj.process_request(self.renderer, params, options)
+      end
+
+      @saved = self.save
     end
-
-    self.post.handler_obj.options(opts)
-    self.post.handler_obj.process_request(renderer, params, options)
   end
 
-  def process_comment_request(params)
-    return unless params[:stream_post_comment]
-
-    @post = PostStreamPost.find_by_id(params[:stream_post_comment][:post_stream_post_id])
-    if @post.nil?
-      self.setup_post nil
-      return nil
-    end
-
-    return nil unless self.valid_post_and_target
-
-    @comment = @post.post_stream_post_comments.build params[:stream_post_comment].slice(:body, :name)
-    @comment.end_user_id = self.end_user.id if self.end_user
-    @comment
-  end
-
-  def process_delete_post_request(params)
-    @post = PostStreamPost.find_by_id(params[:post_stream_post_id])
+  def can_delete_post?(post)
+    post.end_user_id == self.end_user.id
   end
 
   def delete_post
-    if @post.end_user_id == self.end_user.id
+    if @post && self.can_delete_post?(@post)
       @post.destroy
-      return true
+      true
+    else
+      false
     end
+  end
 
-    false
+  def get_locals
+    {:poster => self, :posts => self.posts, :post => self.post, :has_more => self.has_more, :saved => @saved, :deleted => @deleted, :renderer => self.renderer, :post_page_node => self.post_page_node, :page_connection_hash => self.page_connection_hash, :comment => @comment}
   end
 end

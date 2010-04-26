@@ -1,10 +1,24 @@
 
-if poster.comment
-  page.replace "post_stream_comment_new_#{post.id}", new_post_output if saved
-  page.visual_effect :highlight, "new_comment_#{post.id}", :duration => 3 if saved
-  page.replace "post_stream_comment_#{post.id}", form_output
-else
-  page.replace "post_stream_post_new", new_post_output if saved
-  page.visual_effect :highlight, "new_post_#{new_post.id}", :duration => 3 if saved
-  page.replace "stream_post_form", form_output
+case poster.request_type
+when 'new_post'
+  if saved
+    page.replace "post_stream_post_new", render(:partial => '/post_stream/page/new_post', :locals => poster.get_locals)
+    page.visual_effect :highlight, "post_stream_post_#{post.id}", :duration => 3
+    poster.setup
+    poster.request_type = nil
+  end
+
+  page.replace "stream_post_form", renderer.webiva_post_process_paragraph(renderer.post_stream_page_stream_feature(poster.get_locals.merge(:partial_feature => 'form', :options => options)))
+
+when 'new_comment'
+  if saved
+    page.replace "post_stream_comment_new_#{post.id}", render(:partial => '/post_stream/page/new_comment', :locals => poster.get_locals)
+    page.visual_effect :highlight, "new_comment_#{post.id}", :duration => 3
+  end
+
+  page.replace "post_stream_comment_#{post.id}", renderer.webiva_post_process_paragraph(render(:partial => '/post_stream/page/comment_form', :locals => poster.get_locals))
+
+when 'delete_post'
+  page.replace "post_stream_post_#{post.id}", '' if deleted
 end
+

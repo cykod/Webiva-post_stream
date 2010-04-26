@@ -9,8 +9,8 @@ class PostStreamPost < DomainModel
 
   # posted_by models must have a name and image field
   belongs_to :posted_by, :polymorphic => true
-  has_many :post_stream_post_targets, :dependent => :destroy
-  has_many :post_stream_post_comments, :order => 'posted_at DESC', :dependent => :destroy
+  has_many :post_stream_post_targets, :dependent => :delete_all
+  has_many :post_stream_post_comments, :order => 'posted_at DESC', :dependent => :delete_all
 
   validates_presence_of :post_type
   has_options :post_type, [['Post', 'post'], ['Content','content'], ['Link','link'], ['Image', 'image'], ['Media', 'media']] 
@@ -72,6 +72,7 @@ class PostStreamPost < DomainModel
   end
 
   def self.find_by_identifier(identifier)
+    return nil unless identifier
     post_id, post_hash = *identifier.split('-')
     PostStreamPost.find_by_id_and_post_hash(post_id, post_hash)
   end

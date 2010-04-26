@@ -8,7 +8,7 @@ PostStreamForm.defaultCommentText = '<%= jvh poster.options[:default_comment_tex
 
 <div class="post_stream_posts">
 <div id="post_stream_post_new"></div>
-<%= render :partial => '/post_stream/page/posts', :locals => {:posts => posts, :renderer => renderer, :poster => poster, :site_node => site_node, :has_more => has_more, :stream_page => stream_page} %>
+<%= render :partial => '/post_stream/page/posts', :locals => poster.get_locals %>
 <div id="more_stream_posts">
 </div>
 <% if has_more -%>

@@ -1,7 +1,7 @@
 <div class="post">
-<% if post.end_user_id == poster.end_user.id -%>
+<% if poster.can_delete_post?(post) -%>
 <div class="delete">
-<a onclick="PostStream.deletePost('<%= jvh renderer.ajax_url %>', <%= post.id %>);" href="javascript:void(0);">Delete</a>
+<a onclick="PostStream.deletePost('<%= jvh renderer.ajax_url %>', '<%= post.identifier %>');" href="javascript:void(0);">Delete</a>
 </div>
 <% end -%>
 
@@ -25,15 +25,15 @@
   <spam class="links">
 <% if poster.can_post? -%>
     <a href="javascript:void(0);" onclick="PostStreamForm.toggleComment(<%= post.id %>);">Comment</a>
-  <% if site_node && poster.options[:post_on_facebook] -%>
-    | <a class="fb_share_button" onclick="PostStream.share('<%= jvh Configuration.domain_link(post.share_url(site_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);" href="javascript:void(0);"><span><%= 'Share'.t %></span></a>
+  <% if post_page_node && poster.options[:post_on_facebook] -%>
+    | <a class="fb_share_button" onclick="PostStream.share('<%= jvh Configuration.domain_link(post.share_url(post_page_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);" href="javascript:void(0);"><span><%= 'Share'.t %></span></a>
   <% end -%>
-<% elsif site_node && poster.options[:post_on_facebook] -%>
-    <a class="fb_share_button" onclick="PostStream.share('<%= jvh Configuration.domain_link(post.share_url(site_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);" href="javascript:void(0);"><span><%= 'Share'.t %></span></a>
+<% elsif post_page_node && poster.options[:post_on_facebook] -%>
+    <a class="fb_share_button" onclick="PostStream.share('<%= jvh Configuration.domain_link(post.share_url(post_page_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);" href="javascript:void(0);"><span><%= 'Share'.t %></span></a>
 <% end -%>
   </span>
 </div>
 <%= content_tag(:div, post.handler_obj.render(renderer, poster.options), {:class => 'shared_content'}, false) if post.handler_obj -%>
-<%= render :partial => '/post_stream/page/comments', :locals => {:renderer => renderer, :post => post, :poster => poster} %>
-<%= render :partial => '/post_stream/page/comment_form', :locals => {:renderer => renderer, :post => post, :poster => poster} if poster.can_post? %>
+<%= render :partial => '/post_stream/page/comments', :locals => poster.get_locals.merge(:post => post) %>
+<%= render :partial => '/post_stream/page/comment_form', :locals => poster.get_locals.merge(:post => post) if poster.can_post? %>
 <hr class="separator"/>

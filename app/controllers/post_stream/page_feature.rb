@@ -122,7 +122,7 @@ class PostStream::PageFeature < ParagraphFeature
 
       c.submit_tag('form:submit', :default => 'Post')
 
-      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => data[:options].post_page_node, :attributes => t.attr, :show_comments => true) }
+      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data[:poster].get_locals.merge(:attributes => t.attr) }
     end
   end
 
@@ -186,7 +186,7 @@ class PostStream::PageFeature < ParagraphFeature
 
   def post_stream_page_post_feature(data)
     webiva_feature(:post_stream_page_post,data) do |c|
-      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data.merge(:paragraph => paragraph, :renderer => self.renderer, :site_node => site_node, :attributes => t.attr, :show_comments => true) }
+      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data[:poster].get_locals.merge(:attributes => t.attr) }
     end
   end
 end

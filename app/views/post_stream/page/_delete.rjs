@@ -1,4 +1,0 @@
-
-if deleted
-  page.replace "post_stream_post_#{post.id}", ''
-end

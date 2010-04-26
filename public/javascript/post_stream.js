@@ -147,7 +147,7 @@ PostStream = {
   },
 
   deletePost: function(url, id) {
-    parameters = 'delete=1&post_stream_post_id=' + id + '&page_connection_hash=' + PostStreamForm.pageConnectionHash;
+    parameters = 'delete=1&post_stream_post_identifier=' + id + '&page_connection_hash=' + PostStreamForm.pageConnectionHash;
 
     new Ajax.Request(url, {parameters: parameters,
                            onSuccess: function(res) { eval(res.responseText); }
