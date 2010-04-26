@@ -35,5 +35,5 @@
 </div>
 <%= content_tag(:div, post.handler_obj.render(renderer, poster.options), {:class => 'shared_content'}, false) if post.handler_obj -%>
 <%= render :partial => '/post_stream/page/comments', :locals => poster.get_locals.merge(:post => post) %>
-<%= render :partial => '/post_stream/page/comment_form', :locals => poster.get_locals.merge(:post => post) if poster.can_post? %>
+<%= render :partial => '/post_stream/page/comment_form', :locals => poster.get_locals.merge(:post => post) if poster.can_comment? %>
 <hr class="separator"/>

@@ -1,7 +1,7 @@
 require 'digest/sha1'
 
 class PostStreamPoster
-  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_targets, :shared_content_node, :view_targets, :active_handlers, :options, :renderer, :page_connection_hash, :post_page_node, :request_type
+  attr_accessor :end_user, :target, :post_permission, :admin_permission, :additional_targets, :shared_content_node, :view_targets, :active_handlers, :options, :renderer, :page_connection_hash, :post_page_node, :request_type, :paragraph_options
 
   include HandlerActions
 
@@ -14,6 +14,10 @@ class PostStreamPoster
 
   def can_post?
     self.post_permission || self.admin_permission
+  end
+
+  def can_comment?
+    self.can_post?
   end
 
   def fetch_first_post
@@ -66,7 +70,11 @@ class PostStreamPoster
   end
 
   def posts
-    @posts
+    @posts ||= []
+  end
+
+  def posts=(posts)
+    @posts = posts
   end
 
   def has_more
@@ -142,6 +150,7 @@ class PostStreamPoster
 
     @has_more, @posts = PostStreamPost.find_for_targets(stream_targets, page, opts)
     self.fetch_comments(@posts)
+    self.fetch_images(@posts)
     [@has_more, @posts]
   end
 
@@ -150,6 +159,16 @@ class PostStreamPoster
 
     posts.each do |post|
       post.comments = comments[post.id] if comments[post.id]
+    end
+  end
+
+  def fetch_images(posts)
+    user_profile_ids = posts.collect { |post| post.posted_by_id if post.posted_by_type == 'UserProfileEntry' }.compact
+    return if user_profile_ids.empty?
+
+    user_profiles = UserProfileEntry.find(:all, :conditions => {:id => user_profile_ids}, :include => {:end_user => :domain_file}).index_by(&:id)
+    posts.each do |post|
+      post.image = user_profiles[post.posted_by_id].end_user.image if user_profiles[post.posted_by_id] && post.posted_by_type == 'UserProfileEntry'
     end
   end
 
@@ -177,35 +196,39 @@ class PostStreamPoster
     elsif params[:stream_post_comment]
       self.request_type = 'new_comment'
 
-      self.fetch_post_by_identifier(params[:stream_post_comment][:post_stream_post_identifier])
+      if self.can_comment?
+        self.fetch_post_by_identifier(params[:stream_post_comment][:post_stream_post_identifier])
 
-      if @post && self.valid_post_and_target
-        @comment = @post.post_stream_post_comments.build params[:stream_post_comment].slice(:body, :name)
-        @comment.end_user_id = self.end_user.id if self.end_user
-        @saved = @comment.save
-        @post.reload if @saved
+        if @post && self.valid_post_and_target
+          @comment = @post.post_stream_post_comments.build params[:stream_post_comment].slice(:body, :name)
+          @comment.end_user_id = self.end_user.id if self.end_user
+          @saved = @comment.save
+          @post.reload if @saved
+        end
       end
     else
       self.request_type = 'new_post'
 
-      if self.post.handler_obj
-        opts = params[self.post.handler_obj.form_name.to_sym]
-        opts = opts.to_hash.symbolize_keys if opts
+      if self.can_post?
+        if self.post.handler_obj
+          opts = params[self.post.handler_obj.form_name.to_sym]
+          opts = opts.to_hash.symbolize_keys if opts
 
-        if opts && self.post.handler_obj.respond_to?(:valid_params)
-          opts = opts.slice(*self.post.handler_obj.valid_params)
+          if opts && self.post.handler_obj.respond_to?(:valid_params)
+            opts = opts.slice(*self.post.handler_obj.valid_params)
+          end
+
+          self.post.handler_obj.options(opts)
+          self.post.handler_obj.process_request(self.renderer, params, options)
         end
 
-        self.post.handler_obj.options(opts)
-        self.post.handler_obj.process_request(self.renderer, params, options)
+        @saved = self.save
       end
-
-      @saved = self.save
     end
   end
 
   def can_delete_post?(post)
-    post.end_user_id == self.end_user.id
+    self.can_post? && post.end_user_id == self.end_user.id
   end
 
   def delete_post
@@ -218,6 +241,6 @@ class PostStreamPoster
   end
 
   def get_locals
-    {:poster => self, :posts => self.posts, :post => self.post, :has_more => self.has_more, :saved => @saved, :deleted => @deleted, :renderer => self.renderer, :post_page_node => self.post_page_node, :page_connection_hash => self.page_connection_hash, :comment => @comment}
+    {:poster => self, :posts => self.posts, :post => self.post, :has_more => self.has_more, :saved => @saved, :deleted => @deleted, :renderer => self.renderer, :post_page_node => self.post_page_node, :page_connection_hash => self.page_connection_hash, :comment => @comment, :options => self.paragraph_options}
   end
 end

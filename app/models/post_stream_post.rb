@@ -56,7 +56,11 @@ class PostStreamPost < DomainModel
   end
 
   def image
-    self.posted_by ? self.posted_by.image : Configuration.missing_image(nil)
+    @image ||= self.posted_by ? self.posted_by.image : Configuration.missing_image(nil)
+  end
+
+  def image=(image)
+    @image = image
   end
 
   def posted_by_shared_content_node
@@ -172,11 +176,6 @@ class PostStreamPost < DomainModel
 
   def comments=(comments)
     @comments = comments
-  end
-
-  def add_comment(comment)
-    @comments ||= []
-    @comments << comment
   end
 
   def preview_image_url

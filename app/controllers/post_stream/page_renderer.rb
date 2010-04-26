@@ -23,10 +23,13 @@ class PostStream::PageRenderer < ParagraphRenderer
       return render_paragraph :text => 'Please setup page connections' unless target
     end
 
+    PostStreamPoster.setup_header(self)
+
     @poster = PostStreamPoster.new myself, target, @options.to_h
     @poster.renderer = self
     @poster.post_page_node = @options.post_page_node
     @poster.page_connection_hash = page_connection_hash
+    @poster.paragraph_options = @options
 
     conn_type, conn_id = page_connection(:post_permission)
     @poster.post_permission = true if conn_id || editor?
@@ -37,22 +40,17 @@ class PostStream::PageRenderer < ParagraphRenderer
     conn_type, conn_id = page_connection(:content_list)
     @poster.view_targets = conn_id if conn_id
 
-    PostStreamPoster.setup_header(self)
+    @poster.setup(params)
 
-    if @poster.can_post?
+    if request.post? && ! editor?
+      @poster.process_request(params)
 
-      @poster.setup(params)
+      myself.reload if myself.id && myself.missing_name?
 
-      if request.post? && ! editor?
-        @poster.process_request(params)
-
-        myself.reload if myself.id && myself.missing_name?
-
-        if ajax?
-          return render_paragraph :rjs => '/post_stream/page/update', :locals => @poster.get_locals.merge(:options => @options)
-        else
-          return redirect_paragraph :page
-        end
+      if ajax?
+        return render_paragraph :rjs => '/post_stream/page/update', :locals => @poster.get_locals
+      else
+        return redirect_paragraph :page
       end
     end
 
@@ -79,14 +77,15 @@ class PostStream::PageRenderer < ParagraphRenderer
       @poster = PostStreamPoster.new myself, nil, @options.to_h
       @poster.renderer = self
       @poster.post_page_node = @options.post_page_node
+      @poster.paragraph_options @options
 
-      @posts = PostStreamPost.with_types(@options.post_types_filter).find(:all, :limit => @options.posts_to_display, :order => 'posted_at DESC')
-      @poster.fetch_comments(@posts) if @options.show_comments
+      @poster.posts = PostStreamPost.with_types(@options.post_types_filter).find(:all, :limit => @options.posts_to_display, :order => 'posted_at DESC')
+      @poster.fetch_comments(@poster.posts) if @options.show_comments
 
       if paragraph.site_feature
-        cache[:output] = post_stream_page_recent_posts_feature
+        cache[:output] = post_stream_page_recent_posts_feature(@poster.get_locals)
       else
-        cache[:output] = render_to_string :partial => '/post_stream/page/stream', :locals => @poster.get_locals
+        cache[:output] = render_to_string :partial => '/post_stream/page/stream', :locals => @poster.get_locals.merge(:attributes => {})
       end
     end
 
@@ -101,7 +100,8 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     @poster = PostStreamPoster.new myself, nil, @options.to_h
     @poster.renderer = self
-    @poster.post_page_node = self
+    @poster.post_page_node = site_node
+    @poster.paragraph_options = @options
 
     if editor?
       @poster.fetch_first_post
@@ -111,13 +111,15 @@ class PostStream::PageRenderer < ParagraphRenderer
       raise SiteNodeEngine::MissingPageException.new( site_node, language ) unless @poster.fetch_post_by_identifier(post_identifier)
     end
 
-    @posts = []
-    @posts << @poster.post if @poster.post
-    @poster.fetch_comments(@posts)
+    @poster.posts = @poster.post ? [@poster.post] : []
+    @poster.fetch_comments(@poster.posts)
 
     PostStreamPoster.setup_header(self)
 
     if @poster.post
+      @poster.posts = [@poster.post]
+      @poster.fetch_comments(@poster.posts)
+
       self.html_include(:head_html, "<meta name='title' content='#{vh truncate(@poster.post.body, :length => 60)}' />")
 
       if @poster.post.preview_image_url
