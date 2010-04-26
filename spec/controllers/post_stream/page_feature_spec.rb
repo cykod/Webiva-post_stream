@@ -17,7 +17,6 @@ describe PostStream::PageFeature, :type => :view do
 
     @options = PostStream::PageController::StreamOptions.new nil
     @feature.should_receive(:render_to_string).once
-    @feature.should_receive(:paragraph).once
     @feature.renderer.should_receive(:require_css)
     @feature.should_receive(:site_node).any_number_of_times.and_return(@site_node)
 
