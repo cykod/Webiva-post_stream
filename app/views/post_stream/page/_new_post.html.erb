@@ -1,5 +1,5 @@
 <div id="post_stream_post_new"></div>
-<div class="post_stream_post" id="post_stream_post_<%= post.id %>">
+<div class="post_stream_post post_stream_post_out" id="post_stream_post_<%= post.id %>" onmouseover="PostStream.onMouseOverPost('<%= post.id %>');" onmouseout="PostStream.onMouseOutPost('<%= post.id %>');">
 <div class="new_post">
 <%= render :partial => '/post_stream/page/post', :locals => poster.get_locals %>
 </div>

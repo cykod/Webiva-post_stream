@@ -1,5 +1,5 @@
 <% posts.each do |post| -%>
-  <div class="post_stream_post" id="post_stream_post_<%= post.id %>">
+  <div class="post_stream_post post_stream_post_out" id="post_stream_post_<%= post.id %>" onmouseover="PostStream.onMouseOverPost('<%= post.id %>');" onmouseout="PostStream.onMouseOutPost('<%= post.id %>');">
   <%= render :partial => '/post_stream/page/post', :locals => poster.get_locals.merge(:post => post) %>
   </div>
 <% end -%>

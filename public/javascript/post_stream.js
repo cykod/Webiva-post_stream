@@ -153,5 +153,13 @@ PostStream = {
     new Ajax.Request(url, {parameters: parameters,
                            onSuccess: function(res) { eval(res.responseText); }
                      });    
+  },
+
+  onMouseOverPost: function(id) {
+    $('post_stream_post_' + id).className = 'post_stream_post post_stream_post_over';
+  },
+
+  onMouseOutPost: function(id) {
+    $('post_stream_post_' + id).className = 'post_stream_post post_stream_post_out';
   }
 }
