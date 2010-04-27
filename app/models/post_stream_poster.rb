@@ -207,7 +207,7 @@ class PostStreamPoster
           @post.reload if @saved
         end
       end
-    else
+    elsif params[:stream_post]
       self.request_type = 'new_post'
 
       if self.can_post?
