@@ -38,6 +38,11 @@ class PostStreamPost < DomainModel
     self.body
   end
 
+  def self.content_admin_url(node_id)
+    node = self.find_by_id(node_id)
+    node.content_admin_url if node
+  end
+
   def content_admin_url
     { :controller => '/post_stream/manage/post', :action => 'post', :path => [ self.id ] }
   end

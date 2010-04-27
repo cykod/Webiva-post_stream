@@ -17,6 +17,8 @@ class PostStream::AdminController < ModuleController
   #  register_handler :post_stream, :share, 'PostStream::Share::File'
   register_handler :post_stream, :link, 'PostStream::Share::Link::Oembed'
 
+  register_handler :webiva, :widget, 'PostStreamWidget'
+
   cms_admin_paths "options",
     "Post Stream Options" => { :action => 'options' },
     "Options" => { :controller => '/options' },
