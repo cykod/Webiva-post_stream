@@ -32,7 +32,7 @@ describe PostStreamPoster do
     assert_difference 'PostStreamPostTarget.count', 1 do
       assert_difference 'PostStreamTarget.count', 1 do
         assert_difference 'PostStreamPost.count', 1 do
-          @poster.save.should be_true
+          @poster.process_request :stream_post => {:body => 'My first post'}
         end
       end
     end
@@ -52,7 +52,7 @@ describe PostStreamPoster do
     assert_difference 'PostStreamPostTarget.count', 1 do
       assert_difference 'PostStreamTarget.count', 1 do
         assert_difference 'PostStreamPost.count', 1 do
-          @poster.save.should be_true
+          @poster.process_request :stream_post => {:body => 'My first post', :name => 'First Last'}
         end
       end
     end
@@ -77,7 +77,7 @@ describe PostStreamPoster do
     assert_difference 'PostStreamPostTarget.count', 1 do
       assert_difference 'PostStreamTarget.count', 1 do
         assert_difference 'PostStreamPost.count', 1 do
-          @poster.save.should be_true
+          @poster.process_request :stream_post => {:body => 'My first post'}
         end
       end
     end
@@ -97,7 +97,7 @@ describe PostStreamPoster do
     assert_difference 'PostStreamPostTarget.count', 1 do
       assert_difference 'PostStreamTarget.count', 1 do
         assert_difference 'PostStreamPost.count', 1 do
-          @poster.save.should be_true
+          @poster.process_request :stream_post => {:body => 'My first post'}
         end
       end
     end
@@ -121,7 +121,7 @@ describe PostStreamPoster do
     assert_difference 'PostStreamPostTarget.count', 2 do
       assert_difference 'PostStreamTarget.count', 2 do
         assert_difference 'PostStreamPost.count', 1 do
-          @poster.save.should be_true
+          @poster.process_request :stream_post => {:body => 'My first post', :additional_target => additional_target}
         end
       end
     end
@@ -132,18 +132,19 @@ describe PostStreamPoster do
   it "should be able to fetch posts for target" do
     @user = EndUser.push_target('test1@test.dev', :first_name => 'First', :last_name => 'Last')
     @poster = PostStreamPoster.new @user, @user
+    @poster.post_permission = true
 
     assert_difference 'PostStreamPostTarget.count', 4 do
       assert_difference 'PostStreamTarget.count', 1 do
         assert_difference 'PostStreamPost.count', 4 do
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
         end
       end
     end
@@ -157,18 +158,19 @@ describe PostStreamPoster do
     @user1 = EndUser.push_target('test1@test.dev', :first_name => 'First', :last_name => 'Last')
     @user2 = EndUser.push_target('test2@test.dev', :first_name => 'First2', :last_name => 'Last2')
     @poster = PostStreamPoster.new @user2, @user1
+    @poster.post_permission = true
 
     assert_difference 'PostStreamPostTarget.count', 8 do
       assert_difference 'PostStreamTarget.count', 2 do
         assert_difference 'PostStreamPost.count', 4 do
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
         end
       end
     end
@@ -195,36 +197,38 @@ describe PostStreamPoster do
     @user2 = EndUser.push_target('test2@test.dev', :first_name => 'First2', :last_name => 'Last2')
     @user3 = EndUser.push_target('test3@test.dev', :first_name => 'First3', :last_name => 'Last3')
     @poster = PostStreamPoster.new @user2, @user2
+    @poster.post_permission = true
 
     assert_difference 'PostStreamPostTarget.count', 4 do
       assert_difference 'PostStreamTarget.count', 1 do
         assert_difference 'PostStreamPost.count', 4 do
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
         end
       end
     end
 
 
     @poster = PostStreamPoster.new @user1, @user1
+    @poster.post_permission = true
 
     assert_difference 'PostStreamPostTarget.count', 4 do
       assert_difference 'PostStreamTarget.count', 1 do
         assert_difference 'PostStreamPost.count', 4 do
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
         end
       end
     end
@@ -253,13 +257,13 @@ describe PostStreamPoster do
       assert_difference 'PostStreamTarget.count', 1 do
         assert_difference 'PostStreamPost.count', 4 do
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
           @poster.setup(:stream_post => {:body => 'My first post'})
-          @poster.save
+          @poster.process_request :stream_post => {:body => 'My first post'}
         end
       end
     end
@@ -373,5 +377,31 @@ describe PostStreamPoster do
         @poster.process_request(params)
       end
     end
+  end
+
+  it "should not be able to delete a post if not the owner" do
+    @user1 = EndUser.push_target('test1@test.dev', :first_name => 'First', :last_name => 'Last')
+    @user2 = EndUser.push_target('test2@test.dev')
+
+    @poster = PostStreamPoster.new @user1, @user1
+    @poster.post_permission = true
+
+    params = {:stream_post => {:body => 'My first post'}}
+    @poster.setup(params)
+    @poster.process_request(params)
+    @post = @poster.post
+
+    @poster = PostStreamPoster.new @user2, @user1
+    @poster.post_permission = true
+    @poster.can_comment?.should be_true
+
+    params = {:delete => 1, :post_stream_post_identifier => @post.identifier}
+    @poster.setup(params)
+
+    assert_difference 'PostStreamPost.count', 0 do
+      @poster.process_request(params)
+    end
+
+    @poster.can_delete_post?(@post).should be_false
   end
 end

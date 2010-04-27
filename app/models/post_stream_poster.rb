@@ -52,7 +52,6 @@ class PostStreamPoster
     return false if @post.nil?
     return false unless self.valid_post_and_target
     @post
-    @comment = @post.post_stream_post_comments.new
   end
 
   def fetch_post_by_identifier(identifier)
@@ -191,14 +190,14 @@ class PostStreamPoster
     if params[:delete]
       self.request_type = 'delete_post'
 
-      self.fetch_post_by_identifier(params[:post_stream_post_identifier])
+      self.fetch_post(params[:post_stream_post_identifier])
 
       @deleted = self.delete_post
     elsif params[:stream_post_comment]
       self.request_type = 'new_comment'
 
       if self.can_comment?
-        self.fetch_post_by_identifier(params[:stream_post_comment][:post_stream_post_identifier])
+        self.fetch_post(params[:stream_post_comment][:post_stream_post_identifier])
 
         if @post && self.valid_post_and_target
           @comment = @post.post_stream_post_comments.build params[:stream_post_comment].slice(:body, :name)

@@ -2,7 +2,9 @@
 class PostStream::AdminController < ModuleController
 
   component_info 'PostStream', :description => 'Post Stream support', :access => :public
-                              
+
+  content_model :post_stream
+
   # Register a handler feature
   register_permission_category :post_stream, "PostStream" ,"Permissions related to Post Stream"
   
@@ -25,6 +27,12 @@ class PostStream::AdminController < ModuleController
   content_node_type 'Post Stream Posts', "PostStreamPost", :title_field => :title, :url_field => :identifier
 
   public
+
+  def self.get_post_stream_info
+    [
+      {:name => 'Post Stream Posts', :url => {:controller => '/post_stream/manage'}, :permission => 'post_stream_manage', :icon => 'icons/content/feedback.gif'}
+    ]
+  end
 
   def options
     cms_page_path ['Options','Modules'],"Post Stream Options"

@@ -38,9 +38,9 @@ class PostStreamPost < DomainModel
     self.body
   end
 
-#  def content_admin_url
-#    { :controller => '/post_stream/manage', :action => 'post', :path => [ self.id ] }
-#  end
+  def content_admin_url
+    { :controller => '/post_stream/manage/post', :action => 'post', :path => [ self.id ] }
+  end
 
   def post_on_facebook=(val)
     val = val == 'true' if val.is_a?(String)
