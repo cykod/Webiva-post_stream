@@ -103,6 +103,7 @@ PostStreamForm = {
     PostStream.nextPage++;
 
     new Ajax.Request(url, {parameters: 'stream_page=' + PostStream.nextPage + '&page_connection_hash=' + PostStreamForm.pageConnectionHash,
+                           method: 'get',
                            onSuccess: function(res) {
                              if(res.responseText == 'no_more') {
                                $('stream_post_has_more').hide();

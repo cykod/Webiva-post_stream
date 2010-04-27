@@ -42,15 +42,17 @@ class PostStream::PageRenderer < ParagraphRenderer
 
     @poster.setup(params)
 
-    if request.post? && ! editor? && params[:stream_page].nil?
-      @poster.process_request(params)
+    unless editor?
+      if request.post?
+        @poster.process_request(params)
 
-      myself.reload if myself.id && myself.missing_name?
+        myself.reload if myself.id && myself.missing_name?
 
-      if ajax?
-        return render_paragraph :rjs => '/post_stream/page/update', :locals => @poster.get_locals
-      else
-        return redirect_paragraph :page
+        if ajax?
+          return render_paragraph :rjs => '/post_stream/page/update', :locals => @poster.get_locals
+        else
+          return redirect_paragraph :page
+        end
       end
     end
 
