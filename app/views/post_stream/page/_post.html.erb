@@ -1,7 +1,7 @@
 <div class="post">
 <% if poster.can_delete_post?(post) -%>
 <div class="delete">
-<a onclick="PostStream.deletePost('<%= jvh renderer.ajax_url %>', '<%= post.identifier %>');" href="javascript:void(0);">Delete</a>
+<a onclick="PostStream.deletePost('<%= jvh renderer.ajax_url %>', '<%= post.identifier %>');" href="javascript:void(0);"><span>Delete</span></a>
 </div>
 <% end -%>
 
