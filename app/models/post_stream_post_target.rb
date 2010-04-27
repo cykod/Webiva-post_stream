@@ -14,7 +14,9 @@ class PostStreamPostTarget < DomainModel
 
   def self.link_post_to_target(post, target)
     begin
-      self.create :post_stream_post_id => post.id, :post_stream_target_id => target.id, :posted_at => post.posted_at, :post_type => post.post_type
+      post_target = self.create :post_stream_post_id => post.id, :post_stream_target_id => target.id, :posted_at => post.posted_at, :post_type => post.post_type
+      target.update_stats post
+      post_target
     rescue ActiveRecord::StatementInvalid => e
       logger.error e
       self.find_with_post_and_target(post, target)

@@ -21,11 +21,22 @@ class PostStreamTarget < DomainModel
     # Note: could test target here and make sure it responds to name and image
 
     begin
-      self.create(:target => target)
+      self.create(:target => target, :name => target.name)
     rescue ActiveRecord::StatementInvalid => e
       # possible the record was already created
       logger.error e
       self.find_target(target)
     end
+  end
+
+  def before_create
+    self.created_at = Time.now
+  end
+
+  def update_stats(post)
+    self.name = self.target.name
+    self.last_posted_at = post.posted_at
+    self.post_stream_post_count = PostStreamPost.with_posted_by(self.target).count
+    self.save
   end
 end

@@ -29,6 +29,7 @@ class PostStreamPost < DomainModel
   content_node
 
   named_scope :with_types, lambda { |types| types.empty? ? {} : {:conditions => {:post_type => types}} }
+  named_scope :with_posted_by, lambda { |poster| {:conditions => {:posted_by_type => poster.class.to_s, :posted_by_id => poster.id}} }
 
   def identifier
     "#{self.id}-#{self.post_hash}"
@@ -208,5 +209,11 @@ class PostStreamPost < DomainModel
     elsif self.handler_obj
       self.handler_obj.preview_image_url
     end
+  end
+
+  def after_destroy
+    target = PostStreamTarget.find_target self.posted_by
+    target.post_stream_post_count = PostStreamPost.with_posted_by(self.posted_by).count
+    target.save
   end
 end

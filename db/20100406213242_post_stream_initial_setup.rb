@@ -19,6 +19,7 @@ class PostStreamInitialSetup < ActiveRecord::Migration
     end
 
     add_index :post_stream_posts, [:end_user_id], :name => 'post_stream_posts_user_idx'
+    add_index :post_stream_posts, [:posted_by_type, :posted_by_id], :name => 'post_stream_posts_posted_by_idx'
     add_index :post_stream_posts, [:shared_content_node_id], :name => 'post_stream_posts_content_idx'
     add_index :post_stream_posts, [:post_type, :posted_at], :name => 'post_stream_posts_type_posted_at_idx'
 
@@ -37,6 +38,10 @@ class PostStreamInitialSetup < ActiveRecord::Migration
     create_table :post_stream_targets, :force => true do |t|
       t.integer :target_id
       t.string :target_type
+      t.string :name
+      t.integer :post_stream_post_count
+      t.datetime :last_posted_at
+      t.datetime :created_at
     end
 
     add_index :post_stream_targets, [:target_type, :target_id], :name => 'post_stream_targets_idx', :unique => true
