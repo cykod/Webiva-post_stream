@@ -69,6 +69,7 @@ class PostStream::PageRenderer < ParagraphRenderer
       return
     end
 
+    require_css('/components/post_stream/stylesheets/stream.css') unless paragraph.render_css
     render_paragraph :feature => :post_stream_page_stream
   end
 
@@ -79,7 +80,7 @@ class PostStream::PageRenderer < ParagraphRenderer
       @poster = PostStreamPoster.new myself, nil, @options.to_h
       @poster.renderer = self
       @poster.post_page_node = @options.post_page_node
-      @poster.paragraph_options @options
+      @poster.paragraph_options = @options
 
       @poster.posts = PostStreamPost.with_types(@options.post_types_filter).find(:all, :limit => @options.posts_to_display, :order => 'posted_at DESC')
       @poster.fetch_comments(@poster.posts) if @options.show_comments

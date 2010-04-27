@@ -14,6 +14,7 @@
 .post_stream_post .delete {
   float: right;
   font-size: 0.9em;
+  padding-right: 5px;
 }
 
 .post_stream_post_out .delete {
