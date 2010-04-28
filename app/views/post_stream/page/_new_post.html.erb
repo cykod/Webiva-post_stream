@@ -6,6 +6,6 @@
 </div>
 <% if post.post_on_facebook -%>
 <script type="text/javascript">
-PostStream.share('<%= jvh Configuration.domain_link(post.share_url(site_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);
+PostStream.share('<%= jvh Configuration.domain_link(post.share_url(post_page_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);
 </script>
 <% end -%>
