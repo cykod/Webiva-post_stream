@@ -133,18 +133,11 @@ PostStream = {
   },
 
   share: function(url, title, summary) {
-
-    if( FB.Connect.get_loggedInUser() ) {
-      FB.Connect.showShareDialog(url, function(){});
-      return;
-    }
-
-    if( ! summary ) {
-      summary = '';
-    }
-
-    var sharer_url = "http://www.facebook.com/sharer.php?s=100&p[url]=" + escape(url) + "&p[title]=" + escape(title) + "&p[summary]=" + escape(summary);
-    window.open(sharer_url, 'sharer', 'toolbar=0,status=0,width=626,height=436');
+    var share = {
+      method: 'stream.share',
+      u: url
+    };
+    FB.ui(share, function(response) {});
   },
 
   deletePost: function(url, id) {

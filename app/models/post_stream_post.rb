@@ -183,7 +183,7 @@ class PostStreamPost < DomainModel
   end
 
   def handler_class
-    @handler_class ||= self.handler.classify.constantize if self.handler
+    @handler_class ||= self.handler.camelcase.constantize if self.handler
   end
 
   def handler_obj

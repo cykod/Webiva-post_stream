@@ -86,7 +86,7 @@ class PostStream::Share::Link < PostStream::Share::Base
   end
 
   def handler_class
-    @handler_class ||= self.options.handler.classify.constantize if self.options.handler
+    @handler_class ||= self.options.handler.camelcase.constantize if self.options.handler
   end
 
   def handler_obj
