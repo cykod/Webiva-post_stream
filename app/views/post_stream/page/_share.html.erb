@@ -1,0 +1,37 @@
+<div class="<%= post.post_type %>">
+<%
+
+title = share.name
+title_link = content_tag(:a, truncate(title, :length => title_length), {:href => post.link, :rel => 'nofollow', :target => '_blank', :title => title})
+heading = content_tag(:div, title_link, {:class => 'title'}, false)
+
+provider = share.provider_name
+provider_tag = ''
+if provider
+  provider_link = share.provider_url ? content_tag(:a, provider, {:href => share.provider_url, :rel => 'nofollow', :target => '_blank'}) : provider
+  provider_tag = content_tag(:span, provider_link, {:class => 'provider'}, false)
+end
+
+author = share.author_name
+author_tag = ''
+if author
+  author_link = share.author_url ? content_tag(:a, author, {:href => share.author_url, :rel => 'nofollow', :target => '_blank'}) : author
+  author_tag = content_tag(:span, 'by %s' / author_link, {:class => 'author'}, false)
+end
+
+%>
+<%= heading %>
+
+<% if post.post_type == 'media' -%>
+  <%= render :partial => '/post_stream/page/share_media', :locals => {:share => share, :post => post, :options => options, :maxwidth => maxwidth, :title_length => title_length} %>
+<% elsif post.post_type == 'image' -%>
+  <%= render :partial => '/post_stream/page/share_image', :locals => {:share => share, :post => post, :options => options, :maxwidth => maxwidth, :title_length => title_length} %>
+<% end -%>
+
+<% unless provider_tag.blank? && author_tag.blank? -%>
+  <div class="provider_author">
+    <%= provider_tag %> <%= author_tag %>
+  </div>
+<% end -%>
+
+</div>

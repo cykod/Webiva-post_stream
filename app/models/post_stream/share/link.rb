@@ -21,11 +21,7 @@ class PostStream::Share::Link < PostStream::Share::Base
   def valid?
     is_valid = super
 
-    if self.handler_obj && ! self.handler_obj.valid?
-      self.options.errors.add(:link, 'is invalid')
-      self.post.errors.add_to_base(self.handler_obj.error_message) if self.handler_obj.error_message
-      return false
-    elsif self.options.errors[:link]
+    if self.options.errors[:link]
       error = self.options.errors[:link]
       error = error[0] if error.is_a?(Array)
       self.post.errors.add_to_base('Link ' + error)
@@ -51,19 +47,10 @@ class PostStream::Share::Link < PostStream::Share::Base
         @handler_class = handler.class.to_s.underscore
         @handler_obj = handler
         self.options.handler = @handler_class
-        self.options.data = handler.data
         true
       else
         nil
       end
-    end
-  end
-
-  def render(renderer, opts={})
-    if self.handler_obj
-      self.handler_obj.render(renderer, opts)
-    else
-      'Link: %s' / content_tag(:a, self.post.link, {:href => self.post.link, :rel => 'nofollow', :target => '_blank'})
     end
   end
 
@@ -97,6 +84,54 @@ class PostStream::Share::Link < PostStream::Share::Base
     self.handler_obj.preview_image_url if self.handler_obj
   end
 
+  def image_url
+    self.options.data[:image_url]
+  end
+
+  def width
+    self.options.data[:width]
+  end
+
+  def height
+    self.options.data[:height]
+  end
+
+  def name
+    self.options.data[:title]
+  end
+
+  def author_name
+    self.options.data[:author_name]
+  end
+
+  def author_url
+    self.options.data[:author_url]
+  end
+
+  def provider_name
+    self.options.data[:provider_name]
+  end
+
+  def provider_url
+    self.options.data[:provider_url]
+  end
+
+  def embeded_html
+    self.options.data[:html]
+  end
+
+  def thumbnail_url
+    self.options.data[:thumbnail_url]
+  end
+
+  def thumbnail_width
+    self.options.data[:thumbnail_width]
+  end
+
+  def thumbnail_height
+    self.options.data[:thumbnail_height]
+  end
+
   class Options < HashModel
     attr_accessor :handler_required
 
@@ -119,8 +154,6 @@ class PostStream::Share::Link < PostStream::Share::Base
       @post = post
     end
 
-    def preview_image_url; nil; end
-
     def post
       @post
     end
@@ -129,22 +162,20 @@ class PostStream::Share::Link < PostStream::Share::Base
       self.post.link
     end
 
-    def options_class
-      @options_class ||= "#{self.class.to_s}::Options".constantize
-    end
-
-    def options(opts={})
-      data = self.post.handler_obj.options.data || {}
-      opts ||= {}
-      @options ||= self.options_class.new(data.merge(opts.to_hash.symbolize_keys))
-    end
-
     def data
-      self.options.to_h
+      self.post.handler_obj.options.data
     end
 
-    def valid?
-      self.options.valid? && self.error_message.nil?
+    def data=(data)
+      self.post.handler_obj.options.data = data
+    end
+
+    def post_type
+      self.post.post_type
+    end
+
+    def post_type=(type)
+      self.post.post_type = type
     end
   end
 end

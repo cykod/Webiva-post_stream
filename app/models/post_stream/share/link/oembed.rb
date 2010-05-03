@@ -19,32 +19,26 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
     maxwidth = opts[:maxwidth] || '340'
     maxheight = opts[:maxheight] ? opts[:maxheight].to_s : nil
     OEmbed.transform(self.link, false, {'maxwidth' => maxwidth.to_s, 'maxheight' => maxheight}.delete_if{|k,v| v.blank?}) do |r, url|
-      r.video? { |d| self.post.post_type = 'media'; self.options.data = d; '' }
-      r.photo? { |d| self.post.post_type = 'image'; self.options.data = d; '' }
-      r.rich? { |d| self.post.post_type = 'media'; self.options.data = d; '' }
-      r.link? { |d| self.post.post_type = 'link'; self.options.data = d; '' }
+      r.video? { |d| self.post_type = 'media'; self.data = d.to_hash.symbolize_keys; '' }
+      r.photo? { |d| self.post_type = 'image'; self.data = d.to_hash.symbolize_keys; '' }
+      r.rich? { |d| self.post_type = 'media'; self.data = d.to_hash.symbolize_keys; '' }
+      r.link? { |d| self.post_type = 'link'; self.data = d.to_hash.symbolize_keys; '' }
     end
 
-    self.options.data.empty? ? false : true
-  end
-
-  def render(renderer, opts={})
-    maxwidth = (opts[:maxwidth] || 340).to_i
-    maxheight = opts[:maxheight] ? opts[:maxheight].to_i : nil
-    title_length = (opts[:title_length] || 40).to_i
-    renderer.render_to_string :partial => '/post_stream/share/link/oembed', :locals => {:post => self.post, :options => self.options, :maxwidth => maxwidth, :maxheight => maxheight, :title_length => title_length}
-  end
-
-  def preview_image_url
-    if self.options.data['type'] == 'photo'
-      self.options.data['url']
-    elsif ! self.options.data['thumbnail_url'].blank?
-      self.options.data['thumbnail_url']
+    unless self.data.empty?
+      if self.data[:type] == 'video' || self.data[:type] == 'rich'
+        if self.data[:html].blank?
+          self.data[:type] = 'photo'
+          self.data[:image_url] = self.data[:thumbnail_url]
+          self.data[:width] = self.data[:thumbnail_width]
+          self.data[:height] = self.data[:thumbnail_height]
+        end
+      elsif self.data[:type] == 'photo'
+        self.data[:image_url] = self.data[:url]
+      end
     end
-  end
 
-  class Options < HashModel
-    attributes :data => {}
+    self.data.empty? ? false : true
   end
 
   class WebivaNetHTTP
