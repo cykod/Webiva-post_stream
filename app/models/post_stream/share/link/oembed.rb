@@ -1,5 +1,4 @@
 require 'oembed_links'
-require 'nokogiri'
 require 'net/http'
 
 yaml_file = File.join(File.dirname(__FILE__), '../../../../..', "config", "oembed_links.yml")

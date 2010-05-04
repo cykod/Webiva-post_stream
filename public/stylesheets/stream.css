@@ -83,6 +83,13 @@
   font-size: 0.9em;
 }
 
+.post_stream_post .shared_content .description {
+  padding: 10px;
+  text-align: left;
+  font-weight: normal;
+  font-size: 1em;
+}
+
 .post_stream_post .shared_content a {
   outline: none;
 }
@@ -94,13 +101,9 @@
 .post_stream_post .shared_content .provider_author {
   text-align: left;
   padding-top: 2px;
-  padding-right: 5px;
+  margin-right: 5px;
   font-size: 0.8em;
   border-top: 1px solid #000;
-}
-
-.post_stream_post .shared_content .provider_author .provider {
-  float: left;
 }
 
 .post_stream_post .shared_content .provider_author .author {
