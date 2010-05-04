@@ -16,6 +16,7 @@ class PostStream::AdminController < ModuleController
   register_handler :post_stream, :share, 'PostStream::Share::MediaLink'
   #  register_handler :post_stream, :share, 'PostStream::Share::File'
   register_handler :post_stream, :link, 'PostStream::Share::Link::Oembed'
+  register_handler :post_stream, :link, 'PostStream::Share::Link::Fetch'
 
   register_handler :webiva, :widget, 'PostStreamWidget'
 

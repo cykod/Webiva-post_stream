@@ -15,6 +15,7 @@ module PostStream::Share
     def identifier; self.info[:identifier]; end
 
     def name; self.post.link; end
+    def description; nil; end
     def image_url; nil; end
     def width; nil; end
     def height; nil; end
@@ -26,6 +27,7 @@ module PostStream::Share
     def author_url; nil; end
     def provider_name; nil; end
     def provider_url; nil; end
+    def additional_information; nil; end
     def embeded_html; nil; end
 
     def options_class

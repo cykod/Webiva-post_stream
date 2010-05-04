@@ -40,6 +40,9 @@ class PostStream::PageRenderer < ParagraphRenderer
     conn_type, conn_id = page_connection(:content_list)
     @poster.view_targets = conn_id if conn_id
 
+    conn_type, conn_id = page_connection(:target_list)
+    @poster.additional_targets = conn_id if conn_id
+
     @poster.setup(params)
 
     unless editor?

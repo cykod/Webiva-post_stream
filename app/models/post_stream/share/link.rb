@@ -100,6 +100,10 @@ class PostStream::Share::Link < PostStream::Share::Base
     self.options.data[:title]
   end
 
+  def description
+    self.options.data[:description]
+  end
+
   def author_name
     self.options.data[:author_name]
   end
