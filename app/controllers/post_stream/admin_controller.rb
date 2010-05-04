@@ -19,6 +19,8 @@ class PostStream::AdminController < ModuleController
 
   register_handler :webiva, :widget, 'PostStreamWidget'
 
+  register_handler :blog, :targeted_after_publish, "PostStream::Autopublish"
+
   cms_admin_paths "options",
     "Post Stream Options" => { :action => 'options' },
     "Options" => { :controller => '/options' },
