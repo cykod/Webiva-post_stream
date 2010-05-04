@@ -55,7 +55,7 @@ class PostStreamPost < DomainModel
 
   def share_url(site_node)
     if self.shared_content_node
-      "#{self.shared_content_node.node_path}/#{self.identifier}"
+      self.shared_content_node.link
     else
       "#{site_node.node_path}/#{self.identifier}"
     end
