@@ -9,7 +9,8 @@ class PostStream::PageController < ParagraphController
                                                         [:content, 'Post Permission Content', :content]],
                                    :admin_permission => [[:target, 'Admin Permission Target', :target],
                                                          [:content, 'Admin Permission Content', :content]],
-                                   :content_list => [[:content_list, "Additional Content List",:content_list]]
+                                   :content_list => [[:content_list, "Additional Content List",:content_list]],
+                                   :target_list => [[:target_list, "Additional Target List",:target_list]]
                                  }
 
   editor_for :recent_posts, :name => 'Recent Posts', :feature => :post_stream_page_recent_posts
