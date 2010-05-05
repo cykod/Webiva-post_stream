@@ -143,10 +143,10 @@ class PostStream::PageRenderer < ParagraphRenderer
 
   def upload
     file = InlineFileUpload.new params[:file]
+    file.folder_id = @options.folder_id
 
     if request.post?
-      handle_file_upload(params[:file], 'file_id', {:folder => @options.folder_id})
-      file.file_id = params[:file][:file_id]
+      file.handle_file_upload(self, params)
       return render_paragraph(:parent_rjs => '/inline_file_upload/update', :locals => {:file => file}) if file.valid?
     end
 

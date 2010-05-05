@@ -30,6 +30,7 @@ class PostStream::Share::File < PostStream::Share::Base
   end
 
   def process_request(renderer, params, opts={})
+    self.options.file_id = nil unless self.options.file.creator_id == renderer.myself.id
     self.post.domain_file_id = self.options.file_id
     self.post.post_type = 'image'
   end
