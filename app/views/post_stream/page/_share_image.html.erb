@@ -7,4 +7,4 @@ if width.blank? || width.to_i > maxwidth
 end
 img = tag(:img, {:src => share.image_url, :width => width, :height => height, :alt => share.name, :title => share.name, :class => 'post_stream_photo'}.delete_if{|k,v| v.blank?})
 -%>
-<%= content_tag(:a, img, {:href => post.link, :rel => 'nofollow', :target => '_blank'}, false) %>
+<%= content_tag(:a, img, {:href => share.link, :rel => 'nofollow', :target => '_blank'}, false) %>

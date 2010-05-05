@@ -9,6 +9,8 @@ class PostStream::PageRenderer < ParagraphRenderer
   def stream
     @options = paragraph_options(:stream)
 
+    return self.upload if self.file_upload?
+
     target = nil
     conn_type, conn_id = page_connection(:target)
     if conn_id
@@ -138,6 +140,18 @@ class PostStream::PageRenderer < ParagraphRenderer
   end
 
   protected
+
+  def upload
+    file = InlineFileUpload.new params[:file]
+
+    if request.post?
+      handle_file_upload(params[:file], 'file_id', {:folder => @options.folder_id})
+      file.file_id = params[:file][:file_id]
+      return render_paragraph(:parent_rjs => '/inline_file_upload/update', :locals => {:file => file}) if file.valid?
+    end
+
+    render_paragraph :partial => '/inline_file_upload/form', :locals => {:file => file, :form_options => {:url => self.ajax_url}}
+  end
 
   def file_upload?
     params[:upload]

@@ -14,7 +14,8 @@ module PostStream::Share
     def info; @info ||= self.get_handler_info(:post_stream, :share, self.class.to_s.underscore); end
     def identifier; self.info[:identifier]; end
 
-    def name; self.post.link; end
+    def name; self.link; end
+    def link; self.post.link; end
     def description; nil; end
     def image_url; nil; end
     def width; nil; end

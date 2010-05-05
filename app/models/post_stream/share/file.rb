@@ -9,7 +9,7 @@ class PostStream::Share::File < PostStream::Share::Base
   end
 
   def valid_params
-    [:domain_file_id]
+    [:file_id]
   end
 
   def valid?
@@ -18,7 +18,7 @@ class PostStream::Share::File < PostStream::Share::Base
     if self.options.errors[:file_id]
       error = self.options.errors[:file_id]
       error = error[0] if error.is_a?(Array)
-      self.post.errors.add_to_base('Upload file ' + error)
+      self.post.errors.add_to_base('File ' + error)
       return false
     end
 
@@ -26,29 +26,53 @@ class PostStream::Share::File < PostStream::Share::Base
   end
 
   def render_form_elements(renderer, form, opts={})
-    output = form.hidden_field(:file_id)
-    output += form.inline_file_upload(:file, :url => renderer.ajax_url, :params => {:page_connection_hash => renderer.page_connection_hash})
+    renderer.render_to_string :partial => '/post_stream/share/file_form', :locals => {:renderer => renderer, :form => form}
   end
 
   def process_request(renderer, params, opts={})
-    if renderer.request.post? && params[self.form_name]
-      renderer.handle_file_upload(params[self.form_name], 'file_id', {:folder => opts[:folder_id]})
-    end
-
     self.post.domain_file_id = self.options.file_id
+    self.post.post_type = 'image'
   end
 
-  def render(renderer, opts={})
-    self.post.domain_file.image_tag if self.post.domain_file
+  def name
+    self.post.domain_file.name
   end
 
-  def preview_image_url
-    self.post.domain_file.full_url if self.post.domain_file
+  def image_url
+    self.post.domain_file.url :small
+  end
+
+  def link
+    self.post.domain_file.full_url
+  end
+
+  def width
+    self.post.domain_file.width :small
+  end
+
+  def height
+    self.post.domain_file.height :small
+  end
+
+  def author_name
+    self.post.end_user.name if self.post.end_user
+  end
+
+  def provider_name
+    Configuration.domain
+  end
+
+  def provider_url
+    Configuration.domain_link '/'
   end
 
   class Options < HashModel
     attributes :file_id => nil
-
     validates_presence_of :file_id
+    domain_file_options :file_id
+
+    def validate
+      self.errors.add(:file_id, 'must be an image') if self.file && ! self.file.image?
+    end
   end
 end
