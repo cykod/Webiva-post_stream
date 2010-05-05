@@ -1,7 +1,5 @@
 <%
 html = share.embeded_html.to_s
-doc =  Nokogiri::HTML(html)
-html = doc.xpath('//object').to_s
 
 thumbnail_width = share.thumbnail_width
 thumbnail_height = share.thumbnail_height
