@@ -115,7 +115,7 @@ class PostStream::PageFeature < ParagraphFeature
 
       c.define_tag('form:share_with:targets') do |t|
         unless data[:poster].additional_targets.empty?
-          content = data[:poster].additional_targets.length == 1 ? t.locals.form.check_boxes(:additional_target, data[:poster].additional_target_options, :single => true) : t.locals.form.select(:additional_target, [['--Select an addiontal stream--'.t, nil]] + data[:poster].additional_target_options)
+          content = data[:poster].additional_targets.length == 1 ? t.locals.form.check_boxes(:additional_target, data[:poster].additional_target_options, :single => true) : t.locals.form.select(:additional_target, [['-- Also post to --'.t, nil]] + data[:poster].additional_target_options)
           '<div class="targets">' + content + '</div>'
         end
       end
