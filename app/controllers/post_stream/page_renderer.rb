@@ -145,7 +145,7 @@ class PostStream::PageRenderer < ParagraphRenderer
     file = InlineFileUpload.new params[:file]
     file.folder_id = @options.folder_id
 
-    if request.post?
+    if request.post? && ! editor?
       file.handle_file_upload(self, params)
       return render_paragraph(:parent_rjs => '/inline_file_upload/update', :locals => {:file => file}) if file.valid?
     end

@@ -144,12 +144,13 @@ class PostStreamPoster
 
   # returns has_more and posts
   def fetch_posts(page=1, opts={})
-    if self.options[:only_display_target_posts]
+    if self.options[:posts_to_display] == 'target'
       @has_more, @posts = PostStreamPost.find_for_target(self.target, page, opts)
     else
       stream_targets = self.fetch_targets
       return [false, []] if stream_targets.empty?
 
+      opts[:except] = self.target if self.options[:posts_to_display] == 'not_target'
       @has_more, @posts = PostStreamPost.find_for_targets(stream_targets, page, opts)
     end
 

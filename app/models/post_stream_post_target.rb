@@ -11,6 +11,7 @@ class PostStreamPostTarget < DomainModel
   named_scope :with_post, lambda { |post_id| {:conditions => {:post_stream_post_id => post_id}} }
   named_scope :with_target, lambda { |target_id| {:conditions => {:post_stream_target_id => target_id}} }
   named_scope :with_types, lambda { |types| {:conditions => {:post_type => types}} }
+  named_scope :without_posted_by, lambda { |poster| {:joins => :post_stream_post, :conditions => ['NOT (post_stream_posts.posted_by_type = ? and post_stream_posts.posted_by_id = ?)',  poster.class.to_s, poster.id]} }
 
   def self.link_post_to_target(post, target)
     begin

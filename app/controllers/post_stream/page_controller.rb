@@ -20,10 +20,10 @@ class PostStream::PageController < ParagraphController
                                }
 
   class StreamOptions < HashModel
-    attributes :folder_id => nil, :post_types_filter => [], :maxwidth => 340, :title_length => 40, :default_post_text => '', :default_comment_text => '', :post_on_facebook => true, :posts_per_page => 10, :post_page_id => nil, :only_display_target_posts => false
+    attributes :folder_id => nil, :post_types_filter => [], :maxwidth => 340, :title_length => 40, :default_post_text => '', :default_comment_text => '', :post_on_facebook => true, :posts_per_page => 10, :post_page_id => nil, :posts_to_display => 'all'
 
     integer_options :maxwidth, :posts_per_page, :title_length
-    boolean_options :post_on_facebook, :only_display_target_posts
+    boolean_options :post_on_facebook
     page_options :post_page_id
 
     options_form(
@@ -32,7 +32,7 @@ class PostStream::PageController < ParagraphController
                  fld(:posts_per_page, :text_field),
                  fld(:maxwidth, :text_field, :description => 'embed content max width', :label => 'Max width'),
                  fld(:title_length, :text_field, :description => 'embed content title width before truncating'),
-                 fld(:only_display_target_posts, :check_boxes, :single => true, :options => [['target posts only', true]]),
+                 fld(:posts_to_display, :radio_buttons, :options => [['show all posts', 'all'], ['targets posts only', 'target'], ['all except target', 'not_target']]),
                  fld(:post_on_facebook, :check_boxes, :single => true, :options => [['share posts on Facebook', true]]),
                  fld(:default_post_text, :text_field),
                  fld(:default_comment_text, :text_field),

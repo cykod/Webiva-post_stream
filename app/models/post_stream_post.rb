@@ -30,6 +30,7 @@ class PostStreamPost < DomainModel
 
   named_scope :with_types, lambda { |types| types.empty? ? {} : {:conditions => {:post_type => types}} }
   named_scope :with_posted_by, lambda { |poster| {:conditions => {:posted_by_type => poster.class.to_s, :posted_by_id => poster.id}} }
+  named_scope :without_posted_by, lambda { |poster| {:conditions => ['NOT (posted_by_type = ? and posted_by_id = ?)',  poster.class.to_s, poster.id]} }
 
   def identifier
     "#{self.id}-#{self.post_hash}"
@@ -146,6 +147,7 @@ class PostStreamPost < DomainModel
     page = (page || 1).to_i
     limit = opts.delete(:limit) || 10
     offset = (page-1) * limit
+    except = opts.delete(:except)
 
     post_types = opts.delete(:post_types)
     if post_types && ! post_types.empty?
@@ -154,7 +156,9 @@ class PostStreamPost < DomainModel
       scope = PostStreamPostTarget
     end
 
-    items = scope.with_target(targets).find(:all, {:select => 'DISTINCT post_stream_post_id', :limit => limit + 1, :offset => offset, :order => 'posted_at DESC'}.merge(opts))
+    scope = scope.without_posted_by(except) if except
+
+    items = scope.with_target(targets).find(:all, {:select => 'DISTINCT post_stream_post_id', :limit => limit + 1, :offset => offset, :order => 'post_stream_post_targets.posted_at DESC'}.merge(opts))
 
     has_more = items.length > limit
     items.pop if has_more

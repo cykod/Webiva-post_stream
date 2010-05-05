@@ -26,11 +26,12 @@ class PostStream::Share::File < PostStream::Share::Base
   end
 
   def render_form_elements(renderer, form, opts={})
+    return '' if renderer.editor?
     renderer.render_to_string :partial => '/post_stream/share/file_form', :locals => {:renderer => renderer, :form => form}
   end
 
   def process_request(renderer, params, opts={})
-    self.options.file_id = nil unless self.options.file.creator_id == renderer.myself.id
+    self.options.file_id = nil unless self.options.file && self.options.file.creator_id == renderer.myself.id
     self.post.domain_file_id = self.options.file_id
     self.post.post_type = 'image'
   end
