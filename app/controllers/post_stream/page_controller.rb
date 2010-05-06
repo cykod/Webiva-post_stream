@@ -33,7 +33,7 @@ class PostStream::PageController < ParagraphController
                  fld(:maxwidth, :text_field, :description => 'embed content max width', :label => 'Max width'),
                  fld(:title_length, :text_field, :description => 'embed content title width before truncating'),
                  fld(:posts_to_display, :radio_buttons, :options => [['show all posts', 'all'], ['targets posts only', 'target'], ['all except target', 'not_target']]),
-                 fld(:post_on_facebook, :check_boxes, :single => true, :options => [['share posts on Facebook', true]]),
+                 fld(:post_on_facebook, :check_boxes, :single => true, :options => [['share posts on Facebook', true]], :description => 'requires Facebooked module and Post page'),
                  fld(:default_post_text, :text_field),
                  fld(:default_comment_text, :text_field),
                  fld(:post_page_id, :page_selector)

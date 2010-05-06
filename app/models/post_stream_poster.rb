@@ -245,6 +245,10 @@ class PostStreamPoster
     end
   end
 
+  def can_post_to_facebook?
+    self.options[:post_on_facebook] && self.post_page_node && SiteModule.module_enabled?('Facebooked')
+  end
+
   def get_locals
     {:poster => self, :posts => self.posts, :post => self.post, :has_more => self.has_more, :saved => @saved, :deleted => @deleted, :renderer => self.renderer, :post_page_node => self.post_page_node, :page_connection_hash => self.page_connection_hash, :comment => @comment, :options => self.paragraph_options}
   end

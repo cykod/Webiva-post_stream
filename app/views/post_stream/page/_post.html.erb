@@ -25,10 +25,10 @@
   <spam class="links">
 <% if poster.can_post? -%>
     <a href="javascript:void(0);" onclick="PostStreamForm.toggleComment(<%= post.id %>);">Comment</a>
-  <% if post_page_node && poster.options[:post_on_facebook] -%>
+  <% if poster.can_post_to_facebook? -%>
     | <a class="fb_share_button" onclick="PostStream.share('<%= jvh Configuration.domain_link(post.share_url(post_page_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);" href="javascript:void(0);"><span><%= 'Share'.t %></span></a>
   <% end -%>
-<% elsif post_page_node && poster.options[:post_on_facebook] -%>
+<% elsif poster.can_post_to_facebook? -%>
     <a class="fb_share_button" onclick="PostStream.share('<%= jvh Configuration.domain_link(post.share_url(post_page_node)) %>', '<%= jvh truncate(post.body, :length => 60) %>', null);" href="javascript:void(0);"><span><%= 'Share'.t %></span></a>
 <% end -%>
   </span>
