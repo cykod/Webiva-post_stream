@@ -1,8 +1,17 @@
 <table class='mini_table' width='100%'>
-<tr><th>Title</th><th>Body</th><th>Posted By</th><th>Posted On</th></tr>
+<tr><th>Title</th><th>Body</th><th>Posted By</th><th>Posted On</th>
+</tr>
 <% posts.each do |post| -%>
 <tr>
-<td><a target="_blank" href="<%= url_for :controller => '/post_stream/manage', :action => 'post', :path => [post.id] %>"><%= h post.title %></a></td>
+<td>
+<% if post.posted_by -%>
+  <a target="_blank" href="<%= url_for :controller => '/post_stream/manage', :action => 'post', :path => [post.posted_by_post_stream_target.id, post.id] %>">
+<% end -%>
+<%= '<span style="color:red;">' if post.flagged %>
+<%= h post.title %>
+<%= '</span>' if post.flagged %>
+<%= '</a>' if post.posted_by %>
+</td>
 <td><%= h truncate(post.body, :length => 80) %></td>
 <td><%= post.posted_by.name if post.posted_by %></td>
 <td><%= post.posted_at.to_s(:short) %></td>

@@ -20,6 +20,7 @@ class PostStream::ManageController < ModuleController
                   hdr(:static, 'User'),
                   :handler,
                   hdr(:number, :post_stream_post_comments_count, :label => '# Comments'),
+                  :flagged,
                   :posted_at
                 ]
 
@@ -28,6 +29,7 @@ class PostStream::ManageController < ModuleController
                 PostStreamTarget,
                 [ :name,
                   hdr(:number, :post_stream_post_count, :label => '# Posts'),
+                  hdr(:number, :flagged_post_count, :label => '# Flagged Posts'),
                   :last_posted_at,
                   :created_at
                 ]
@@ -60,6 +62,14 @@ class PostStream::ManageController < ModuleController
     active_table_action 'post_stream' do |act,ids|
       case act
       when 'delete': PostStreamPost.destroy(ids)
+      when 'flag'
+        PostStreamPost.update_all('flagged = 1', :id => ids)
+        @target.flagged_post_count = PostStreamPost.with_posted_by(@target.target).flagged_posts.count
+        @target.save
+      when 'unflag'
+        PostStreamPost.update_all('flagged = 0', :id => ids)
+        @target.flagged_post_count = PostStreamPost.with_posted_by(@target.target).flagged_posts.count
+        @target.save
       end
     end
 

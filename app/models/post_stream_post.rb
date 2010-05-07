@@ -32,6 +32,7 @@ class PostStreamPost < DomainModel
   named_scope :with_posted_by, lambda { |poster| {:conditions => {:posted_by_type => poster.class.to_s, :posted_by_id => poster.id}} }
   named_scope :without_posted_by, lambda { |poster| {:conditions => ['NOT (posted_by_type = ? and posted_by_id = ?)',  poster.class.to_s, poster.id]} }
   named_scope :without_posts, lambda { |ids| {:conditions => ['post_stream_post.id not in(?)', ids] } }
+  named_scope :flagged_posts, {:conditions => {:flagged => true}}
 
   def identifier
     "#{self.id}-#{self.post_hash}"
@@ -221,9 +222,22 @@ class PostStreamPost < DomainModel
     end
   end
 
+  def after_save
+    if self.flagged
+      target = PostStreamTarget.find_target self.posted_by
+      target.flagged_post_count = PostStreamPost.with_posted_by(self.posted_by).flagged_posts.count
+      target.save
+    end
+  end
+
   def after_destroy
     target = PostStreamTarget.find_target self.posted_by
     target.post_stream_post_count = PostStreamPost.with_posted_by(self.posted_by).count
+    target.flagged_post_count = PostStreamPost.with_posted_by(self.posted_by).flagged_posts.count if self.flagged
     target.save
+  end
+
+  def posted_by_post_stream_target
+    @posted_by_post_stream_target ||= PostStreamTarget.find_target self.posted_by if self.posted_by
   end
 end
