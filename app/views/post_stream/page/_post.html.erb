@@ -3,7 +3,7 @@
 <div class="delete">
 <a onclick="PostStream.deletePost('<%= jvh renderer.ajax_url %>', '<%= post.identifier %>');" href="javascript:void(0);"><span>Delete</span></a>
 </div>
-<% elsif poster.can_post? -%>
+<% else -%>
 <div class="flag_post">
 <a onclick="PostStream.flagPost('<%= jvh renderer.ajax_url %>', '<%= post.identifier %>');" href="javascript:void(0);"><span>Flag as inappropriate</span></a>
 </div>

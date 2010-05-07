@@ -203,7 +203,7 @@ class PostStreamPoster
     elsif params[:flag]
       self.request_type = 'flag_post'
 
-      self.fetch_post(params[:post_stream_post_identifier])
+      self.fetch_post_by_identifier(params[:post_stream_post_identifier])
 
       @flagged = self.flag_post
     elsif params[:stream_post_comment]

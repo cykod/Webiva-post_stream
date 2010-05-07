@@ -4,7 +4,7 @@ class PostStream::PageRenderer < ParagraphRenderer
 
   paragraph :stream, :ajax => true
   paragraph :recent_posts
-  paragraph :post
+  paragraph :post, :ajax => true
 
   def stream
     @options = paragraph_options(:stream)
@@ -115,6 +115,24 @@ class PostStream::PageRenderer < ParagraphRenderer
     @poster.renderer = self
     @poster.post_page_node = site_node
     @poster.paragraph_options = @options
+
+    unless editor?
+      if request.post? && params[:flag]
+        @poster.process_request(params)
+
+        if @poster.flagged?
+          paragraph_action(myself.action("/post_stream/flagged_post", :target => @poster.post, :identifier => truncate(@poster.post.body, :length => 30)))
+          paragraph.run_triggered_actions(@poster.post,'flagged_post',myself)
+        end
+
+        if ajax?
+          return render_paragraph :inline => '{}', :locals => @poster.get_locals
+        else
+          flash[:notice] = 'Post has been flagged'
+          return redirect_paragraph :page
+        end       
+      end
+    end
 
     if editor?
       @poster.fetch_first_post
