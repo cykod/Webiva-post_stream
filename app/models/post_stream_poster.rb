@@ -144,6 +144,8 @@ class PostStreamPoster
 
   # returns has_more and posts
   def fetch_posts(page=1, opts={})
+    opts[:exclude] = self.flagged_posts
+
     if self.options[:posts_to_display] == 'target'
       @has_more, @posts = PostStreamPost.find_for_target(self.target, page, opts)
     else
@@ -198,6 +200,12 @@ class PostStreamPoster
       self.fetch_post(params[:post_stream_post_identifier])
 
       @deleted = self.delete_post
+    elsif params[:flag]
+      self.request_type = 'flag_post'
+
+      self.fetch_post(params[:post_stream_post_identifier])
+
+      @flagged = self.flag_post
     elsif params[:stream_post_comment]
       self.request_type = 'new_comment'
 
@@ -245,11 +253,40 @@ class PostStreamPoster
     end
   end
 
+  def flag_post
+    if @post
+      @post.flagged = true
+      @post.save
+
+      if self.renderer
+        self.renderer.session[:post_stream_posts] ||= {}
+        self.renderer.session[:post_stream_posts][:flagged] ||= []
+        self.renderer.session[:post_stream_posts][:flagged] << @post.id
+      end
+
+      true
+    else
+      false
+    end
+  end
+
+  def flagged?
+    @flagged
+  end
+
+  def flagged_posts
+    if self.renderer && self.renderer.session[:post_stream_posts] && self.renderer.session[:post_stream_posts][:flagged]
+      self.renderer.session[:post_stream_posts][:flagged]
+    else
+      nil
+    end
+  end
+
   def can_post_to_facebook?
     self.options[:post_on_facebook] && self.post_page_node && SiteModule.module_enabled?('Facebooked')
   end
 
   def get_locals
-    {:poster => self, :posts => self.posts, :post => self.post, :has_more => self.has_more, :saved => @saved, :deleted => @deleted, :renderer => self.renderer, :post_page_node => self.post_page_node, :page_connection_hash => self.page_connection_hash, :comment => @comment, :options => self.paragraph_options}
+    {:poster => self, :posts => self.posts, :post => self.post, :has_more => self.has_more, :saved => @saved, :deleted => @deleted, :flagged => @flagged, :renderer => self.renderer, :post_page_node => self.post_page_node, :page_connection_hash => self.page_connection_hash, :comment => @comment, :options => self.paragraph_options}
   end
 end

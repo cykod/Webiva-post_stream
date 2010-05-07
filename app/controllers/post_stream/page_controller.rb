@@ -11,7 +11,8 @@ class PostStream::PageController < ParagraphController
                                                          [:content, 'Admin Permission Content', :content]],
                                    :content_list => [[:content_list, "Additional Content List",:content_list]],
                                    :target_list => [[:target_list, "Additional Target List",:target_list]]
-                                 }
+                                 },
+                      :triggers => [['Flagged post','flagged_post']]
 
   editor_for :recent_posts, :name => 'Recent Posts', :feature => :post_stream_page_recent_posts
 
@@ -45,6 +46,10 @@ class PostStream::PageController < ParagraphController
 
     def post_types_options
       PostStreamPost.post_type_select_options
+    end
+
+    def options_partial
+      "/application/triggered_options_partial"
     end
   end
 

@@ -25,6 +25,20 @@
   display: block;
 }
 
+.post_stream_post .flag_post {
+  float: right;
+  font-size: 0.9em;
+  padding-right: 5px;
+}
+
+.post_stream_post_out .flag_post {
+  display: none;
+}
+
+.post_stream_post_over .flag_post {
+  display: block;
+}
+
 .post_stream_post .post img {
   display: block;
   float: left;

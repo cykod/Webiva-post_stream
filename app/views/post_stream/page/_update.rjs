@@ -20,5 +20,8 @@ when 'new_comment'
 
 when 'delete_post'
   page.replace "post_stream_post_#{post.id}", '' if deleted
+
+when 'flag_post'
+  page.replace "post_stream_post_#{post.id}", '' if flagged
 end
 

@@ -3,9 +3,13 @@
 <div class="delete">
 <a onclick="PostStream.deletePost('<%= jvh renderer.ajax_url %>', '<%= post.identifier %>');" href="javascript:void(0);"><span>Delete</span></a>
 </div>
+<% elsif poster.can_post? -%>
+<div class="flag_post">
+<a onclick="PostStream.flagPost('<%= jvh renderer.ajax_url %>', '<%= post.identifier %>');" href="javascript:void(0);"><span>Flag as inappropriate</span></a>
+</div>
 <% end -%>
 
-  <% if post.image %>
+  <% if post.image && post.image.image? %>
     <% if post.posted_by_shared_content_node -%>
       <%= content_tag(:a, post.image.image_tag(:thumb), {:href => post.posted_by_shared_content_node.link}, false) %>
     <% else -%>

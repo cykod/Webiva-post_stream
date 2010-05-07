@@ -118,6 +118,7 @@ PostStreamForm = {
 
 PostStream = {
   nextPage: 1,
+  flagMessage: 'Post has been flagged.',
 
   embed: function(html, id) {
     // remove shared embeded content
@@ -146,6 +147,14 @@ PostStream = {
     new Ajax.Request(url, {parameters: parameters,
                            onSuccess: function(res) { eval(res.responseText); }
                      });    
+  },
+
+  flagPost: function(url, id) {
+    parameters = 'flag=1&post_stream_post_identifier=' + id + '&page_connection_hash=' + PostStreamForm.pageConnectionHash;
+
+    new Ajax.Request(url, {parameters: parameters,
+                           onSuccess: function(res) { eval(res.responseText); alert(PostStream.flagMessage);}
+                     });
   },
 
   onMouseOverPost: function(id) {
