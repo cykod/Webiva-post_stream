@@ -18,7 +18,8 @@ class PostStream::PageController < ParagraphController
 
   editor_for :post, :name => 'Post', :feature => :post_stream_page_post,
                     :inputs => { :post_identifier => [[:identifier, 'Post Identifier', :path]]
-                               }
+                               },
+                    :triggers => [['Flagged post','flagged_post']]
 
   class StreamOptions < HashModel
     attributes :folder_id => nil, :post_types_filter => [], :maxwidth => 340, :title_length => 40, :default_post_text => '', :default_comment_text => '', :post_on_facebook => true, :posts_per_page => 10, :post_page_id => nil, :posts_to_display => 'all'
@@ -92,5 +93,9 @@ class PostStream::PageController < ParagraphController
                  fld(:title_length, :text_field, :description => 'embed content title width before truncating'),
                  fld(:post_on_facebook, :check_boxes, :single => true, :options => [['share posts on Facebook', true]])
                  )
+
+    def options_partial
+      "/application/triggered_options_partial"
+    end
   end
 end
