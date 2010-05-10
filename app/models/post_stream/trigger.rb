@@ -17,15 +17,20 @@ class PostStream::Trigger < Trigger::TriggeredActionHandler
     include ActionView::Helpers::TextHelper
 
     class AutoPostOptions < HashModel
-      default_options :body => nil
+      default_options :body => nil, :title => nil, :use_title => false
+      boolean_options :use_title
       validates_presence_of :body
+
+      def validate
+        self.errors.add(:title, 'is missing') if self.use_title && self.title.blank?
+      end
     end
     
     options "Auto Post Options", AutoPostOptions
 
     def perform(data={},user = nil)
       @data = data
-
+    
       if user
         poster = PostStreamPoster.new user, user
         poster.setup self.post, self.post_options
@@ -33,38 +38,24 @@ class PostStream::Trigger < Trigger::TriggeredActionHandler
       end
     end
 
+    def data_vars
+      @data_vars ||= @data.is_a?(DomainModel) ? @data.triggered_attributes.symbolize_keys :  (@data.is_a?(Hash) ? @data.symbolize_keys : {})
+    end
+
     def post
       {:stream_post => {:body => self.body}}
     end
 
     def body
-      @body = options.body
-      @body = self.body_replace(:body)
-      @body = self.body_replace(:preview)
-      @body = self.body_replace(:title)
-      @body = self.body_replace(:name)
-      @body = self.body_replace(:link)
-      @body
-    end
-
-    def body_replace(name)
-      @data.respond_to?(name) && @data.send(name) ? @body.gsub("%%#{name}%%", truncate(@data.send(name).to_s, :length => 200)) : @body
+      DomainModel.variable_replace(options.body, self.data_vars)
     end
 
     def post_options
-      {:title => self.title, :link => self.link, :post_type => self.post_type, :shared_content_node_id => self.shared_content_node_id}
+      {:title => self.title, :shared_content_node_id => self.shared_content_node_id}
     end
 
     def title
-      nil
-    end
-
-    def link
-      @data.respond_to?(:link) ? @data.link : nil
-    end
-
-    def post_type
-      self.link ? 'link' : nil
+      options.use_title ? DomainModel.variable_replace(options.title, self.data_vars) : nil
     end
 
     def shared_content_node_id
