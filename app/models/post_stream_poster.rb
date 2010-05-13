@@ -59,17 +59,8 @@ class PostStreamPoster
   end
 
   def valid_post_and_target
-    link = nil
-    stream_target = PostStreamTarget.find_target(self.target)
-    link = PostStreamPostTarget.find_with_post_and_target(@post, stream_target) if stream_target
-    return link if link
-    stream_target = PostStreamTarget.find_target(self.end_user)
-    link = PostStreamPostTarget.find_with_post_and_target(@post, stream_target) if stream_target
-    return link if link
-    return nil unless self.view_targets
-    link = self.view_targets.find do |t|
-      stream_target = PostStreamTarget.find_target(t)
-      stream_target ? PostStreamPostTarget.find_with_post_and_target(@post, stream_target) : nil
+    self.fetch_targets.find do |stream_target|
+      PostStreamPostTarget.find_with_post_and_target(@post, stream_target)
     end
   end
 
