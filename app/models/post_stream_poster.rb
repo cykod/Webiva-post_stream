@@ -237,7 +237,7 @@ class PostStreamPoster
   end
 
   def can_delete_post?(post)
-    self.can_post? && post.end_user_id == self.end_user.id
+    self.can_post? && self.end_user.id && post.end_user_id == self.end_user.id
   end
 
   def delete_post
