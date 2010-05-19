@@ -22,7 +22,10 @@ class PostStream::PageRenderer < ParagraphRenderer
     elsif editor?
       target = myself
     else
-      return render_paragraph :text => 'Please setup page connections' unless target
+      if target.nil? || target.id.nil?
+        return render_paragraph :text => 'Please setup page connections' if myself.editor?
+        return render_paragraph :nothing => true
+      end
     end
 
     PostStreamPoster.setup_header(self)
