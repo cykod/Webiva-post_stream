@@ -278,6 +278,10 @@ class PostStreamPoster
     end
   end
 
+  def new_post?
+    self.request_type == 'new_post' && @saved
+  end
+
   def can_post_to_facebook?
     self.options[:post_on_facebook] && self.post_page_node && SiteModule.module_enabled?('Facebooked')
   end

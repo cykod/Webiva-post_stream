@@ -51,12 +51,14 @@ class PostStream::PageRenderer < ParagraphRenderer
       if request.post?
         @poster.process_request(params)
 
+        myself.reload if myself.id && myself.missing_name?
+
         if @poster.flagged?
           paragraph_action(myself.action("/post_stream/flagged_post", :target => @poster.post, :identifier => truncate(@poster.post.body, :length => 30)))
           paragraph.run_triggered_actions(@poster.post,'flagged_post',myself)
         end
 
-        myself.reload if myself.id && myself.missing_name?
+        paragraph.run_triggered_actions(@poster.post,'new_post',myself) if @poster.new_post?
 
         if ajax?
           return render_paragraph :rjs => '/post_stream/page/update', :locals => @poster.get_locals

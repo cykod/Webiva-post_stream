@@ -12,7 +12,8 @@ class PostStream::PageController < ParagraphController
                                    :content_list => [[:content_list, "Additional Content List",:content_list]],
                                    :target_list => [[:target_list, "Additional Target List",:target_list]]
                                  },
-                      :triggers => [['Flagged post','flagged_post']]
+                      :triggers => [['Flagged post','flagged_post'],
+                                    ['New post', 'new_post']]
 
   editor_for :recent_posts, :name => 'Recent Posts', :feature => :post_stream_page_recent_posts
 
