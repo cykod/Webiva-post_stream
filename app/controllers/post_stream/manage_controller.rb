@@ -73,7 +73,7 @@ class PostStream::ManageController < ModuleController
       end
     end
 
-    @active_table_output = post_stream_table_generate params, :order => 'posted_at DESC', :conditions => ['posted_by_type = ? and posted_by_id = ?', @target.target_type, @target.target_id]
+    @active_table_output = post_stream_table_generate params, :order => 'posted_at DESC', :conditions => ['post_stream_targets.id = ?', @target.id], :joins => :post_stream_targets
     
     render :partial => 'post_stream_table' if display
   end

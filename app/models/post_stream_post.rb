@@ -10,6 +10,7 @@ class PostStreamPost < DomainModel
   # posted_by models must have a name and image field
   belongs_to :posted_by, :polymorphic => true
   has_many :post_stream_post_targets, :dependent => :delete_all
+  has_many :post_stream_targets, :through => :post_stream_post_targets
   has_many :post_stream_post_comments, :order => 'posted_at DESC', :dependent => :delete_all
 
   validates_presence_of :post_type
