@@ -25,7 +25,7 @@ describe PostStream::PageRenderer, :type => :controller do
   it "should post to the stream" do
     @myself = EndUser.new
     @target = EndUser.push_target('test@test.dev')
-    @rnd = stream_renderer({}, :target => [:target, @myself], :post_permission => [:target, @target])
+    @rnd = stream_renderer({}, :target => [:target, @target], :post_permission => [:target, @target])
     @rnd.should_receive(:redirect_paragraph)
     assert_difference 'PostStreamPost.count', 1 do
       renderer_post @rnd, :stream_post => {:body => 'My first post'}
