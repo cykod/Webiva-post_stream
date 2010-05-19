@@ -11,9 +11,9 @@ end
 thumbnail_img = tag(:img, {:src => share.thumbnail_url, :width => thumbnail_width, :height => thumbnail_height, :title => share.name, :alt => share.name, :id => "post_stream_thumbnail_#{post.id}", :class => 'post_stream_thumbnail'}.delete_if{|k,v| v.blank?})
 
 %>
-<% if share.thumbnail_url -%>
+<% if share.thumbnail_url && share.provider_name != 'Amazon' -%>
   <a href="javascript:void(0);" onclick="PostStream.embed('<%= jvh html %>', '<%= post.id %>');"><%= thumbnail_img %></a>
   <%= content_tag(:div, '', {:id => "post_stream_embed_#{post.id}", :class => 'post_stream_embed', :style => "display:none; width:#{share.width}px; height:#{share.height}px;"}) %>
 <% elsif html -%>
-  <%= content_tag(:div, html, {:id => "post_stream_embed_#{post.id}", :class => 'post_stream_embed', :style => "width:#{share.width}px; height:#{share.height}px;"}) %>
+  <%= content_tag(:div, html, {:id => "post_stream_embed_#{post.id}", :style => "width:#{share.width}px; height:#{share.height}px;"}) %>
 <% end -%>
