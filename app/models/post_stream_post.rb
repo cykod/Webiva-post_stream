@@ -9,9 +9,9 @@ class PostStreamPost < DomainModel
 
   # posted_by models must have a name and image field
   belongs_to :posted_by, :polymorphic => true
-  has_many :post_stream_post_targets, :dependent => :delete_all
+  has_many :post_stream_post_targets
   has_many :post_stream_targets, :through => :post_stream_post_targets
-  has_many :post_stream_post_comments, :order => 'posted_at DESC', :dependent => :delete_all
+  has_many :post_stream_post_comments, :dependent => :delete_all, :order => 'posted_at DESC'
 
   validates_presence_of :post_type
   has_options :post_type, [['Post', 'post'], ['Content','content'], ['Link','link'], ['Image', 'image'], ['Media', 'media']] 
@@ -223,19 +223,23 @@ class PostStreamPost < DomainModel
     end
   end
 
+  def flagged=(flag)
+    @update_targets = self.flagged != flag
+    self.write_attribute :flagged, flag
+    flag
+  end
+
   def after_save
-    if self.flagged
-      target = PostStreamTarget.find_target self.posted_by
-      target.flagged_post_count = PostStreamPost.with_posted_by(self.posted_by).flagged_posts.count
-      target.save
-    end
+    self.post_stream_targets.each { |target| target.update_stats } if @update_targets
+  end
+
+  def after_create
+    self.post_stream_targets.each { |target| target.update_stats(self) }
   end
 
   def after_destroy
-    target = PostStreamTarget.find_target self.posted_by
-    target.post_stream_post_count = PostStreamPost.with_posted_by(self.posted_by).count
-    target.flagged_post_count = PostStreamPost.with_posted_by(self.posted_by).flagged_posts.count if self.flagged
-    target.save
+    self.post_stream_targets.each { |target| target.update_stats }
+    PostStreamPostTarget.delete_all(:id => self.post_stream_post_targets.collect(&:id))
   end
 
   def posted_by_post_stream_target

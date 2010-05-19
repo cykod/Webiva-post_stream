@@ -29,6 +29,7 @@ class PostStream::ManageController < ModuleController
                 PostStreamTarget,
                 [ :name,
                   hdr(:number, :post_stream_post_count, :label => '# Posts'),
+                  hdr(:number, :posted_by_count, :label => '# Posts From Target'),
                   hdr(:number, :flagged_post_count, :label => '# Flagged Posts'),
                   :last_posted_at,
                   :created_at
@@ -63,17 +64,13 @@ class PostStream::ManageController < ModuleController
       case act
       when 'delete': PostStreamPost.destroy(ids)
       when 'flag'
-        PostStreamPost.update_all('flagged = 1', :id => ids)
-        @target.flagged_post_count = PostStreamPost.with_posted_by(@target.target).flagged_posts.count
-        @target.save
+        PostStreamPost.find(:all, :conditions => {:id => ids}).each { |post| post.update_attributes(:flagged => true) }
       when 'unflag'
-        PostStreamPost.update_all('flagged = 0', :id => ids)
-        @target.flagged_post_count = PostStreamPost.with_posted_by(@target.target).flagged_posts.count
-        @target.save
+        PostStreamPost.find(:all, :conditions => {:id => ids}).each { |post| post.update_attributes(:flagged => false) }
       end
     end
 
-    @active_table_output = post_stream_table_generate params, :order => 'posted_at DESC', :conditions => ['post_stream_targets.id = ?', @target.id], :joins => :post_stream_targets
+    @active_table_output = post_stream_table_generate params, :order => 'posted_at DESC', :conditions => ['post_stream_targets.id = ?', @target.id], :joins => :post_stream_targets, :select => 'DISTINCT post_stream_posts.*'
     
     render :partial => 'post_stream_table' if display
   end

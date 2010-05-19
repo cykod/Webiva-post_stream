@@ -26,7 +26,7 @@
 </div>
 <div class="actions">
   <span class="posted_at"><%= '%s ago' / time_ago_in_words(post.posted_at) %></span>
-  <spam class="links">
+  <span class="links">
 <% if poster.can_post? -%>
     <a href="javascript:void(0);" onclick="PostStreamForm.toggleComment(<%= post.id %>);">Comment</a>
   <% if poster.can_post_to_facebook? -%>

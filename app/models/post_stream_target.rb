@@ -6,6 +6,7 @@ class PostStreamTarget < DomainModel
   validates_presence_of :target_type
 
   has_many :post_stream_post_targets, :dependent => :destroy
+  has_many :post_stream_posts, :through => :post_stream_post_targets
 
   named_scope :with_target, lambda { |target| {:conditions => {:target_type => target.class.to_s, :target_id => target.id}} }
 
@@ -14,7 +15,7 @@ class PostStreamTarget < DomainModel
   end
 
   def self.find_target(target)
-    self.with_target(target).find(:first)
+    self.with_target(target).find(:first) if target
   end
 
   def self.create_target(target)
@@ -33,10 +34,12 @@ class PostStreamTarget < DomainModel
     self.created_at = Time.now
   end
 
-  def update_stats(post)
-    self.name = self.target.name
-    self.last_posted_at = post.posted_at
-    self.post_stream_post_count = PostStreamPost.with_posted_by(self.target).count
+  def update_stats(post=nil)
+    self.name = self.target.name if self.target
+    self.last_posted_at = post.posted_at if post
+    self.post_stream_post_count = self.post_stream_posts.count :select => 'DISTINCT post_stream_posts.id'
+    self.flagged_post_count = self.post_stream_posts.flagged_posts.count :select => 'DISTINCT post_stream_posts.id'
+    self.posted_by_count = self.post_stream_posts.with_posted_by(self.target).count :select => 'DISTINCT post_stream_posts.id' if self.target
     self.save
   end
 end
