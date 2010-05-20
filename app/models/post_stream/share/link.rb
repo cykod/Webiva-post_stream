@@ -149,6 +149,10 @@ class PostStream::Share::Link < PostStream::Share::Base
     def data
       @data ||= {}
     end
+
+    def data=(data)
+      @data = data
+    end
   end
 
   class Base
@@ -168,6 +172,10 @@ class PostStream::Share::Link < PostStream::Share::Base
 
     def data
       self.post.handler_obj.options.data
+    end
+
+    def data=(data)
+      self.post.handler_obj.options.data = data
     end
 
     def post_type

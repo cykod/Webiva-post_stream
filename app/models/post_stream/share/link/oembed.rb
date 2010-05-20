@@ -27,13 +27,31 @@ class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
     unless self.data.empty?
       if self.data[:type] == 'video' || self.data[:type] == 'rich'
         if self.data[:html].blank?
-          self.data[:type] = 'photo'
-          self.data[:image_url] = self.data[:thumbnail_url]
-          self.data[:width] = self.data[:thumbnail_width]
-          self.data[:height] = self.data[:thumbnail_height]
+          if ! self.data[:thumbnail_url].blank?
+            self.data[:type] = 'photo'
+            self.data[:image_url] = self.data[:thumbnail_url]
+          else
+            self.data = {}
+          end
         end
       elsif self.data[:type] == 'photo'
         self.data[:image_url] = self.data[:url]
+      end
+
+      if self.data[:image_url]
+        image_size = DomainFile.remote_image_size(self.data[:image_url])
+        if image_size
+          self.data[:width] = image_size[0]
+          self.data[:height] = image_size[1]
+        end
+      end
+
+      if self.data[:thumbnail_url]
+        image_size = DomainFile.remote_image_size(self.data[:thumbnail_url])
+        if image_size
+          self.data[:thumbnail_width] = image_size[0]
+          self.data[:thumbnail_height] = image_size[1]
+        end
       end
     end
 
