@@ -40,7 +40,8 @@ module PostStream::Share
 
       data = self.post.data || {}
       opts ||= {}
-      @options ||= self.options_class.new(data.merge(opts))
+
+      @options = self.options_class.new(data.merge(opts))
     end
 
     def valid?

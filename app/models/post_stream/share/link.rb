@@ -135,7 +135,7 @@ class PostStream::Share::Link < PostStream::Share::Base
   class Options < HashModel
     attr_accessor :handler_required
 
-    attributes :link => nil, :handler => nil, :data => {}
+    attributes :link => nil, :handler => nil, :data => nil
 
     validates_presence_of :link
     validates_urlness_of :link, :allow_nil => true
@@ -144,6 +144,10 @@ class PostStream::Share::Link < PostStream::Share::Base
       if self.handler_required
         self.errors.add(:handler, 'is required') unless self.handler
       end
+    end
+
+    def data
+      @data ||= {}
     end
   end
 
@@ -164,10 +168,6 @@ class PostStream::Share::Link < PostStream::Share::Base
 
     def data
       self.post.handler_obj.options.data
-    end
-
-    def data=(data)
-      self.post.handler_obj.options.data = data
     end
 
     def post_type
