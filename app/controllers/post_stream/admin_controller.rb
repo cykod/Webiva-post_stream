@@ -35,6 +35,7 @@ class PostStream::AdminController < ModuleController
   linked_models :end_user, 
                 [ :post_stream_post_comments, [ :post_stream_targets, :target_type, :target_id ] ]
 
+  linked_models :content_node, [ [ :post_stream_post, :shared_content_node_id ]  ]
   public
 
   def self.get_post_stream_info
