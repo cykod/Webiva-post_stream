@@ -119,7 +119,7 @@ class PostStream::Share::Link::Fetch < PostStream::Share::Link::Base
       return response.body
     rescue URI::InvalidURIError => e
       return nil
-    rescue Exeception => e
+    rescue Exception => e
       Rails.logger.error "failed to fetch: #{url}, #{e}"
     end
 
