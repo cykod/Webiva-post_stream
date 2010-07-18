@@ -20,6 +20,8 @@ class PostStream::Share::Link::Fetch < PostStream::Share::Link::Base
     return nil unless uri.scheme == 'http'
     return nil unless uri.port == 80
 
+    return nil if uri.host.downcase.include?("facebook.com")
+
     body = self.fetch(uri)
     return nil unless body
 
