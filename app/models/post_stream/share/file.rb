@@ -68,6 +68,10 @@ class PostStream::Share::File < PostStream::Share::Base
     Configuration.domain_link '/'
   end
 
+  def render(renderer, opts={})
+    super if self.post.domain_file
+  end
+
   class Options < HashModel
     attributes :file_id => nil
     validates_presence_of :file_id
