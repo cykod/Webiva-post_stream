@@ -3,6 +3,13 @@ class PostStream::PageFeature < ParagraphFeature
 
   include StyledFormBuilderGenerator::FormFor
   include ActionView::Helpers::DateHelper
+  extend ActionView::Helpers::DateHelper
+
+  def self.site_feature_social_unit_location_handler_info
+    {
+      :name => 'Recent Post'
+    }
+  end
 
   feature :post_stream_page_stream,
     :default_css_file => '/components/post_stream/stylesheets/stream.css',
@@ -166,15 +173,8 @@ class PostStream::PageFeature < ParagraphFeature
   def post_stream_page_recent_posts_feature(data)
     webiva_feature(:post_stream_page_recent_posts,data) do |c|
       c.loop_tag('post') { |t| data[:posts] }
-      c.image_tag('post:photo') { |t| t.locals.post.image }
-      c.link_tag('post:post') { |t| t.locals.post.content_node.link }
-      c.link_tag('post:posted_by') { |t| t.locals.post.posted_by_shared_content_node.link if t.locals.post.posted_by_shared_content_node }
-      c.link_tag('post:content') { |t| t.locals.post.shared_content_node.link if t.locals.post.shared_content_node }
-      c.h_tag('post:title') { |t| t.locals.post.title }
-      c.value_tag('post:body') { |t| t.locals.post.body_html }
-      c.date_tag('post:posted_at',DEFAULT_DATETIME_FORMAT.t) { |t| t.locals.post.posted_at }
-      c.value_tag('post:posted_ago') { |t| time_ago_in_words(t.locals.post.posted_at) }
-      c.value_tag('post:embeded') { |t| t.locals.post.handler_obj.render(self.renderer, data[:poster].options) if t.locals.post.handler_obj }
+      self.class.post_features(c, data)
+      c.value_tag("post:embeded") { |t| t.locals.post.handler_obj.render(self.renderer, data[:poster].options) if t.locals.post.handler_obj }
     end
   end
 
@@ -188,5 +188,21 @@ class PostStream::PageFeature < ParagraphFeature
     webiva_feature(:post_stream_page_post,data) do |c|
       c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data[:poster].get_locals.merge(:attributes => t.attr) }
     end
+  end
+
+  def self.social_unit_location_feature(context, data)
+    context.expansion_tag('group:post') { |t| t.locals.post = PostStreamPost.with_posted_by(t.locals.group).find(:first, :order => 'posted_at DESC') }
+    self.post_features(context, data, 'group:post')
+  end
+
+  def self.post_features(context, data, base='post')
+    context.image_tag("#{base}:photo") { |t| t.locals.post.image }
+    context.link_tag("#{base}:post") { |t| t.locals.post.content_node.link }
+    context.link_tag("#{base}:posted_by") { |t| t.locals.post.posted_by_shared_content_node.link if t.locals.post.posted_by_shared_content_node }
+    context.link_tag("#{base}:content") { |t| t.locals.post.shared_content_node.link if t.locals.post.shared_content_node }
+    context.h_tag("#{base}:title") { |t| t.locals.post.title }
+    context.value_tag("#{base}:body") { |t| t.locals.post.body_html }
+    context.date_tag("#{base}:posted_at",DEFAULT_DATETIME_FORMAT.t) { |t| t.locals.post.posted_at }
+    context.value_tag("#{base}:posted_ago") { |t| time_ago_in_words(t.locals.post.posted_at) }
   end
 end

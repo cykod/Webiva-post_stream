@@ -23,6 +23,8 @@ class PostStream::AdminController < ModuleController
 
   register_handler :blog, :targeted_after_publish, "PostStream::Autopublish"
 
+  register_handler :site_feature, :social_unit_location, 'PostStream::PageFeature'
+
   cms_admin_paths "options",
     "Post Stream Options" => { :action => 'options' },
     "Options" => { :controller => '/options' },
