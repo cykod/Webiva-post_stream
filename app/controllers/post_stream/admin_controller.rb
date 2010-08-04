@@ -1,7 +1,7 @@
 
 class PostStream::AdminController < ModuleController
 
-  component_info 'PostStream', :description => 'Post Stream support', :access => :public
+  component_info 'PostStream', :description => 'Post Stream support', :access => :private
 
   content_model :post_stream
 
