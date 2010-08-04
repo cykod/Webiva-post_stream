@@ -2,7 +2,8 @@
 <%
 
 title = share.name
-title = content_tag(:a, truncate(title, :length => title_length), {:href => share.link, :rel => 'nofollow', :target => '_blank', :title => title}) if share.link
+title = content_tag(:a, truncate(title.to_s, :length => title_length.to_i), {:href => share.link, :rel => 'nofollow', :target => '_blank', :title => title}) if share.link
+
 heading = content_tag(:div, title, {:class => 'title'}, false)
 
 description = share.description ? content_tag(:div, truncate(share.description, :length => 200), {:class => 'description'}) : ''
