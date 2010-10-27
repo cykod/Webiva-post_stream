@@ -10,7 +10,7 @@
 <% end -%>
 
   <% if post.image && post.image.image? %>
-    <% if post.posted_by_shared_content_node -%>
+    <% if post.posted_by_shared_content_node && ! post.posted_by_shared_content_node.link.blank? -%>
       <%= content_tag(:a, post.image.image_tag(:thumb), {:href => post.posted_by_shared_content_node.link}, false) %>
     <% else -%>
       <%= post.image.image_tag(:thumb) %>

@@ -81,8 +81,11 @@ class PostStreamPost < DomainModel
     @shared_content_node = node
   end
 
-  def user_profile_entry
-    nil
+  def user_profile_entry(user_profile_type_id=nil)
+    return @user_profile_entry if @user_profile_entry
+    return nil unless SiteModule.module_enabled?('user_profile')
+    @end_user_profile = UserProfileEntry.fetch_entry(self.end_user, user_profile_type_id) if user_profile_type_id
+    @end_user_profile ||= UserProfileEntry.fetch_first_entry(self.end_user)
   end
 
   def self.find_by_identifier(identifier)
@@ -132,7 +135,7 @@ class PostStreamPost < DomainModel
   def before_create
     self.post_hash ||= DomainModel.generate_hash[0..8]
 
-    self.posted_by = self.user_profile_entry || self.end_user if self.posted_by.nil? && self.end_user
+    self.posted_by = (self.user_profile_entry || self.end_user) if self.posted_by.nil? && self.end_user
 
     self.title = self.posted_by ? self.posted_by.name : 'Anonymous'.t if self.title.blank?
     self.title = self.name if self.name && self.title == 'Anonymous'.t
