@@ -13,14 +13,20 @@ class PostStream::PageController < ParagraphController
                                    :target_list => [[:target_list, "Additional Target List",:target_list]]
                                  },
                       :triggers => [['Flagged post','flagged_post'],
-                                    ['New post', 'new_post']]
+                                    ['New post', 'new_post'],
+                                    ['New comment', 'new_comment'],
+                                    ['Notify target on post', 'notify_target_on_post'],
+                                    ['Notify target on comments', 'notify_target_on_comment']]
 
   editor_for :recent_posts, :name => 'Recent Posts', :feature => :post_stream_page_recent_posts
 
   editor_for :post, :name => 'Post', :feature => :post_stream_page_post,
                     :inputs => { :post_identifier => [[:identifier, 'Post Identifier', :path]]
                                },
-                    :triggers => [['Flagged post','flagged_post']]
+                    :triggers => [['Flagged post','flagged_post'],
+                                  ['New comment', 'new_comment'],
+                                  ['Notify target on comments', 'notify_target_on_comment']]
+
 
   class StreamOptions < HashModel
     attributes :folder_id => nil, :post_types_filter => [], :maxwidth => 340, :title_length => 40, :default_post_text => '', :default_comment_text => '', :post_on_facebook => true, :posts_per_page => 10, :post_page_id => nil, :posts_to_display => 'all'

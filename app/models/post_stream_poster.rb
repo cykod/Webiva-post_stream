@@ -131,6 +131,11 @@ class PostStreamPoster
     stream_target = PostStreamTarget.find_target(self.target)
     targets << stream_target if stream_target
 
+    if self.target.respond_to?(:end_user)
+      stream_target = PostStreamTarget.find_target(self.target.end_user)
+      targets << stream_target if stream_target
+    end
+
     if self.view_targets
       self.view_targets.each do |target_group|
         target_type, target_ids = *target_group
@@ -284,6 +289,10 @@ class PostStreamPoster
 
   def new_post?
     self.request_type == 'new_post' && @saved
+  end
+
+  def new_comment?
+    self.request_type == 'new_comment' && @saved
   end
 
   def can_post_to_facebook?

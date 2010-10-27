@@ -25,6 +25,10 @@ class PostStream::AdminController < ModuleController
 
   register_handler :site_feature, :social_unit_location, 'PostStream::PageFeature'
 
+  register_action '/post_stream/flagged_post', :description => 'Post Stream: Flagged a post'
+  register_action '/post_stream/new_post', :description => 'Post Stream: Posted'
+  register_action '/post_stream/new_comment', :description => 'Post Stream: Commented on a post'
+
   cms_admin_paths "options",
     "Post Stream Options" => { :action => 'options' },
     "Options" => { :controller => '/options' },

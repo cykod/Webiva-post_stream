@@ -61,7 +61,20 @@ class PostStream::PageRenderer < ParagraphRenderer
           paragraph.run_triggered_actions(@poster.post,'flagged_post',myself)
         end
 
-        paragraph.run_triggered_actions(@poster.post,'new_post',myself) if @poster.new_post?
+        if @poster.new_post?
+          paragraph.run_triggered_actions(@poster.post,'new_post',myself)
+
+          targeted_end_user = @poster.target if @poster.target.is_a?(EndUser)
+          targeted_end_user = @poster.target.end_user if @poster.target.respond_to?(:end_user)
+          paragraph.run_triggered_actions(@poster.post,'notify_target_on_post',targeted_end_user) if targeted_end_user && targeted_end_user != myself
+        elsif @poster.new_comment?
+          paragraph_action(myself.action("/post_stream/commented", :target => @poster.post, :identifier => truncate(@poster.comment.body, :length => 30)))
+          paragraph.run_triggered_actions(@poster.post,'new_comment',myself)
+
+          targeted_end_user = @poster.target if @poster.target.is_a?(EndUser)
+          targeted_end_user = @poster.target.end_user if @poster.target.respond_to?(:end_user)
+          paragraph.run_triggered_actions(@poster.post,'notify_target_on_comment',targeted_end_user) if targeted_end_user && targeted_end_user != myself
+        end
 
         if ajax?
           return render_paragraph :rjs => '/post_stream/page/update', :locals => @poster.get_locals
@@ -128,6 +141,13 @@ class PostStream::PageRenderer < ParagraphRenderer
         if @poster.flagged?
           paragraph_action(myself.action("/post_stream/flagged_post", :target => @poster.post, :identifier => truncate(@poster.post.body, :length => 30)))
           paragraph.run_triggered_actions(@poster.post,'flagged_post',myself)
+        elsif @poster.new_comment?
+          paragraph_action(myself.action("/post_stream/commented", :target => @poster.post, :identifier => truncate(@poster.comment.body, :length => 30)))
+          paragraph.run_triggered_actions(@poster.post,'new_comment',myself)
+
+          targeted_end_user = @poster.target if @poster.target.is_a?(EndUser)
+          targeted_end_user = @poster.target.end_user if @poster.target.respond_to?(:end_user)
+          paragraph.run_triggered_actions(@poster.post,'notify_target_on_comment',targeted_end_user) if targeted_end_user && targeted_end_user != myself
         end
 
         if ajax?
