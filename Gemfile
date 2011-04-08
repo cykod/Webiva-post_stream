@@ -1,0 +1,2 @@
+
+gem 'oembed_links'
