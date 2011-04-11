@@ -58,7 +58,7 @@ class PostStreamPost < DomainModel
   end
 
   def content_admin_url
-    { :controller => '/post_stream/manage/post', :action => 'post', :path => [ self.id ] }
+    { :controller => '/post_stream/manage', :action => 'post', :path => [ self.id ] }
   end
 
   def post_on_facebook=(val)
@@ -237,7 +237,7 @@ class PostStreamPost < DomainModel
 
   def flagged=(flag)
     @update_targets = self.flagged != flag
-    self.write_attribute :flagged, flag
+    self[:flagged] = flag
     flag
   end
 

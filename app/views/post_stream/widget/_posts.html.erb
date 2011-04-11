@@ -8,11 +8,11 @@
   <a target="_blank" href="<%= url_for :controller => '/post_stream/manage', :action => 'post', :path => [post.posted_by_post_stream_target.id, post.id] %>">
 <% end -%>
 <%= '<span style="color:red;">' if post.flagged %>
-<%= h post.title %>
+<%= post.title %>
 <%= '</span>' if post.flagged %>
-<%= '</a>' if post.posted_by %>
+<%= '</a>'.html_safe if post.posted_by %>
 </td>
-<td><%= h truncate(post.body, :length => 80) %></td>
+<td><%= truncate(post.body, :length => 80) %></td>
 <td><%= post.posted_by.name if post.posted_by %></td>
 <td><%= post.posted_at.to_s(:short) %></td>
 </tr>
