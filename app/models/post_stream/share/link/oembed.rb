@@ -1,10 +1,4 @@
-require 'oembed_links'
 require 'net/http'
-
-yaml_file = File.join(File.dirname(__FILE__), '../../../../..', "config", "oembed_links.yml")
-if File.exists?(yaml_file)
-  OEmbed::register_yaml_file(yaml_file)
-end
 
 class PostStream::Share::Link::Oembed < PostStream::Share::Link::Base
   def self.post_stream_link_handler_info

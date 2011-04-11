@@ -1,4 +1,5 @@
-require  File.expand_path(File.dirname(__FILE__)) + '/../../post_stream_spec_helper'
+require "spec_helper"
+require "post_stream_spec_helper"
 
 describe PostStream::PageFeature, :type => :view do
 

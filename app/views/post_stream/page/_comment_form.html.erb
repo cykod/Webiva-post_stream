@@ -1,5 +1,5 @@
 <div class="comment_form" id="post_stream_comment_<%= post.id %>" <%= 'style="display:none;"' if post.post_stream_post_comments_count == 0 %>>
-<% cms_unstyled_form_for :stream_post_comment, post.post_stream_post_comments.new(:body => poster.options[:default_comment_text]), :html => {:id => "post_stream_comment_form_#{post.id}", :onsubmit => "PostStreamForm.onsubmit('#{renderer.ajax_url}', 'post_stream_comment_form_#{post.id}'); return false;", :class => 'post_stream_comment_form post_stream_inactive'} do |f| -%>
+<%= cms_unstyled_form_for :stream_post_comment, post.post_stream_post_comments.new(:body => poster.options[:default_comment_text]), :html => {:id => "post_stream_comment_form_#{post.id}", :onsubmit => "PostStreamForm.onsubmit('#{renderer.ajax_url}', 'post_stream_comment_form_#{post.id}'); return false;", :class => 'post_stream_comment_form post_stream_inactive'} do |f| -%>
 <%= f.hidden_field :post_stream_post_identifier %>
 <% if myself.id && myself.missing_name? %>
   <div class="name"><%= 'Name:'.t %> <%= f.text_field :name %></div>

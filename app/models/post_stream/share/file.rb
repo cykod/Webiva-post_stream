@@ -15,9 +15,8 @@ class PostStream::Share::File < PostStream::Share::Base
   def valid?
     is_valid = super
 
-    if self.options.errors[:file_id]
-      error = self.options.errors[:file_id]
-      error = error[0] if error.is_a?(Array)
+    if ! self.options.errors[:file_id].empty?
+      error = self.options.errors[:file_id][0]
       self.post.errors.add_to_base('File ' + error)
       return false
     end

@@ -8,7 +8,7 @@ class PostStreamTarget < DomainModel
   has_many :post_stream_post_targets, :dependent => :destroy
   has_many :post_stream_posts, :through => :post_stream_post_targets
 
-  named_scope :with_target, lambda { |target| {:conditions => {:target_type => target.class.to_s, :target_id => target.id}} }
+  scope :with_target, lambda { |target| where(:target_type => target.class.to_s, :target_id => target.id) }
 
   def self.push_target(target)
     self.find_target(target) || self.create_target(target)
@@ -28,10 +28,6 @@ class PostStreamTarget < DomainModel
       logger.error e
       self.find_target(target)
     end
-  end
-
-  def before_create
-    self.created_at = Time.now
   end
 
   def update_stats(post=nil)

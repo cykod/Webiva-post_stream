@@ -13,11 +13,14 @@ class PostStreamPost < DomainModel
   has_many :post_stream_targets, :through => :post_stream_post_targets
   has_many :post_stream_post_comments, :dependent => :delete_all, :order => 'posted_at DESC'
 
+  before_validation :set_post_type, :on => :create
+
   validates_presence_of :post_type
   has_options :post_type, [['Post', 'post'], ['Content','content'], ['Link','link'], ['Image', 'image'], ['Media', 'media']] 
 
   validates_presence_of :body
   validates_presence_of :posted_at
+  validate :validate_post
 
   serialize :data
 
@@ -29,12 +32,18 @@ class PostStreamPost < DomainModel
 
   content_node
 
-  named_scope :with_types, lambda { |types| types.empty? ? {} : {:conditions => {:post_type => types}} }
-  named_scope :with_posted_by, lambda { |poster| {:conditions => {:posted_by_type => poster.class.to_s, :posted_by_id => poster.id}} }
-  named_scope :without_posted_by, lambda { |poster| {:conditions => ['NOT (posted_by_type = ? and posted_by_id = ?)',  poster.class.to_s, poster.id]} }
-  named_scope :without_posts, lambda { |ids| {:conditions => ['post_stream_post.id not in(?)', ids] } }
-  named_scope :flagged_posts, {:conditions => {:flagged => true}}
+  scope :with_types, lambda { |types| types.empty? ? self : where(:post_type => types) }
+  scope :with_posted_by, lambda { |poster| where(:posted_by_type => poster.class.to_s, :posted_by_id => poster.id) }
+  scope :without_posted_by, lambda { |poster| where('NOT (posted_by_type = ? and posted_by_id = ?)',  poster.class.to_s, poster.id) }
+  scope :without_posts, lambda { |ids| where('post_stream_post.id not in(?)', ids) }
+  scope :flagged_posts, where(:flagged => true)
 
+  before_create :set_defaults
+  before_save :set_data
+  after_create :create_target_stats
+  after_save :update_target_stats
+  after_destroy :remove_target_stats
+  
   def identifier
     "#{self.id}-#{self.post_hash}"
   end
@@ -94,7 +103,7 @@ class PostStreamPost < DomainModel
     PostStreamPost.find_by_id_and_post_hash(post_id, post_hash)
   end
 
-  def validate
+  def validate_post
     case self.post_type
     when 'link'
       self.errors.add(:link, 'is required') if self.link.blank?
@@ -116,7 +125,7 @@ class PostStreamPost < DomainModel
     self.errors.add(:name, 'is missing') if self.end_user && self.end_user.missing_name? && self.name.blank?
   end
 
-  def before_validation_on_create
+  def set_post_type
     if self.post_type.nil?
       if self.shared_content_node
         self.post_type = 'content'
@@ -132,7 +141,7 @@ class PostStreamPost < DomainModel
     self.posted_at ||= Time.now
   end
 
-  def before_create
+  def set_defaults
     self.post_hash ||= DomainModel.generate_hash[0..8]
 
     self.posted_by = (self.user_profile_entry || self.end_user) if self.posted_by.nil? && self.end_user
@@ -141,7 +150,7 @@ class PostStreamPost < DomainModel
     self.title = self.name if self.name && self.title == 'Anonymous'.t
   end
 
-  def before_save
+  def set_data
     self.data = self.handler_obj.options.to_h if self.handler_obj
   end
 
@@ -232,15 +241,15 @@ class PostStreamPost < DomainModel
     flag
   end
 
-  def after_save
+  def update_target_stats
     self.post_stream_targets.each { |target| target.update_stats } if @update_targets
   end
 
-  def after_create
+  def create_target_stats
     self.post_stream_targets.each { |target| target.update_stats(self) }
   end
 
-  def after_destroy
+  def remove_target_stats
     self.post_stream_targets.each { |target| target.update_stats }
     PostStreamPostTarget.delete_all(:id => self.post_stream_post_targets.collect(&:id))
   end

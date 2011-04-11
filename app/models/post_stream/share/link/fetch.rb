@@ -1,4 +1,3 @@
-require 'nokogiri'
 require 'net/http'
 
 class PostStream::Share::Link::Fetch < PostStream::Share::Link::Base

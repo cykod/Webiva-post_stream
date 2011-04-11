@@ -1,7 +1,7 @@
-<%= "<img src='#{comment.end_user.image.url(:icon)}'/>" if comment.end_user && comment.end_user.image %>
+<%= "<img src='#{comment.end_user.image.url(:icon)}'/>".html_safe if comment.end_user && comment.end_user.image %>
 <span class="content">
 <span class="name"><%= comment.end_user ? comment.end_user.name : 'Anonymous'.t %></span>
-<span class="body"><%= comment.body_html %></span>
+<span class="body"><%= comment.body_html.html_safe %></span>
 <span class="posted_at"><span class="dash">-</span> <%= '%s ago' / time_ago_in_words(comment.posted_at) %></span>
 </span>
 <hr class="separator"/>

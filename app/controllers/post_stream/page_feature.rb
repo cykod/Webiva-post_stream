@@ -63,11 +63,11 @@ class PostStream::PageFeature < ParagraphFeature
 
       c.expansion_tag('form:no_name') { |t| myself.missing_name? }
       c.define_tag('form:name') do |t|
-        '<div class="name">' + 'Name:'.t + ' ' + t.locals.form.text_field(:name, t.attr) + '</div>'
+        content_tag :div, 'Name:'.t + ' ' + t.locals.form.text_field(:name, t.attr), {:class => 'name'}, false
       end
 
       c.define_tag('form:body') do |t|
-        '<div class="body">' + t.locals.form.text_area(:body, {:onfocus => 'PostStreamForm.bodyOnFocus();'}.merge(t.attr)) + '</div>'
+        content_tag :div, t.locals.form.text_area(:body, {:onfocus => 'PostStreamForm.bodyOnFocus();'}.merge(t.attr)), {:class => 'body'}, false
       end
 
       c.define_tag('form:handlers') do |t|
@@ -75,9 +75,7 @@ class PostStream::PageFeature < ParagraphFeature
         t.locals.share_components_close_image = t.attr['close_image']
 
         output = t.locals.form.hidden_field :handler
-        output << '<div class="stream_post_handlers">'
-        output << (t.single? ? self.render_handler_forms(t, data) : t.expand)
-        output << '</div>'
+        output << content_tag(:div, (t.single? ? self.render_handler_forms(t, data) : t.expand), {:class => "stream_post_handlers"}, false)
       end
 
       c.define_tag('form:handlers:handler') do |t|
@@ -87,43 +85,43 @@ class PostStream::PageFeature < ParagraphFeature
       end
 
       c.define_tag('form:share') do |t|
-        '<div id="post_stream_share" class="post_stream_share">' + t.expand + '&nbsp;</div>'
+        content_tag :div, "#{t.expand}&nbsp;", {:id => 'post_stream_share', :class => 'post_stream_share'}, false
       end
 
       c.define_tag('form:share:buttons') do |t|
         style = data[:poster].post.handler ? "style='display:none;'" : ''
-        output = "<ul id='post_stream_share_buttons' class='post_stream_share_buttons' #{style}>"
-        output << "<li class='label'>#{t.attr['label']}</li>" unless t.attr['label'].blank?
+        output = ''
+        output = "<li class='label'>#{t.attr['label']}</li>" unless t.attr['label'].blank?
 
         if t.single?
           output << ("<li class='button'>" + data[:poster].handlers.collect{ |handler| handler.render_button }.join("</li><li class='button'>") + "</li>")
         else
           output << t.expand
         end
-        output << '</ul>'
+        content_tag :ul, output, {:id => 'post_stream_share_buttons', :class => 'post_stream_share_buttons'}, false
       end
 
       c.define_tag('form:share:buttons:button') do |t|
         title = t.attr['title'] || t.expand
         handler = data[:poster].get_handler_by_type(t.attr['type'])
-        handler ? '<li class="button">' + handler.render_button('title' => title) + '</li>' : ''
+        handler ? content_tag(:li, handler.render_button('title' => title) ,{:class => "button"}, false) : ''
       end
 
       c.define_tag('form:share_with') do |t|
-        '<div class="post_stream_share_with">' + t.expand + '</div>'
+        content_tag :div, t.expand, {:class => 'post_stream_share_with'}, false
       end
 
       c.define_tag('form:share_with:facebook') do |t|
         if data[:poster].can_post_to_facebook?
           content = t.single? ? 'Post to Facebook' : t.expand
-          '<div class="facebook">' + t.locals.form.check_boxes(:post_on_facebook, [[content, true]], :single => true) + '</div>'
+          content_tag :div, t.locals.form.check_boxes(:post_on_facebook, [[content, true]], :single => true), {:class => 'facebook'}, false
         end
       end
 
       c.define_tag('form:share_with:targets') do |t|
         unless data[:poster].additional_targets.empty?
           content = data[:poster].additional_targets.length == 1 ? t.locals.form.check_boxes(:additional_target, data[:poster].additional_target_options, :single => true) : t.locals.form.select(:additional_target, [['-- Also post to --'.t, nil]] + data[:poster].additional_target_options)
-          '<div class="targets">' + content + '</div>'
+          content_tag :div, content, {:class => 'targets'}, false
         end
       end
 
@@ -138,9 +136,7 @@ class PostStream::PageFeature < ParagraphFeature
   end
 
   def render_handler_form(handler, t, data, opts={})
-    cms_unstyled_fields_for(handler.form_name, handler.options) do |f|
-      handler.render_form(self.renderer, f, opts)
-    end
+    render_to_string :partial => '/post_stream/page/handler_form', :locals => {:renderer => self.renderer, :handler => handler, :opts => opts}
   end
 
   feature :post_stream_page_recent_posts,
@@ -186,7 +182,7 @@ class PostStream::PageFeature < ParagraphFeature
 
   def post_stream_page_post_feature(data)
     webiva_feature(:post_stream_page_post,data) do |c|
-      c.define_tag('stream') { |t| render_to_string :partial => '/post_stream/page/stream', :locals => data[:poster].get_locals.merge(:attributes => t.attr) }
+      c.define_tag('stream') { |t| render_to_string(:partial => '/post_stream/page/stream', :locals => data[:poster].get_locals.merge(:attributes => t.attr)) }
     end
   end
 

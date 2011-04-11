@@ -1,6 +1,8 @@
-require  File.expand_path(File.dirname(__FILE__)) + '/../post_stream_spec_helper'
+require "spec_helper"
+require "post_stream_spec_helper"
 
 describe PostStreamPost do
+  include ActionDispatch::TestProcess
 
   reset_domain_tables :post_stream_posts, :post_stream_post_comments, :post_stream_targets, :post_stream_post_targets, :end_users
 

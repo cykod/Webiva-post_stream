@@ -5,9 +5,12 @@ class PostStreamPostComment < DomainModel
   belongs_to :post_stream_post
   has_end_user :end_user_id, :name_column => :name
 
+  before_validation :set_defaults, :on => :create
+
   validates_presence_of :post_stream_post_id
   validates_presence_of :body
   validates_presence_of :posted_at
+  validate :validate_name
 
   safe_content_filter(:body => :body_html)  do |comment|
     { :filter => comment.content_filter,
@@ -15,11 +18,13 @@ class PostStreamPostComment < DomainModel
     }
   end
 
-  def before_validation_on_create
+  after_create :update_comments_count
+
+  def set_defaults
     self.posted_at ||= Time.now
   end
 
-  def validate
+  def validate_name
     self.errors.add(:name, 'is missing') if self.end_user && self.end_user.missing_name? && self.name.blank?
   end
 
@@ -27,7 +32,7 @@ class PostStreamPostComment < DomainModel
     PostStream::AdminController.module_options.content_filter || 'comment'
   end
 
-  def after_create
+  def update_comments_count
     self.post_stream_post.update_comments_count
   end
 

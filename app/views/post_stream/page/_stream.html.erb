@@ -14,8 +14,8 @@ PostStream.flagMessage = 'Post has been flagged.';
 </div>
 <% if has_more -%>
 <div class="has_more">
-<a id="stream_post_has_more" onclick="PostStreamForm.has_more('<%= jvh renderer.ajax_url %>');" href="javascript:void(0);"><%= attributes['has_more'] || 'Previous Posts'.t %></a>
-<span id="stream_post_no_more" style="display:none;"><%= attributes['no_more'] || 'No more posts'.t %></span>
+<a id="stream_post_has_more" onclick="PostStreamForm.has_more('<%= jvh renderer.ajax_url %>');" href="javascript:void(0);"><%= (attributes['has_more'] || 'Previous Posts'.t).html_safe %></a>
+<span id="stream_post_no_more" style="display:none;"><%= (attributes['no_more'] || 'No more posts'.t).html_safe %></span>
 </div>
 <% end -%>
 </div>
