@@ -1,0 +1,5 @@
+.share_file
+  - if renderer.myself.id
+    = form.inline_file_upload(:file_id, :url => renderer.ajax_url, :params => {:page_connection_hash => renderer.page_connection_hash})
+  - else
+    .errors= 'Must be logged in to share images.'.t
