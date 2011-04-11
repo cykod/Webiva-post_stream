@@ -51,9 +51,9 @@ class PostStream::PageFeature < ParagraphFeature
       c.value_tag('form:errors') do |t|
         errors = []
         
-        errors << t.locals.stream_post.errors[:base] if t.locals.stream_post.errors[:base]
+        errors << t.locals.stream_post.errors[:base] unless t.locals.stream_post.errors[:base].empty?
 
-        errors << "Body #{t.locals.stream_post.errors[:body]}" if t.locals.stream_post.errors[:body]
+        errors << "Body #{t.locals.stream_post.errors[:body]}" unless t.locals.stream_post.errors[:body].empty?
 
         prefix = t.attr['prefix'] || ''
         postfix = t.attr['postfix'] || ''
