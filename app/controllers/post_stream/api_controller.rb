@@ -28,6 +28,12 @@ skip_before_filter :verify_authenticity_token
      args = params.slice(:target_type,:target_id,:subject,:message)
      target = PostStreamTarget.find_by_target_type_and_target_id(args[:target_type],args[:target_id])
 
+
+     if !target && PostStreamTarget.find_by_target_type(args[:target_type])
+       target = PostStreamTarget.create(:target_type => args[:target_type],
+                               :target_id => args[:target_id])
+    end
+
      if target 
        @post = PostStreamPost.new :body => args[:message], :title => args[:subject], :end_user_id => myself.id, :posted_by => target.target
 
